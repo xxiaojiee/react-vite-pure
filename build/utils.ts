@@ -10,6 +10,7 @@ export function isProdFn(mode: string): boolean {
   return mode === 'production';
 }
 
+
 /**
  * Whether to generate package preview
  */
@@ -40,7 +41,7 @@ export function wrapperEnv(envConf: Recordable): ViteEnv {
 }
 
 /**
- * Get the environment variables starting with the specified prefix
+ * 获取以指定前缀开头的环境变量
  * @param match prefix
  * @param confFiles ext
  */
@@ -63,9 +64,21 @@ export function getEnvConfig(match = 'VITE_GLOB_', confFiles = ['.env', '.env.pr
 }
 
 /**
- * Get user root directory
+ * 获取用户根目录
  * @param dir file path
  */
 export function getRootPath(...dir: string[]) {
   return path.resolve(process.cwd(), ...dir);
 }
+
+
+/**
+ * 获取配置文件变量名
+ * @param env
+ */
+export const getConfigFileName = (env: Record<string, any>) => {
+  //toUpperCase 全部转成大写   replace方法去掉所有空格
+  return `__PRODUCTION__${env.VITE_GLOB_APP_SHORT_NAME || '__APP'}__CONF__`
+    .toUpperCase()
+    .replace(/\s/g, '');
+};

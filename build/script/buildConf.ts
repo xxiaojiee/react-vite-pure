@@ -1,14 +1,16 @@
+
+
 /**
- * Generate additional configuration files when used for packaging. The file can be configured with some global variables, so that it can be changed directly externally without repackaging
+ * 用于打包时生成额外的配置文件。 该文件可以配置一些全局变量，这样就可以直接在外部进行更改，无需重新打包
  */
 import { GLOB_CONFIG_FILE_NAME, OUTPUT_DIR } from '../constant';
 import fs, { writeFileSync } from 'fs-extra';
 import chalk from 'chalk';
 
-import { getRootPath, getEnvConfig } from '../utils';
-import { getConfigFileName } from '../getConfigFileName';
+import { getRootPath, getEnvConfig, getConfigFileName } from '../utils';
 
 import pkg from '../../package.json';
+
 
 function createConfig(
   {
@@ -39,6 +41,6 @@ function createConfig(
 
 export function runBuildConfig() {
   const config = getEnvConfig();
-  const configFileName = getConfigFileName(config);
+  const configFileName = getConfigFileName(config);  // 获取配置文件变量名
   createConfig({ config, configName: configFileName });
 }
