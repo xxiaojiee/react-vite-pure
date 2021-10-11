@@ -1,0 +1,99 @@
+import { Input, Form } from 'antd';
+import React from 'react';
+
+import { FormItemProps } from 'antd/es/form/FormItem';
+import ItemMap from './map';
+// import LoginContext, { LoginContextProps } from './LoginContext';
+
+export type WrappedLoginItemProps = LoginItemProps;
+export type LoginItemKeyType = keyof typeof ItemMap;
+
+export interface LoginItemType {
+  [k: string]: React.FC<WrappedLoginItemProps>;
+}
+
+export interface LoginItemProps extends Partial<FormItemProps> {
+  name?: string;
+  style?: React.CSSProperties;
+  placeholder?: string;
+  buttonText?: React.ReactNode;
+  countDown?: number;
+  getCaptchaButtonText?: string;
+  getCaptchaSecondText?: string;
+  // updateActive?: LoginContextProps['updateActive'];
+  type?: string;
+  defaultValue?: string;
+  customProps?: { [key: string]: unknown };
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  // tabUtil?: LoginContextProps['tabUtil'];
+}
+
+const FormItem = Form.Item;
+
+const getFormItemOptions = ({
+  onChange,
+  defaultValue,
+  customProps = {},
+  rules,
+}: LoginItemProps) => {
+  const options: {
+    rules?: LoginItemProps['rules'];
+    onChange?: LoginItemProps['onChange'];
+    initialValue?: LoginItemProps['defaultValue'];
+  } = {
+    rules: rules || (customProps.rules as LoginItemProps['rules']),
+  };
+  if (onChange) {
+    options.onChange = onChange;
+  }
+  if (defaultValue) {
+    options.initialValue = defaultValue;
+  }
+  return options;
+};
+
+const LoginItem: React.FC<LoginItemProps> = (props: LoginItemProps) => {
+  const {
+    onChange,
+    customProps,
+    defaultValue,
+    rules,
+    name,
+    getCaptchaButtonText,
+    getCaptchaSecondText,
+    // updateActive,
+    type,
+    // tabUtil,
+    ...restProps
+  } = props;
+
+  if (!name) {
+    return null;
+  }
+  // get getFieldDecorator props
+  const options = getFormItemOptions(props);
+  const otherProps = restProps || {};
+
+  return (
+    <FormItem name={name} {...options}>
+      <Input {...customProps} {...otherProps} />
+    </FormItem>
+  );
+};
+
+const LoginItems: Partial<LoginItemType> = {};
+
+Object.keys(ItemMap).forEach((key) => {
+  const item = ItemMap[key];
+  LoginItems[key] = (props: LoginItemProps) => (
+    <LoginItem
+      customProps={item.props}
+      rules={item.rules}
+      {...props}
+      type={key}
+      // updateActive={context.updateActive}
+    />
+  );
+});
+
+export default LoginItems as LoginItemType;
