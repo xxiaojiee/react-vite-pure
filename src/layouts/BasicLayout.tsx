@@ -85,14 +85,15 @@ const BasicLayout = (props: BasicLayoutProps) => {
         },
         ...routers,
       ]}
-      itemRender={(rou, params, routes, paths) => {
-        const first = routes.indexOf(rou) === 0;
-        return first ? (
-          <Link to={paths.join('/')}>{rou.breadcrumbName}</Link>
-        ) : (
-          <span>{rou.breadcrumbName}</span>
-        );
-      }}
+      // itemRender={(rou, params, routes, paths) => {
+      //   const first = routes.indexOf(rou) === 0;
+      //   console.log('first:', first, rou, routes);
+      //   return first ? (
+      //     <Link to={paths.join('/')}>{rou.breadcrumbName}</Link>
+      //   ) : (
+      //     <span>{rou.breadcrumbName}</span>
+      //   );
+      // }}
       footerRender={() => defaultFooterDom}
       menuDataRender={menuDataRender(user?.character || '')}
       rightContentRender={() => (

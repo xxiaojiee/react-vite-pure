@@ -1,13 +1,12 @@
 /**
- *  Introduces component library styles on demand.
+ *  按需引入组件库样式.
  * https://github.com/anncwb/vite-plugin-style-import
  */
 
 import styleImport from 'vite-plugin-style-import';
 
-export function configStyleImportPlugin(isBuild: boolean) {
-  if (!isBuild) return [];
-  const pwaPlugin = styleImport({
+export function configStyleImportPlugin() {
+  const stylePlugin = styleImport({
     libs: [
       {
         libraryName: 'antd',
@@ -18,5 +17,5 @@ export function configStyleImportPlugin(isBuild: boolean) {
       },
     ]
   });
-  return pwaPlugin;
+  return stylePlugin;
 }

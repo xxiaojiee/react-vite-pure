@@ -96,6 +96,12 @@ export const routes: IRouter[] = [
             ],
           },
           {
+            path: '/debug',
+            name:'调试',
+            icon: <ContainerOutlined />,
+            component: load(() => import('../pages/debug/index')),
+          },
+          {
             path: '/',
             redirect: '/home',
           },

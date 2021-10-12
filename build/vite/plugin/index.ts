@@ -58,7 +58,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
    * 按需导入组件库样式
    * 由于vite本身已按需导入了组件库，因此仅样式不是按需导入的，因此只需按需导入样式即可。
    */
-  vitePlugins.push(configStyleImportPlugin(isBuild));
+  vitePlugins.push(configStyleImportPlugin());
 
   // rollup-plugin-visualizer
   // vitePlugins.push(configVisualizerConfig());
