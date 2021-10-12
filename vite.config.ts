@@ -65,7 +65,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
     // 项目使用的vite插件。 数量大，因此需要单独提取和管理
     plugins: createVitePlugins(viteEnv, isBuild),
-
     // 指定传递给 CSS 预处理器的选项
     css: {
       preprocessorOptions: {

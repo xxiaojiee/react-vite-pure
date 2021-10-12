@@ -1,5 +1,5 @@
 /**
- * The name of the configuration file entered in the production environment
+ * 生产环境中输入的配置文件名
  */
 export const GLOB_CONFIG_FILE_NAME = '_app.config.js';
 

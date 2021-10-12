@@ -3,7 +3,7 @@ import { Avatar, Menu, Spin } from 'antd';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import HeaderDropdown from '../HeaderDropdown';
-import avatar from '../../assets/logo.svg';
+import avatar from '/@/assets/logo.svg';
 import { useUserContainer } from '/@/contexts/user';
 
 const AvatarDropdown = ({ menu }: { menu?: boolean }) => {

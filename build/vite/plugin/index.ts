@@ -3,19 +3,19 @@ import type { Plugin } from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import legacy from '@vitejs/plugin-legacy';
 
-// import { configHtmlPlugin } from './html';
-import { configPwaConfig } from './pwa';
+import { configHtmlPlugin } from './html';
+// import { configPwaConfig } from './pwa';
 // import { configMockPlugin } from './mock';
 // import { configCompressPlugin } from './compress';
 import { configStyleImportPlugin } from './styleImport';
 // import { configVisualizerConfig } from './visualizer';
 // import { configImageminPlugin } from './imagemin';
 // import { configWindiCssPlugin } from './windicss';
-// import { configSvgIconsPlugin } from './svgSprite';
+import { configSvgIconsPlugin } from './svgSprite';
 
 interface ViteEnv {
-  VITE_GLOB_APP_TITLE?: string,
-  VITE_PUBLIC_PATH?: string,
+  VITE_GLOB_APP_TITLE: string,
+  VITE_PUBLIC_PATH: string,
   VITE_USE_IMAGEMIN?: boolean,
   VITE_USE_MOCK: boolean,
   VITE_LEGACY?: boolean,
@@ -41,10 +41,10 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   VITE_LEGACY && isBuild && vitePlugins.push(legacy());
 
   // vite-plugin-html
-  // vitePlugins.push(configHtmlPlugin(viteEnv, isBuild));
+  vitePlugins.push(configHtmlPlugin(viteEnv, isBuild));
 
   // vite-plugin-svg-icons
-  // vitePlugins.push(configSvgIconsPlugin(isBuild));
+  vitePlugins.push(configSvgIconsPlugin(isBuild));
 
   // vite-plugin-windicss
   // vitePlugins.push(configWindiCssPlugin());
@@ -63,7 +63,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   // rollup-plugin-visualizer
   // vitePlugins.push(configVisualizerConfig());
 
-  // The following plugins only work in the production environment
+  // 以下插件仅适用于生产环境
   if (isBuild) {
     //vite-plugin-imagemin
     // VITE_USE_IMAGEMIN && vitePlugins.push(configImageminPlugin());

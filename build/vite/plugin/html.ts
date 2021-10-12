@@ -25,24 +25,24 @@ export function configHtmlPlugin(env: ViteEnv, isBuild: boolean) {
 
   const path = VITE_PUBLIC_PATH.endsWith('/') ? VITE_PUBLIC_PATH : `${VITE_PUBLIC_PATH}/`;
 
-  const getAppConfigSrc = () => {
+  const getAppConfigFileSrc = () => {
     return `${path || '/'}${GLOB_CONFIG_FILE_NAME}?v=${pkg.version}-${new Date().getTime()}`;
   };
-  console.log('src:', getAppConfigSrc());
+
   const htmlPlugin: Plugin[] = html({
     minify: isBuild,
     inject: {
-      // Inject data into ejs template
+      // 将数据注入 ejs 模板
       injectData: {
         title: VITE_GLOB_APP_TITLE,
       },
-      // Embed the generated app.config.js file
+      // 嵌入生成的 app.config.js 文件
       tags: isBuild
         ? [
           {
             tag: 'script',
             attrs: {
-              src: getAppConfigSrc(),
+              src: getAppConfigFileSrc(),
             },
           },
         ]
