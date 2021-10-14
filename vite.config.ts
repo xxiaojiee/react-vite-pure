@@ -6,9 +6,8 @@ import { loadEnv } from 'vite'
 
 import moment from 'moment';
 import { wrapperEnv } from './build/utils';
-import { createProxy } from './build/vite/proxy';
 import { OUTPUT_DIR } from './build/constant';
-import { createVitePlugins } from './build/vite/plugin';
+import { createVitePlugins } from './build/plugin';
 import pkg from './package.json';
 
 const { dependencies, devDependencies, name, version } = pkg;
@@ -34,9 +33,9 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
   // 读取并格式化所有环境变量，并配置文件到process.env
   const viteEnv = wrapperEnv(env);
-
-  const { VITE_PORT, VITE_PUBLIC_PATH, VITE_PROXY, VITE_DROP_CONSOLE } = viteEnv;
-
+  // 获取环境变量
+  const { VITE_PORT, VITE_PUBLIC_PATH, VITE_DROP_CONSOLE } = viteEnv;
+  // 是否是生产模式
   const isBuild = command === 'build';
 
   return {
@@ -44,19 +43,24 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     base: VITE_PUBLIC_PATH,
     root,
     server: {
+      // 启用https
       // https: true,
+      // 默认打开路由
       // open: '/table/manage',
       host: true,
       port: VITE_PORT,  // 默认3000
-      proxy: createProxy(VITE_PROXY),
-      // proxy: {
-      //   // 正则写法： '^/api/.*'
-      //   '/api': {
-      //     target: 'http://jsonplaceholder.typicode.com/',
-      //     changeOrigin: true,
-      //     rewrite: (paths) => paths.replace(/^\/api/, ''),
-      //   },
-      // },
+      proxy: {
+        // 正则写法： '^/api/.*'
+        '/dog-manage-webapi': {
+          target: 'http://10.200.62.92/', // 后端目标接口地址
+          changeOrigin: false,
+          // rewrite: (paths) => {
+          //   console.log(222, paths, paths.replace(/^\/socket/, ''));
+          //   return paths.replace(/^\/socket/, '')
+          // },
+          // ws: true, // 开启ws, 如果是http代理此处可以不用设置
+        },
+      },
     },
     define: {
       __INTLIFY_PROD_DEVTOOLS__: false,
@@ -94,6 +98,10 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
       ],
     },
+    // 为 JSX 注入 helper （这是一个仅在 Vite 中使用的选项）
+    // esbuild: {
+    //   jsxInject: `import React from 'react'`
+    // },
     build: {
       // 设置最终构建的浏览器兼容目标
       target: 'es2015',

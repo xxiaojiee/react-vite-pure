@@ -6,6 +6,7 @@
     "start": "npm run dev",
     "dev": "vite",
     "build": "vite build && esno ./build/script/postBuild.ts",
+    "build1": "esno ./build/script/postBuild.ts",
     "build:no-cache": "yarn clean:cache && npm run build",
     "preview": "npm run build && vite preview",
     "preview:dist": "vite preview",

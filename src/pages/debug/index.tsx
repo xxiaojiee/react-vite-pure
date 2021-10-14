@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from 'antd';
+import testMsg from '/@/assets/icon/test.svg';
 
 const { TextArea } = Input;
 
@@ -23,11 +24,14 @@ const Index: React.FC = () => {
       <Button type="primary" onClick={showModal}>
         Open Modal
       </Button>
+      <div>
+        <img src={testMsg}/>
+      </div>
       <Modal
         title="文书确认"
         okText="签收"
         cancelText="取消"
-        visible ={isModalVisible}
+        visible={isModalVisible}
         onOk={handleOk}
         bodyStyle={{ padding: 10 }}
         onCancel={handleCancel}

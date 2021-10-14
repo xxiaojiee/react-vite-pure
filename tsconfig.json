@@ -4,11 +4,15 @@
     "target": "ESNext",
     // ↓编译过程中需要引入的库文件的列表。
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    // ↓要包含的类型声明文件名列表。
-    "types": ["vite/client"],
-    // ↓模块名到基于 baseUrl的路径映射的列表。查看 模块解析文档了解详情。
+    // ↓/指定引入的类型声明文件，默认是自动引入所有声明文件，一旦指定该选项，则会禁用自动引入，改为只引入指定的类型声明文件，如果指定空数组[]则不引用任何文件
+    "types": [
+      // 引入 vite/client 的类型声明
+      "vite/client"
+    ],
+    // ↓指定模块的路径，和baseUrl有关联，和webpack中resolve.alias配置一样
     "paths": {
       "*": ["types/*"],
+       //指定后可以在文件之直接 import * from '/@/utils';
       "/@/*": ["src/*"],
       "/#/*": ["types/*"]
     },

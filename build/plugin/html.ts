@@ -6,8 +6,8 @@ import type { Plugin } from 'vite';
 
 import html from 'vite-plugin-html';
 
-import pkg from '../../../package.json';
-import { GLOB_CONFIG_FILE_NAME } from '../../constant';
+import pkg from '../../package.json';
+import { GLOB_CONFIG_FILE_NAME } from '../constant';
 
 interface ViteEnv {
   VITE_GLOB_APP_TITLE: string,

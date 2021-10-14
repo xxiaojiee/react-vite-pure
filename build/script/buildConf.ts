@@ -21,7 +21,7 @@ function createConfig(
 ) {
   try {
     const windowConf = `window.${configName}`;
-    // Ensure that the variable will not be modified
+    // 确保变量不会被修改
     const configStr = `${windowConf}=${JSON.stringify(config)};
       Object.freeze(${windowConf});
       Object.defineProperty(window, "${configName}", {
@@ -41,6 +41,7 @@ function createConfig(
 
 export function runBuildConfig() {
   const config = getEnvConfig();
-  const configFileName = getConfigFileName(config);  // 获取配置文件变量名
+  // 获取配置文件变量名
+  const configFileName = getConfigFileName(config);
   createConfig({ config, configName: configFileName });
 }

@@ -11,7 +11,6 @@ export const runBuild = async () => {
 
     // 生成配置文件
     if (!argvList.includes('disabled-config')) {
-      console.log(11111);
       await runBuildConfig();
     }
 

@@ -2,17 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 
+/**
+ * 判断是否是开发环境
+ * @param mode 当前环境的模式
+ */
 export function isDevFn(mode: string): boolean {
   return mode === 'development';
 }
-
+/**
+ * 判断是否是生产环境
+ * @param mode 当前环境的模式
+ */
 export function isProdFn(mode: string): boolean {
   return mode === 'production';
 }
 
-
 /**
- * Whether to generate package preview
+ * 是否生成包预览
  */
 export function isReportMode(): boolean {
   return process.env.REPORT === 'true';
@@ -28,11 +34,6 @@ export function wrapperEnv(envConf: Recordable): ViteEnv {
 
     if (envName === 'VITE_PORT') {
       realName = Number(realName);
-    }
-    if (envName === 'VITE_PROXY') {
-      try {
-        realName = JSON.parse(realName);
-      } catch (error) { }
     }
     ret[envName] = realName;
     process.env[envName] = realName;
