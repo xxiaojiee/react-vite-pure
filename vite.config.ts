@@ -29,7 +29,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd();
 
   // 获取环境变量
-  const env = loadEnv(mode, root);
+  const env = loadEnv(mode, pathResolve('env'));
 
   // 读取并格式化所有环境变量，并配置文件到process.env
   const viteEnv = wrapperEnv(env);
@@ -41,6 +41,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   return {
     // 开发或生产环境服务的 公共基础路径
     base: VITE_PUBLIC_PATH,
+    envDir: '/env',
     root,
     server: {
       // 启用https
@@ -105,6 +106,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     build: {
       // 设置最终构建的浏览器兼容目标
       target: 'es2015',
+      // 构建后是否生成 source map 文件
+      // sourcemap: true,
       // 指定输出路径（相对于 项目根目录).
       outDir: OUTPUT_DIR,
       terserOptions: {
@@ -118,6 +121,10 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       brotliSize: false,
       // chunk 大小警告的限制
       chunkSizeWarningLimit: 1500,
+      // 自定义底层的 Rollup 打包配置
+      // rollupOptions:{
+
+      // }
     },
   }
 }
