@@ -78,22 +78,9 @@ const BasicLayout = (props: BasicLayoutProps) => {
 
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
-      breadcrumbRender={(routers = []) => [
-        {
-          path: '/',
-          breadcrumbName: '首页',
-        },
-        ...routers,
-      ]}
-      // itemRender={(rou, params, routes, paths) => {
-      //   const first = routes.indexOf(rou) === 0;
-      //   console.log('first:', first, rou, routes);
-      //   return first ? (
-      //     <Link to={paths.join('/')}>{rou.breadcrumbName}</Link>
-      //   ) : (
-      //     <span>{rou.breadcrumbName}</span>
-      //   );
-      // }}
+      breadcrumbRender={(routers = []) => {
+        return routers;
+      }}
       footerRender={() => defaultFooterDom}
       menuDataRender={menuDataRender(user?.character || '')}
       rightContentRender={() => (

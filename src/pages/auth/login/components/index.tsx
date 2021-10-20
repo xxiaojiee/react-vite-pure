@@ -26,49 +26,39 @@ interface LoginType extends React.FC<LoginProps> {
   Captcha: React.FunctionComponent<LoginItemProps>;
 }
 
-const Login: LoginType = (props: LoginProps) => {
-  const { activeKey: type, onTabChange: setType } = props;
-  const [tabs, setTabs] = useState<boolean>(false);
-  // const [active, setActive] = useState<{ [k: string]: Array<{ [key: string]: string } | string> }>(
-  //   {},
-  // );
-  const TabChildren: Array<React.ReactComponentElement<typeof LoginTab>> = [];
-  const otherChildren: Array<React.ReactElement<unknown>> = [];
+interface initProp {
+  useTabs: boolean;
+  TabChildren: Array<React.ReactComponentElement<typeof LoginTab>>;
+  otherChildren: Array<React.ReactElement<unknown>>;
+}
+
+const getInit = (children) => {
+  let useTabs = false;
+  const TabChildren = [];
+  const otherChildren = [];
   React.Children.forEach(
-    props.children,
+    children,
     (child: React.ReactComponentElement<typeof LoginTab> | React.ReactElement<unknown>) => {
       if (!child) {
         return;
       }
       if ((child.type as { typeName: string }).typeName === 'LoginTab') {
-        setTabs(true);
+        useTabs = true;
         TabChildren.push(child as React.ReactComponentElement<typeof LoginTab>);
       } else {
         otherChildren.push(child);
       }
     },
   );
+  console.log(444, {useTabs, TabChildren, otherChildren})
+  return [useTabs, TabChildren, otherChildren];
+};
+
+const Login: LoginType = (props: LoginProps) => {
+  const { activeKey: type, onTabChange: setType } = props;
+  const [useTabs, TabChildren, otherChildren]: initProp = getInit(props.children);
+
   return (
-    // <LoginContext.Provider
-    //   value={{
-    //     tabUtil: {
-    //       addTab: (id) => {
-    //         setTabs((preTabs) => [...preTabs, id]);
-    //       },
-    //       removeTab: (id) => {
-    //         setTabs((preTabs) => preTabs.filter((currentId) => currentId !== id));
-    //       },
-    //     },
-    //     updateActive: (activeItem) => {
-    //       if (active && active[type]) {
-    //         active[type].push(activeItem);
-    //       } else if (active) {
-    //         active[type] = [activeItem];
-    //       }
-    //       setActive(active);
-    //     },
-    //   }}
-    // >
     <div>
       <Form
         form={props.form}
@@ -78,7 +68,7 @@ const Login: LoginType = (props: LoginProps) => {
           }
         }}
       >
-        {tabs ? (
+        {useTabs ? (
           <React.Fragment>
             <Tabs
               animated={false}

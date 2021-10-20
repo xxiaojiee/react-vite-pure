@@ -1,6 +1,6 @@
 import React from 'react';
-// import { Redirect } from 'react-router-dom';
-// import { stringify } from 'querystring';
+import { Redirect } from 'react-router-dom';
+import { stringify } from 'querystring';
 import { UserProvider } from '/@/contexts/user';
 
 const SecurityLayout: React.FC<any> = ({ children }: { children: React.ReactNode }) => {
@@ -25,20 +25,20 @@ const SecurityLayout: React.FC<any> = ({ children }: { children: React.ReactNode
   // const access_token = currentUser && currentUser.currentUser;
   // const isLogin = currentUser && currentUser.code === 0 && currentUser.data.user_id;
   // const isLogin = !!(localStorage.getItem('x-token') && localStorage.getItem('x-token') !== 'x-token');
-  // const isLogin = !!localStorage.getItem('x-token');
-  // const queryString = stringify({
-  //   redirect: window.location.href,
-  // });
+  const isLogin = !!localStorage.getItem('x-token');
+  const queryString = stringify({
+    redirect: window.location.href,
+  });
   // if ((!isLogin && loading) || !isReady) {
   // if ((!isLogin) || !isReady) {
   //   return <PageLoading />;
   // }
-  // if (!isLogin && window.location.pathname !== '/auth/login') {
-  //   return <Redirect to={`/auth/login?${queryString}`} />;
-  // }
-  // if (!isLogin && window.location.pathname !== '/') {
-  //   return <Redirect to="/auth/login" />;
-  // }
+  if (!isLogin && window.location.pathname !== '/auth/login') {
+    return <Redirect to={`/auth/login?${queryString}`} />;
+  }
+  if (!isLogin && window.location.pathname !== '/') {
+    return <Redirect to="/auth/login" />;
+  }
   // if (isLogin && window.location.pathname === '/auth/login') {
   //   return <Redirect to="/" />;
   // }

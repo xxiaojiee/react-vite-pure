@@ -64,25 +64,25 @@ const AvatarDropdown = ({ menu }: { menu?: boolean }) => {
   return user?.name ? (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span
-        css={(t) => ({
+        style={{
           display: 'flex',
           alignItems: 'center',
           height: '100%',
           padding: '0 12px',
           cursor: 'pointer',
           transition: 'all 0.3s',
-          color: t.colors.textColor,
-        })}
+          color: 'rgba(0, 0, 0, 0.85)',
+        }}
       >
         <Avatar
           size="small"
-          css={(t) => ({
+          style={{
             margin: '20px 0',
             marginRight: 8,
-            color: t.colors.primary,
+            color: '#1890ff',
             verticalAlign: 'top',
             backgroundColor: 'rgba(255, 255, 255, 0.85)',
-          })}
+          }}
           src={avatar}
           alt="avatar"
         />
@@ -93,7 +93,7 @@ const AvatarDropdown = ({ menu }: { menu?: boolean }) => {
     <span>
       <Spin
         size="small"
-        css={{
+        style={{
           marginLeft: 8,
           marginRight: 8,
         }}
