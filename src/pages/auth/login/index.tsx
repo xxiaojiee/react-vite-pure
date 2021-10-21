@@ -5,6 +5,7 @@ import LoginForm from './components/index';
 import { useRequest } from '/@/services/useRequest';
 import { getPageQuery } from '/@/utils/utils';
 import { LoginParams } from '/@/pages/auth/data';
+import { accountInfoApi } from '/@/api/demo/account';
 
 const { Tab, Password, Mobile, Submit } = LoginForm;
 
@@ -35,6 +36,10 @@ const Login = () => {
   });
 
   const handleSubmit = (values: { [key: string]: any }) => {
+    console.log(6666666666);
+    accountInfoApi().then((data) => {
+      console.log('data:', data);
+    })
     run(values as LoginParams);
   };
 

@@ -9,7 +9,6 @@ import {
   SettingButtonPositionEnum,
 } from '/@/enums/appEnum';
 import { SIDE_BAR_BG_COLOR_LIST, HEADER_PRESET_BG_COLOR_LIST } from './designSetting';
-import { primaryColor } from '../../build/config/themeConfig';
 
 // 注意：改动后需要清空浏览器缓存
 const setting: ProjectConfig = {
@@ -34,7 +33,7 @@ const setting: ProjectConfig = {
   permissionCacheType: CacheTypeEnum.LOCAL,
 
   // 项目主题色
-  themeColor: primaryColor,
+  themeColor: "#1890ff",
 
   // 网站灰色模式，用于可能悼念的日期开启
   grayMode: false,

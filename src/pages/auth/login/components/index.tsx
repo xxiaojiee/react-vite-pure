@@ -1,5 +1,5 @@
 import { Tabs, Form } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import { FormInstance } from 'antd/es/form';
 // import LoginContext from './LoginContext';
 import LoginItem, { LoginItemProps } from './LoginItem';
@@ -26,37 +26,41 @@ interface LoginType extends React.FC<LoginProps> {
   Captcha: React.FunctionComponent<LoginItemProps>;
 }
 
-interface initProp {
+type TabChildren = Array<React.ReactComponentElement<typeof LoginTab>>;
+type OtherChildren = Array<React.ReactElement<unknown>>;
+type Children = React.ReactComponentElement<typeof LoginTab> | React.ReactElement<unknown>;
+
+interface InitProp {
   useTabs: boolean;
-  TabChildren: Array<React.ReactComponentElement<typeof LoginTab>>;
-  otherChildren: Array<React.ReactElement<unknown>>;
+  tabChildren: TabChildren;
+  otherChildren: OtherChildren;
 }
 
-const getInit = (children) => {
+const getInit = (children: Children[]) => {
   let useTabs = false;
-  const TabChildren = [];
-  const otherChildren = [];
-  React.Children.forEach(
-    children,
-    (child: React.ReactComponentElement<typeof LoginTab> | React.ReactElement<unknown>) => {
-      if (!child) {
-        return;
-      }
-      if ((child.type as { typeName: string }).typeName === 'LoginTab') {
-        useTabs = true;
-        TabChildren.push(child as React.ReactComponentElement<typeof LoginTab>);
-      } else {
-        otherChildren.push(child);
-      }
-    },
-  );
-  console.log(444, {useTabs, TabChildren, otherChildren})
-  return [useTabs, TabChildren, otherChildren];
+  const tabChildren: TabChildren = [];
+  const otherChildren: OtherChildren = [];
+  React.Children.forEach(children, (child: Children) => {
+    if (!child) {
+      return;
+    }
+    if ((child.type as { typeName: string }).typeName === 'LoginTab') {
+      useTabs = true;
+      tabChildren.push(child as React.ReactComponentElement<typeof LoginTab>);
+    } else {
+      otherChildren.push(child);
+    }
+  });
+  return {
+    useTabs,
+    tabChildren,
+    otherChildren,
+  };
 };
 
 const Login: LoginType = (props: LoginProps) => {
   const { activeKey: type, onTabChange: setType } = props;
-  const [useTabs, TabChildren, otherChildren]: initProp = getInit(props.children);
+  const { useTabs, tabChildren, otherChildren }: InitProp = getInit(props.children);
 
   return (
     <div>
@@ -77,7 +81,7 @@ const Login: LoginType = (props: LoginProps) => {
                 setType(activeKey);
               }}
             >
-              {TabChildren}
+              {tabChildren}
             </Tabs>
             {otherChildren}
           </React.Fragment>

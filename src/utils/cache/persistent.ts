@@ -15,7 +15,6 @@ import {
   MULTIPLE_TABS_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
-import { toRaw } from 'vue';
 
 interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
@@ -54,7 +53,7 @@ export class Persistent {
 
   static setLocal(key: LocalKeys, value: LocalStore[LocalKeys], immediate = false): void {
     console.log('value:', key, value);
-    localMemory.set(key, toRaw(value));
+    localMemory.set(key, value);
     console.log('localMemory.getCache:', localMemory.getCache);
     immediate && ls.set(APP_LOCAL_CACHE_KEY, localMemory.getCache);
   }
@@ -72,7 +71,7 @@ export class Persistent {
   }
 
   static setSession(key: SessionKeys, value: SessionStore[SessionKeys], immediate = false): void {
-    sessionMemory.set(key, toRaw(value));
+    sessionMemory.set(key, value);
     immediate && ss.set(APP_SESSION_CACHE_KEY, sessionMemory.getCache);
   }
 

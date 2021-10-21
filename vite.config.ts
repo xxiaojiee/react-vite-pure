@@ -52,14 +52,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,  // 默认3000
       proxy: {
         // 正则写法： '^/api/.*'
-        '/dog-manage-webapi': {
-          target: 'http://10.200.62.92/', // 后端目标接口地址
+        // '/dog-manage-webapi': {
+        //   target: 'http://10.200.62.92/', // 后端目标接口地址
+        //   changeOrigin: false,
+        //   rewrite: (paths) => {
+        //     console.log(222, paths, paths.replace(/^\/socket/, ''));
+        //     return paths.replace(/^\/socket/, '')
+        //   },
+        //   ws: true, // 开启ws, 如果是http代理此处可以不用设置
+        // },
+        '/basic-api': {
+          target: 'http://localhost:3000',
           changeOrigin: false,
-          // rewrite: (paths) => {
-          //   console.log(222, paths, paths.replace(/^\/socket/, ''));
-          //   return paths.replace(/^\/socket/, '')
-          // },
-          // ws: true, // 开启ws, 如果是http代理此处可以不用设置
         },
       },
     },
