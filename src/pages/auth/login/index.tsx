@@ -40,7 +40,7 @@ const Login = () => {
     accountInfoApi().then((data) => {
       console.log('data:', data);
     })
-    run(values as LoginParams);
+    // run(values as LoginParams);
   };
 
   return (

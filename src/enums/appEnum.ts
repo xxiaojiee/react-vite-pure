@@ -19,6 +19,12 @@ export enum ThemeEnum {
   LIGHT = 'light',
 }
 
+export enum SessionTimeoutProcessingEnum {
+  ROUTE_JUMP,
+  PAGE_COVERAGE,
+}
+
+
 // 设置按钮的位置枚举
 export enum SettingButtonPositionEnum {
   // 两种都有
