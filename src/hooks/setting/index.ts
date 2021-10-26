@@ -3,7 +3,7 @@ import type { GlobConfig } from '/#/config';
 import { warn } from '/@/utils/log';
 import { getAppEnvConfig } from '/@/utils/env';
 
-export const useGlobSetting = (): Readonly<GlobConfig> => {
+export const getGlobSetting = (): Readonly<GlobConfig> => {
   const {
     VITE_GLOB_APP_TITLE,
     VITE_GLOB_API_URL,
@@ -17,7 +17,6 @@ export const useGlobSetting = (): Readonly<GlobConfig> => {
       `VITE_GLOB_APP_SHORT_NAME 变量只能是字符/下划线，请在环境变量中修改并重新运行。`,
     );
   }
-
   // Take global configuration
   const glob: Readonly<GlobConfig> = {
     title: VITE_GLOB_APP_TITLE,

@@ -6,12 +6,12 @@ import { useAppStore } from '/@/store/modules/app';
 
 import { SIDE_BAR_MINI_WIDTH, SIDE_BAR_SHOW_TIT_MINI_WIDTH } from '/@/enums/appEnum';
 import { MenuModeEnum, MenuTypeEnum, TriggerEnum } from '/@/enums/menuEnum';
-import { useFullContent } from '/@/hooks/web/useFullContent';
+import { getFullContent } from '/@/hooks/web/getFullContent';
 
 const mixSideHasChildren = ref(false);
 
-export function useMenuSetting() {
-  const { getFullContent: fullContent } = useFullContent();
+export function getMenuSetting() {
+  const { getFullContent: fullContent } = getFullContent();
   const appStore = useAppStore();
 
   const getShowSidebar = computed(() => {

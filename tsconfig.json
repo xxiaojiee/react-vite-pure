@@ -11,10 +11,8 @@
     ],
     // ↓指定模块的路径，和baseUrl有关联，和webpack中resolve.alias配置一样
     "paths": {
-      "*": ["types/*"],
-       //指定后可以在文件之直接 import * from '/@/utils';
       "/@/*": ["src/*"],
-      "/#/*": ["types/*"]
+      "/#/*": ["types/*"],
     },
     // ↓允许编译javascript文件。
     "allowJs": false,

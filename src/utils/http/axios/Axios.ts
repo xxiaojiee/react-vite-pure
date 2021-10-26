@@ -145,7 +145,7 @@ export class VAxios {
         })
         .catch((e: Error) => {
           if (requestCatchHook && isFunction(requestCatchHook)) {
-            reject(requestCatchHook(e));
+            reject(requestCatchHook(e, opt));
             return;
           }
           reject(e);
@@ -183,6 +183,7 @@ export class VAxios {
 
     // Request interceptor configuration processing
     this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
+      let newConfig = cloneDeep(config);
       // If cancel repeat request is turned on, then cancel repeat request is prohibited
       const {
         headers: { ignoreCancelToken },
@@ -195,9 +196,9 @@ export class VAxios {
 
       !ignoreCancel && axiosCanceler.addPending(config);
       if (requestInterceptors && isFunction(requestInterceptors)) {
-        config = requestInterceptors(config);
+        newConfig = requestInterceptors(config, this.options);
       }
-      return config;
+      return newConfig;
     }, undefined);
 
     // Request interceptor error capture

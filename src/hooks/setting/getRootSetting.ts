@@ -10,7 +10,7 @@ type RootSetting = Omit<
   'locale' | 'headerSetting' | 'menuSetting' | 'multiTabsSetting'
 >;
 
-export function useRootSetting() {
+export function getRootSetting() {
   const appStore = useAppStore();
 
   const getPageLoading = computed(() => appStore.getPageLoading);

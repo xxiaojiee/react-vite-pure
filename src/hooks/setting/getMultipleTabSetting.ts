@@ -4,7 +4,7 @@ import { computed } from 'vue';
 
 import { useAppStore } from '/@/store/modules/app';
 
-export function useMultipleTabSetting() {
+export function getMultipleTabSetting() {
   const appStore = useAppStore();
 
   const getShowMultipleTab = computed(() => appStore.getMultiTabsSetting.show);

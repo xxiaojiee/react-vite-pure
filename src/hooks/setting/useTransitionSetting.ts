@@ -4,7 +4,7 @@ import { computed } from 'vue';
 
 import { useAppStore } from '/@/store/modules/app';
 
-export function useTransitionSetting() {
+export function getTransitionSetting() {
   const appStore = useAppStore();
 
   const getEnableTransition = computed(() => appStore.getTransitionSetting?.enable);

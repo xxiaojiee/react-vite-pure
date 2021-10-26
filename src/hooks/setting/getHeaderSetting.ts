@@ -4,13 +4,13 @@ import { computed, unref } from 'vue';
 
 import { useAppStore } from '/@/store/modules/app';
 
-import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
-import { useRootSetting } from '/@/hooks/setting/useRootSetting';
-import { useFullContent } from '/@/hooks/web/useFullContent';
+import { getMenuSetting } from '/@/hooks/setting/getMenuSetting';
+import { getRootSetting } from '/@/hooks/setting/getRootSetting';
+import { getFullContent } from '/@/hooks/web/getFullContent';
 import { MenuModeEnum } from '/@/enums/menuEnum';
 
-export function useHeaderSetting() {
-  const { getFullContent } = useFullContent();
+export function getHeaderSetting() {
+  const { getFullContent } = getFullContent();
   const appStore = useAppStore();
 
   const getShowFullHeaderRef = computed(() => {
@@ -41,8 +41,8 @@ export function useHeaderSetting() {
     getIsSidebarType,
     getIsMixSidebar,
     getIsTopMenu,
-  } = useMenuSetting();
-  const { getShowBreadCrumb, getShowLogo } = useRootSetting();
+  } = getMenuSetting();
+  const { getShowBreadCrumb, getShowLogo } = getRootSetting();
 
   const getShowMixHeaderRef = computed(() => !unref(getIsSidebarType) && unref(getShowHeader));
 

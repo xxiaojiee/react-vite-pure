@@ -7,7 +7,7 @@ import {
   HashRouter as Router, // hash模式
   // BrowserRouter as Router, // history模式
 } from 'react-router-dom';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { IRouter, routes } from './common/router';

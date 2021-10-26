@@ -89,7 +89,7 @@ notification.config({
 /**
  * @description: message
  */
-export function useMessage() {
+export function getMessage() {
   return {
     createMessage: Message,
     notification: notification as NotificationApi,
