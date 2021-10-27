@@ -11,6 +11,7 @@ import { cloneDeep } from 'lodash-es';
 import { errorResult } from './const';
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { RequestEnum } from '../../../enums/httpEnum';
+import { deepMerge } from '../..';
 
 export * from './axiosTransform';
 
@@ -153,7 +154,7 @@ export class VAxios {
     });
   }
   /**
-   * @description:  Create axios instance
+   * @description:  创建 axios 实例
    */
   private createAxios(config: CreateAxiosOptions): void {
     this.axiosInstance = axios.create(config);
@@ -165,7 +166,7 @@ export class VAxios {
   }
 
   /**
-   * @description: Interceptor configuration
+   * @description: 拦截器配置
    */
   private setupInterceptors() {
     const transform = this.getTransform();
@@ -208,11 +209,12 @@ export class VAxios {
 
     // Response result interceptor processing
     this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
+      let newRes = cloneDeep(res);
       res && axiosCanceler.removePending(res.config);
       if (responseInterceptors && isFunction(responseInterceptors)) {
-        res = responseInterceptors(res);
+        newRes = responseInterceptors(res);
       }
-      return res;
+      return newRes;
     }, undefined);
 
     // Response result interceptor error capture
