@@ -1,4 +1,5 @@
 import { post, ICommonResponse } from "./request";
+import { accountInfoApi } from '/@/api/demo/account';
 import type { LoginParams, RegisterParams } from "/@/pages/auth/data";
 
 interface LoginResponse extends ICommonResponse {
@@ -7,8 +8,9 @@ interface LoginResponse extends ICommonResponse {
   };
 }
 
-export async function login(params: LoginParams) {
-  return post<LoginResponse>("/api/user/v0/login/", params);
+export function login(params: LoginParams) {
+  return accountInfoApi();
+  // return post<LoginResponse>("/api/user/v0/login/", params);
 }
 
 export async function register(params: RegisterParams) {

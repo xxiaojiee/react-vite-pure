@@ -5,7 +5,6 @@ import LoginForm from './components/index';
 import { useRequest } from '/@/services/useRequest';
 import { getPageQuery } from '/@/utils/utils';
 import { LoginParams } from '/@/pages/auth/data';
-import { accountInfoApi } from '/@/api/demo/account';
 
 const { Tab, Password, Mobile, Submit } = LoginForm;
 
@@ -15,6 +14,7 @@ const Login = () => {
   const { loading, run } = useRequest(login, {
     manual: true,
     onSuccess: (result) => {
+      console.log('result:', result)
       if (result && result.access_token) {
         localStorage.setItem('x-token', result.access_token);
         const urlParams = new URL(window.location.href);
@@ -36,11 +36,7 @@ const Login = () => {
   });
 
   const handleSubmit = (values: { [key: string]: any }) => {
-    console.log(6666666666);
-    accountInfoApi().then((data) => {
-      console.log('data:', data);
-    })
-    // run(values as LoginParams);
+    run(values as LoginParams);
   };
 
   return (

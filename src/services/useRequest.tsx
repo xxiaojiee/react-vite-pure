@@ -8,7 +8,7 @@ export function useRequest<R extends ResultWithData = any, P extends any[] = any
   options?: BaseOptions<R["data"], P>,
 ): BaseResult<R["data"], P> {
   return useHookRequest(service, {
-    formatResult: (result) => result?.data,
+    // formatResult: (result) => result?.data,
     ...options,
   });
 }
