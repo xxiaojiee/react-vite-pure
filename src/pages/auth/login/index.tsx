@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import LoginForm from './components/index';
-import { useRequest } from "ahooks";
+import { useRequest } from 'ahooks';
 import { getPageQuery } from '/@/utils/utils';
 import { LoginParams } from './data';
 import api from './api';
@@ -14,7 +14,7 @@ const Login = () => {
   const { loading, run } = useRequest(api.login, {
     manual: true,
     onSuccess: (result) => {
-      console.log('result:', result)
+      console.log('result:', result);
       if (result && result.access_token) {
         localStorage.setItem('x-token', result.access_token);
         const urlParams = new URL(window.location.href);
@@ -36,7 +36,14 @@ const Login = () => {
   });
 
   const handleSubmit = (values: { [key: string]: any }) => {
-    run(values as LoginParams);
+    console.log('values:', values);
+    run(
+      {
+        password: values.password,
+        username: values.account,
+      },
+      'none', // 不要默认的错误提示
+    );
   };
 
   return (
@@ -47,19 +54,19 @@ const Login = () => {
       }}
     >
       <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-        <Tab key="mobile" tab="手机号登录">
+        <Tab key="password" tab="密码登录">
           <Mobile
-            name="phone"
-            placeholder="手机号"
+            name="account"
+            placeholder="账号"
             rules={[
               {
                 required: true,
-                message: '请输入手机号！',
+                message: '请输入账号！',
               },
-              {
-                pattern: /^1\d{10}$/,
-                message: '手机号格式错误！',
-              },
+              // {
+              //   pattern: /^1\d{10}$/,
+              //   message: '账号格式错误！',
+              // },
             ]}
           />
           <Password
@@ -73,19 +80,19 @@ const Login = () => {
             ]}
           />
         </Tab>
-        <Tab key="password" tab="密码登录">
+        <Tab key="mobile" tab="手机号登录">
           <Mobile
-            name="acction"
-            placeholder="账号"
+            name="phone"
+            placeholder="手机号"
             rules={[
               {
                 required: true,
-                message: '请输入账号！',
+                message: '请输入手机号！',
               },
-              // {
-              //   pattern: /^1\d{10}$/,
-              //   message: '账号格式错误！',
-              // },
+              {
+                pattern: /^1\d{10}$/,
+                message: '手机号格式错误！',
+              },
             ]}
           />
           <Password
