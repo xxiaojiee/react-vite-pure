@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import { login } from '/@/services/auth';
 import LoginForm from './components/index';
-import { useRequest } from '/@/services/useRequest';
+import { useRequest } from "ahooks";
 import { getPageQuery } from '/@/utils/utils';
-import { LoginParams } from '/@/pages/auth/data';
+import { LoginParams } from './data';
+import api from './api';
 
 const { Tab, Password, Mobile, Submit } = LoginForm;
 
 const Login = () => {
   const history = useHistory();
   const [type, setType] = useState('mobile');
-  const { loading, run } = useRequest(login, {
+  const { loading, run } = useRequest(api.login, {
     manual: true,
     onSuccess: (result) => {
       console.log('result:', result)
