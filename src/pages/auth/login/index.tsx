@@ -3,10 +3,14 @@ import { useHistory, Link } from 'react-router-dom';
 import LoginForm from './components/index';
 import { useRequest } from 'ahooks';
 import { getPageQuery } from '/@/utils/utils';
+import { getMessage } from '/@/hooks/web/getMessage';
 import { LoginParams } from './data';
 import api from './api';
 
+console.log('useMessage:', getMessage);
+
 const { Tab, Password, Mobile, Submit } = LoginForm;
+const { createErrorModal } = getMessage();
 
 const Login = () => {
   const history = useHistory();
@@ -33,6 +37,12 @@ const Login = () => {
         history.replace(redirect as string);
       }
     },
+    onError(error){
+      createErrorModal({
+        title: '错误提示',
+        content: (error as unknown as Error).message || '网络异常，请检查您的网络连接是否正常!',
+      });
+    }
   });
 
   const handleSubmit = (values: { [key: string]: any }) => {

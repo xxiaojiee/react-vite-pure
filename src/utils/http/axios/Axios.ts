@@ -121,7 +121,6 @@ export class VAxios {
   request<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
     let conf: AxiosRequestConfig = cloneDeep(config);
     const transform = this.getTransform();
-
     const { requestOptions } = this.options;
 
     const opt: RequestOptions = Object.assign({}, requestOptions, options);
@@ -132,7 +131,6 @@ export class VAxios {
     }
 
     conf = this.supportFormData(conf);
-
     return new Promise((resolve, reject) => {
       this.axiosInstance
         .request<any, AxiosResponse<Result>>(conf)

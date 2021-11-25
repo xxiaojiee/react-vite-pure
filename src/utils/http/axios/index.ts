@@ -45,7 +45,6 @@ const transform: AxiosTransform = {
       return res.data;
     }
     // 错误的时候返回
-
     const { data } = res;
     if (!data) {
       // return '[HTTP] Request has no return value';
@@ -75,7 +74,6 @@ const transform: AxiosTransform = {
           timeoutMsg = message;
         }
     }
-
     // errorMessageMode=‘modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
     // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
     if (options.errorMessageMode === 'modal') {
@@ -110,29 +108,30 @@ const transform: AxiosTransform = {
         config.url = `${config.url}${params}${joinTimestamp(joinTime, true)}`;
         config.params = undefined;
       }
-    } else {
-      if (isString(params)) {
-        formatDate && formatRequestDate(params);
-        if (Reflect.has(config, 'data') && config.data && Object.keys(config.data).length > 0) {
-          config.data = data;
-          config.params = params;
-        } else {
-          // 非GET请求如果没有提供data，则将params视为data
-          config.data = params;
-          config.params = undefined;
-        }
-        if (joinParamsToUrl) {
-          config.url = setObjToUrlParams(
-            config.url as string,
-            Object.assign({}, config.params, config.data),
-          );
-        }
-        return config;
+      return config;
+    }
+    if (!isString(params)) {
+      formatDate && formatRequestDate(params);
+      if (Reflect.has(config, 'data') && config.data && Object.keys(config.data).length > 0) {
+        config.data = data;
+        config.params = params;
+      } else {
+        // 非GET请求如果没有提供data，则将params视为data
+        config.data = params;
+        config.params = undefined;
       }
+      if (joinParamsToUrl) {
+        config.url = setObjToUrlParams(
+          config.url as string,
+          Object.assign({}, config.params, config.data),
+        );
+      }
+    } else {
       // 兼容restful风格
       config.url += params;
       config.params = undefined;
     }
+
     return config;
   },
 
