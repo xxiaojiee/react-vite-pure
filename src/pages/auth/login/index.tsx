@@ -7,8 +7,6 @@ import { getMessage } from '/@/hooks/web/getMessage';
 import { LoginParams } from './data';
 import api from './api';
 
-console.log('useMessage:', getMessage);
-
 const { Tab, Password, Mobile, Submit } = LoginForm;
 const { createErrorModal } = getMessage();
 
@@ -18,9 +16,8 @@ const Login = () => {
   const { loading, run } = useRequest(api.login, {
     manual: true,
     onSuccess: (result) => {
-      console.log('result:', result);
-      if (result && result.access_token) {
-        localStorage.setItem('x-token', result.access_token);
+      if (result && result.token) {
+        localStorage.setItem('x-token', result.token);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -46,7 +43,6 @@ const Login = () => {
   });
 
   const handleSubmit = (values: { [key: string]: any }) => {
-    console.log('values:', values);
     run(
       {
         password: values.password,
