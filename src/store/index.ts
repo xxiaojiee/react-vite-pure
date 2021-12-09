@@ -63,6 +63,7 @@ function reducers(state = initialState, action) {
       newState = data;
     }
     const tool = {
+      id,
       state,
       ...state[id],
       setState,
