@@ -1,15 +1,15 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, message } from 'antd';
-
 import type { Person, AppState } from '/@/store/data.d';
-import { removePerson, addPerson } from '/@/store/actions/index';
+import { actions } from '/@/store';
+
+const { addPerson, removePerson } = actions.user;
 
 const Index: React.FC = () => {
   const [newPerson, setNewPerson] = React.useState('');
   const dispatch = useDispatch();
-  const people: Person[] = useSelector((state: AppState) => state.people);
-  console.log('people:', people);
+  const people: Person[] = useSelector((state: AppState) => state.user.people);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const str = newPerson;

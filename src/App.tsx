@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import { map } from 'lodash-es';
 import { Provider } from 'react-redux';
-import store from './store';
+import { store } from './store';
 import { IRouter, routes } from './common/router';
 import { ConfigProvider } from 'antd';
 
@@ -58,7 +58,7 @@ const App = () => {
   return (
     <Router>
       <ConfigProvider locale={zhCN}>
-        <Provider store={store()}>
+        <Provider store={store}>
           <DynamicRoute routes={routes} />
         </Provider>
       </ConfigProvider>
