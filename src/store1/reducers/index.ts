@@ -29,14 +29,9 @@ for (const file of Object.keys(components)) {
   mutations[name] = defines.mutations;
 }
 
-
-console.log('mutations:', mutations);
-
 function reducers(state = {}, action) {
-    console.log('action:',action);
     if (typeof action.type === 'string' && /^\w+\.\w+$/.test(action.type)) {
         const namespace = action.type.split('.');
-        console.log('namespace:', namespace);
         return mutations[namespace[0]][namespace[1]](state, action);
     }
     return state;

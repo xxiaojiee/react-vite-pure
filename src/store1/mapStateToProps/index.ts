@@ -4,8 +4,3 @@ export const getInputValueState1 = function (state) {
         value: state.currentValue,
     };
 };
-export const getInputValueState2 = function (state) {
-    return {
-        value: state.maxValue,
-    };
-};

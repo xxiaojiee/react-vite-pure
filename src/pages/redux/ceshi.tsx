@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, message } from 'antd';
 
-import type { Person, AppState } from '/@/redux/data.d';
-import { removePerson, addPerson } from '/@/redux/actions/index';
+import type { Person, AppState } from '/@/store/data.d';
+import { removePerson, addPerson } from '/@/store/actions/index';
 
 const Index: React.FC = () => {
   const [newPerson, setNewPerson] = React.useState('');
