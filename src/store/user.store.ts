@@ -8,6 +8,7 @@ export default {
   },
   reducers: {
     addPerson(value) {
+      this.dealData(4,6);
       this.setCurrentState({
         people: this.people.concat([
           {
@@ -23,9 +24,9 @@ export default {
       })
     },
   },
-  mdthods: {
-    dealData() {
-
+  methods: {
+    dealData(a,b) {
+      console.log('this:',a,b, this)
     }
   }
 }

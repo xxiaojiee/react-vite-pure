@@ -7,6 +7,7 @@ const mutations = {};
 const ids = [];
 const initialState = {};
 const allActions = {};
+const methods = {};
 
 for (const file of Object.keys(components)) {
   let defines;
@@ -31,6 +32,7 @@ for (const file of Object.keys(components)) {
   }
   initialState[id] = defines.state || {};
   mutations[id] = defines.reducers || {};
+  methods[id] = defines.methods || {};
   Object.keys(defines.reducers).forEach((key) => {
     componentAction[key] = (val: any) => {
       return {
@@ -66,8 +68,13 @@ function reducers(state = initialState, action) {
       setState,
       setCurrentState,
     };
+    Object.keys(methods[id]).forEach((keys) => {
+      tool[keys] = function (...agument) {
+        methods[id][keys].call(tool, ...agument);
+      }
+    })
     const allState = mutations[id][reducer].call(tool, action.payload, state);
-    if(!newState && !allState){
+    if (!newState && !allState) {
       throw Error(`${action.type}:方法内没有返回值，也没有调用“setState”和“setCurrentState” 方法`);
     }
     return newState || allState || state;
