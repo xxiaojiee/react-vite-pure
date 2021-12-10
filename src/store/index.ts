@@ -3,7 +3,7 @@ import { createStore } from 'redux';
 import type { Store } from 'redux';
 
 const components = import.meta.globEager("./*.store.ts");
-const mutations = {};
+const reducers = {};
 const ids = [];
 const initialState = {};
 const allActions = {};
@@ -31,7 +31,7 @@ for (const file of Object.keys(components)) {
     ids.push(id);
   }
   initialState[id] = defines.state || {};
-  mutations[id] = defines.reducers || {};
+  reducers[id] = defines.reducers || {};
   methods[id] = defines.methods || {};
   Object.keys(defines.reducers).forEach((key) => {
     componentAction[key] = (val: any) => {
@@ -44,7 +44,7 @@ for (const file of Object.keys(components)) {
   allActions[id] = componentAction;
 }
 
-function reducers(state = initialState, action) {
+function rootReducer(state = initialState, action) {
   if (typeof action.type === 'string' && /^\w+\.\w+$/.test(action.type)) {
     const [id, reducer] = action.type.split('.');
     let newState = null;
@@ -64,8 +64,7 @@ function reducers(state = initialState, action) {
     }
     const tool = {
       id,
-      state,
-      ...state[id],
+      state: state[id],
       setState,
       setCurrentState,
     };
@@ -74,7 +73,7 @@ function reducers(state = initialState, action) {
         methods[id][keys].call(tool, ...agument);
       }
     })
-    const allState = mutations[id][reducer].call(tool, action.payload, state);
+    const allState = reducers[id][reducer].call(tool, action.payload, state);
     if (!newState && !allState) {
       throw Error(`${action.type}:方法内没有返回值，也没有调用“setState”和“setCurrentState” 方法`);
     }
@@ -84,7 +83,7 @@ function reducers(state = initialState, action) {
 }
 
 
-export const store: Store = createStore(reducers, initialState);
+export const store: Store = createStore(rootReducer, initialState);
 
 
 export const actions = allActions;

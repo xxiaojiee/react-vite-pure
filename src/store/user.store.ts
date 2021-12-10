@@ -8,9 +8,9 @@ export default {
   },
   reducers: {
     addPerson(value) {
-      this.dealData(4,6);
+      const { people } = this.state;
       this.setCurrentState({
-        people: this.people.concat([
+        people: people.concat([
           {
             id: parseInt((Math.random() * 1000000).toFixed(0), 10),
             name: value,
@@ -19,8 +19,9 @@ export default {
       })
     },
     removePerson(value) {
+      const { people } = this.state;
       this.setCurrentState({
-        people: this.people.filter((person) => person.id !== parseInt(value, 10))
+        people: people.filter((person) => person.id !== parseInt(value, 10))
       })
     },
   },
