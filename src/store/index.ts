@@ -2,16 +2,20 @@
 import { createStore } from 'redux';
 import type { Store } from 'redux';
 
+interface ObjectType {
+  [index: string]: any
+}
+
 const components = import.meta.globEager("./*.store.ts");
-const reducers = {};
-const ids = [];
-const initialState = {};
-const allActions = {};
-const methods = {};
+const ids: string[] = [];
+const reducers: ObjectType = {};
+const initialState: ObjectType = {};
+const allActions: ObjectType = {};
+const methods: ObjectType = {};
 
 for (const file of Object.keys(components)) {
   let defines;
-  const componentAction = {}
+  const componentAction: ObjectType = {}
   try {
     defines = components[file].default;
   } catch (e) {
@@ -20,7 +24,7 @@ for (const file of Object.keys(components)) {
   if (defines === undefined || typeof defines !== 'object') {
     throw Error(`${file}:内没有 export default 或者export default格式有误 `);
   }
-  let id = defines.id;
+  let { id } = defines;
   if (typeof id !== 'string') {
     throw Error(`${file}:缺少id属性`);
   }
@@ -49,7 +53,7 @@ function rootReducer(state = initialState, action) {
     const [id, reducer] = action.type.split('.');
     let newState = null;
     // 改变当前文件中state
-    const setCurrentState = (data) => {
+    const setCurrentState = (data: ObjectType) => {
       newState = {
         ...state,
         [id]: {
@@ -59,17 +63,17 @@ function rootReducer(state = initialState, action) {
       }
     }
     // 改变全局state
-    const setState = (data) => {
+    const setState = (data: ObjectType) => {
       newState = data;
     }
-    const tool = {
+    const tool: ObjectType = {
       id,
       state: state[id],
       setState,
       setCurrentState,
     };
     Object.keys(methods[id]).forEach((keys) => {
-      tool[keys] = function (...agument) {
+      tool[keys] = function (...agument: any) {
         methods[id][keys].call(tool, ...agument);
       }
     })

@@ -1,5 +1,7 @@
-
-import type { AppState } from './data'
+export interface Person{
+  id: number;
+  name: string;
+};
 
 export default {
   id: 'user',
@@ -7,7 +9,7 @@ export default {
     people: [{ id: 1, name: '小萝莉' }]
   },
   reducers: {
-    addPerson(value) {
+    addPerson(this: any, value: string) {
       const { people } = this.state;
       this.setCurrentState({
         people: people.concat([
@@ -18,16 +20,16 @@ export default {
         ])
       })
     },
-    removePerson(value) {
+    removePerson(this: any, value: string) {
       const { people } = this.state;
       this.setCurrentState({
-        people: people.filter((person) => person.id !== parseInt(value, 10))
+        people: people.filter((person: Person) => person.id !== parseInt(value, 10))
       })
     },
   },
   methods: {
-    dealData(a,b) {
-      console.log('this:',a,b, this)
+    dealData() {
+      console.log('this:', this)
     }
   }
 }
