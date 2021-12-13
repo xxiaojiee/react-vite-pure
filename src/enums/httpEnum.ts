@@ -1,7 +1,6 @@
 /**
  * @description: Request result set
  */
-// http请求结果举类
 export enum ResultEnum {
   SUCCESS = 0,
   ERROR = 1,
@@ -12,7 +11,6 @@ export enum ResultEnum {
 /**
  * @description: request method
  */
-// http请求类型
 export enum RequestEnum {
   GET = 'GET',
   POST = 'POST',
@@ -23,7 +21,6 @@ export enum RequestEnum {
 /**
  * @description:  contentTyp
  */
-// http请求的内容类型
 export enum ContentTypeEnum {
   // json
   JSON = 'application/json;charset=UTF-8',
