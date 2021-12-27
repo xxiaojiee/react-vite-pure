@@ -1,15 +1,15 @@
 import React from 'react';
-import type {  RouteMeta } from 'react-router';
+import type { RouteMeta } from 'react-router';
 import type {
-  RouteProps,
+  RouteProps, RouteComponentProps,
 } from 'react-router-dom';
 import { RoleEnum } from '/@/enums/roleEnum';
 
-export interface AppRouteRecordRaw extends Omit<RouteProps, 'meta'> {
+export interface AppRouteRecordRaw extends Omit<RouteProps, 'component'> {
   name: string;
   meta: RouteMeta;
-  component?: React.ReactNode;
-  components?: React.ReactNode;
+  component?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined;
+  components?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined;
   children?: AppRouteRecordRaw[];
   props?: Recordable;
   fullPath?: string;
