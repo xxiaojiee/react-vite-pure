@@ -51,7 +51,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
   route: IRouter;
 }
 
-const BasicLayout = (props: BasicLayoutProps) => {
+const Layout = (props: BasicLayoutProps) => {
   const history = useHistory();
   const { user } = useUserContainer();
   const {
@@ -101,4 +101,4 @@ const BasicLayout = (props: BasicLayoutProps) => {
   );
 };
 
-export default BasicLayout;
+export default Layout;

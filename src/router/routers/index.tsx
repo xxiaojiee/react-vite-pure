@@ -56,7 +56,7 @@ export const routes: IRouter[] = [
     routes: [
       {
         path: '/',
-        component: load(() => import('../../layouts/BasicLayout')),
+        component: load(() => import('../../layouts/default')),
         routes: [
           {
             path: '/home',

@@ -1,20 +1,18 @@
 export const REDIRECT_NAME = 'Redirect';
-
 export const PARENT_LAYOUT_NAME = 'ParentLayout';
-
 export const PAGE_NOT_FOUND_NAME = 'PageNotFound';
 
-export const EXCEPTION_COMPONENT = () => import('/@/views/sys/exception/Exception.vue');
+export const EXCEPTION_COMPONENT = () => import('/@/pages/sys/exception');
 
 /**
  * @description: default layout
  */
-export const LAYOUT = () => import('/@/layouts/default/index.vue');
+export const LAYOUT = () => import('/@/layouts/default/index');
 
 /**
  * @description: parent-layout
  */
-export const getParentLayout = (_name?: string) => {
+export const getParentLayout = () => {
   return () =>
     new Promise((resolve) => {
       resolve({
