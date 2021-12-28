@@ -5,6 +5,7 @@ import {
   EXCEPTION_COMPONENT,
   PAGE_NOT_FOUND_NAME,
 } from '/@/router/constant';
+import { load } from '../constant';
 
 // 404 on a page
 export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
@@ -43,7 +44,7 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
     {
       path: '/redirect/:path(.*)',
       name: REDIRECT_NAME,
-      component: () => import('/@/pages/sys/redirect'),
+      component: load(() => import('/@/pages/sys/redirect')),
       meta: {
         title: REDIRECT_NAME,
         hideBreadcrumb: true,
@@ -66,7 +67,7 @@ export const ERROR_LOG_ROUTE: AppRouteRecordRaw = {
     {
       path: 'list',
       name: 'ErrorLogList',
-      component: () => import('/@/pages/sys/error-log'),
+      component: load(() => import('/@/pages/sys/error-log')),
       meta: {
         title: '错误日志列表',
         hideBreadcrumb: true,

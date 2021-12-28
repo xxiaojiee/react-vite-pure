@@ -5,9 +5,12 @@ import {
   Switch,
 } from 'react-router-dom';
 import { map } from 'lodash-es';
-import { IRouter, routes } from '../router/routers';
+import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
+import { routes, basicRoutes } from '../router/routes';
 
-const RouteWithSubRoutes = (route: IRouter) => {
+console.log('basicRoutes:', basicRoutes);
+
+const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
   const Comp = route.component;
   return (
     <Route
@@ -19,13 +22,13 @@ const RouteWithSubRoutes = (route: IRouter) => {
         } else if (Comp) {
           Component = (
             <Comp {...props} route={route}>
-              <DynamicRoute routes={route.routes} />
+              <DynamicRoute routes={route.children} />
             </Comp>
           );
         } else {
           Component = (
             <>
-              <DynamicRoute routes={route.routes} />
+              <DynamicRoute routes={route.children} />
             </>
           );
         }
@@ -35,7 +38,7 @@ const RouteWithSubRoutes = (route: IRouter) => {
   );
 };
 
-const DynamicRoute = ({ routes: rous }: { routes?: IRouter[] }) => {
+const DynamicRoute = ({ routes: rous }: { routes?: AppRouteRecordRaw[] }) => {
   if (!rous) return null;
   return (
     <Switch>
@@ -49,3 +52,5 @@ const DynamicRoute = ({ routes: rous }: { routes?: IRouter[] }) => {
 export default function Routes() {
   return <DynamicRoute routes={routes} />;
 }
+
+

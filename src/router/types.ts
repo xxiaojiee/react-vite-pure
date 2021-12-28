@@ -8,6 +8,7 @@ import { RoleEnum } from '/@/enums/roleEnum';
 export interface AppRouteRecordRaw extends Omit<RouteProps, 'component'> {
   name: string;
   meta: RouteMeta;
+  redirect?: string;
   component?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined;
   components?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined;
   children?: AppRouteRecordRaw[];
