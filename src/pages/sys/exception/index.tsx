@@ -1,7 +1,7 @@
 import React from 'react';
 
-const exception = () => {
-  return <div>exception</div>;
+const Exception = () => {
+  return <div className="mt-10 font-medium text-white -enter-x">exception</div>;
 };
 
-export default exception;
+export default Exception;

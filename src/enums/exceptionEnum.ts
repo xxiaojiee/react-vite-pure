@@ -19,7 +19,7 @@ export enum ExceptionEnum {
 }
 
 export enum ErrorTypeEnum {
-  VUE = 'vue',
+  React = 'react',
   SCRIPT = 'script',
   RESOURCE = 'resource',
   AJAX = 'ajax',

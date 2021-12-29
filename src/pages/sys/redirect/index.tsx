@@ -1,7 +1,7 @@
 import React from 'react';
 
-const redirect = () => {
+const Redirect = () => {
   return <div>redirect</div>;
 };
 
-export default redirect;
+export default Redirect;

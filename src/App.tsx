@@ -8,14 +8,16 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import Routes from './router';
 import { ConfigProvider } from 'antd';
-
+import { AppProvider } from '/@/components/Application';
 
 const App = () => {
   return (
     <Router>
       <ConfigProvider locale={zhCN}>
         <Provider store={store}>
-          <Routes />
+          <AppProvider>
+            <Routes />
+          </AppProvider>
         </Provider>
       </ConfigProvider>
     </Router>

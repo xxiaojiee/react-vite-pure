@@ -2,16 +2,17 @@ import type { Plugin } from 'vite';
 
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import legacy from '@vitejs/plugin-legacy';
+import windiCSS from 'vite-plugin-windicss';
 
 import { configHtmlPlugin } from './html';
-// import { configPwaConfig } from './pwa';
 import { configMockPlugin } from './mock';
-// import { configCompressPlugin } from './compress';
 import { configStyleImportPlugin } from './styleImport';
-// import { configVisualizerConfig } from './visualizer';
-// import { configImageminPlugin } from './imagemin';
-// import { configWindiCssPlugin } from './windicss';
 import { configSvgIconsPlugin } from './svgSprite';
+import { configThemePlugin } from './theme';
+// import { configPwaConfig } from './pwa';
+// import { configVisualizerConfig } from './visualizer';
+// import { configCompressPlugin } from './compress';
+// import { configImageminPlugin } from './imagemin';
 
 interface ViteEnv {
   VITE_GLOB_APP_TITLE: string,
@@ -36,6 +37,9 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   // 支持热更新
   !isBuild && vitePlugins.push(reactRefresh());
+
+  // vite-plugin-windicss
+  vitePlugins.push(windiCSS());
 
   //兼容旧浏览器。legacy 插件会自动额外生成一个针对旧浏览器的包，并且在 html 中插入根据浏览器 ESM 支持来选择性加载对应包的代码
   VITE_LEGACY && isBuild && vitePlugins.push(legacy());
@@ -62,6 +66,10 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   // rollup-plugin-visualizer
   // vitePlugins.push(configVisualizerConfig());
+
+
+  // vite-plugin-theme
+  vitePlugins.push(configThemePlugin(isBuild));
 
   // 以下插件仅适用于生产环境
   if (isBuild) {

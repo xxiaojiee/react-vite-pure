@@ -1,4 +1,4 @@
-// import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
+
 import { isObject } from '/@/utils/is';
 
 export const noop = () => { };

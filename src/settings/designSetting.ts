@@ -1,7 +1,7 @@
 import { ThemeEnum } from '../enums/appEnum';
 
 // 用于修改项目内组件 class 的统一前缀
-export const prefixCls = 'vben';
+export const prefixCls = 'zoos';
 
 export const darkMode = ThemeEnum.LIGHT;
 

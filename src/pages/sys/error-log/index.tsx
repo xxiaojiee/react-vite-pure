@@ -1,7 +1,7 @@
 import React from 'react';
 
-const errorlog = () => {
+const Errorlog = () => {
   return <div>error-log</div>;
 };
 
-export default errorlog;
+export default Errorlog;
