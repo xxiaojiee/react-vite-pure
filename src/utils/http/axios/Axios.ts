@@ -11,7 +11,6 @@ import { cloneDeep } from 'lodash-es';
 import { errorResult } from './const';
 import { ContentTypeEnum } from '/@/enums/httpEnum';
 import { RequestEnum } from '../../../enums/httpEnum';
-import { deepMerge } from '../..';
 
 export * from './axiosTransform';
 

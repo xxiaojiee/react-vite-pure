@@ -1,10 +1,11 @@
 import type { UserConfig, ConfigEnv } from 'vite';
-
 import path from "path";
 // import fs from 'fs';
 import { loadEnv } from 'vite'
 
 import moment from 'moment';
+
+import { generateModifyVars } from './build/generate/generateModifyVars';
 import { wrapperEnv } from './build/utils';
 import { OUTPUT_DIR } from './build/constant';
 import { createVitePlugins } from './build/plugin';
@@ -67,42 +68,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         },
       },
     },
-    define: {
-      __INTLIFY_PROD_DEVTOOLS__: false,
-      __APP_INFO__: JSON.stringify(__APP_INFO__),
-    },
-    // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
-    // 项目使用的vite插件。 数量大，因此需要单独提取和管理
-    plugins: createVitePlugins(viteEnv, isBuild),
-    // 指定传递给 CSS 预处理器的选项
-    css: {
-      preprocessorOptions: {
-        less: {
-          javascriptEnabled: true,
-          // 重写 less 变量，定制样式
-          modifyVars: {},
-        },
-      }
-    },
-    resolve: {
-      alias: [
-        { find: /^~/, replacement: '' },
-        // { find: /^loadash/, replacement: 'lodash-es' },
-        {
-          find: /\/@\//,
-          replacement: `${pathResolve('src')}/`,
-        },
-        // /#/xxxx => types/xxxx
-        {
-          find: /\/#\//,
-          replacement: `${pathResolve('types')}/`,
-        },
-      ],
-    },
-    // 为 JSX 注入 helper （这是一个仅在 Vite 中使用的选项）
-    // esbuild: {
-    //   jsxInject: `import React from 'react'`
-    // },
     build: {
       // 设置最终构建的浏览器兼容目标
       target: 'es2015',
@@ -125,6 +90,49 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // rollupOptions:{
 
       // }
+    },
+    define: {
+      __INTLIFY_PROD_DEVTOOLS__: false,
+      __APP_INFO__: JSON.stringify(__APP_INFO__),
+    },
+    // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
+    // 项目使用的vite插件。 数量大，因此需要单独提取和管理
+    plugins: createVitePlugins(viteEnv, isBuild),
+    // 指定传递给 CSS 预处理器的选项
+    css: {
+      preprocessorOptions: {
+        less: {
+          modifyVars: generateModifyVars(),
+          javascriptEnabled: true,
+        },
+      }
+    },
+    resolve: {
+      alias: [
+        // { find: /^~/, replacement: '' },
+        // { find: /^loadash/, replacement: 'lodash-es' },
+        {
+          find: /\/@\//,
+          replacement: `${pathResolve('src')}/`,
+        },
+        // /#/xxxx => types/xxxx
+        {
+          find: /\/#\//,
+          replacement: `${pathResolve('types')}/`,
+        },
+      ],
+      // extensions:['.js', '.ts', '.tsx', '.json', 'd.ts'],
+    },
+    // 为 JSX 注入 helper （这是一个仅在 Vite 中使用的选项）
+    // esbuild: {
+    //   jsxInject: `import React from 'react'`
+    // },
+    optimizeDeps: {
+      // 强制预构建不在dependencies中，其他的包。
+      include: [
+        'antd/es/locale/zh_CN',
+        'antd/es/locale/en_US',
+      ],
     },
   }
 }
