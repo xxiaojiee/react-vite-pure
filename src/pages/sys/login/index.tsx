@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDesign } from '/@/hooks/web/useDesign';
+import logoBoxBg from '/@/assets/svg/login-box-bg.svg';
 import './index.less';
 
-const Login = () => {
+const Login: React.FC = () => {
   const { prefixCls } = useDesign('login');
   return (
     <div className={`${prefixCls} relative w-full h-full px-4`}>
@@ -14,7 +15,7 @@ const Login = () => {
           <div className="hidden min-h-full pl-4 mr-4 xl:flex xl:flex-col xl:w-6/12">
             <div className="-enter-x">AppLogo</div>
             <div className="my-auto">
-              <img src="../../../assets/svg/login-box-bg.svg" className="w-1/2 -mt-16 -enter-x" />
+              <img src={logoBoxBg} className="w-1/2 -mt-16 -enter-x" />
               <div className="mt-10 font-medium text-white -enter-x">
                 <span className="inline-block mt-4 text-3xl"> 开箱即用的中后台管理系统</span>
               </div>
