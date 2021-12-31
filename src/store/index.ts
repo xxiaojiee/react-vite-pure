@@ -1,6 +1,8 @@
 
 import { createStore } from 'redux';
 import type { Store } from 'redux';
+import { useSelector } from 'react-redux';
+import { get } from 'lodash-es';
 
 interface ObjectType {
   [index: string]: any
@@ -51,7 +53,7 @@ for (const file of Object.keys(components)) {
 function rootReducer(state = initialState, action) {
   if (typeof action.type === 'string' && /^\w+\.\w+$/.test(action.type)) {
     const [id, reducer] = action.type.split('.');
-    let newState = null;
+    let newState = {};
     // 改变当前文件中state
     const setCurrentState = (data: ObjectType) => {
       newState = {
@@ -91,3 +93,8 @@ export const store: Store = createStore(rootReducer, initialState);
 
 
 export const actions = allActions;
+
+export const useStoreState = (key: string) => {
+  return useSelector((state: Record<string, any>) => get(state, key));
+
+}

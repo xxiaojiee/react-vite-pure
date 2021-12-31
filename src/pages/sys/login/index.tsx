@@ -1,19 +1,26 @@
 import React from 'react';
 import { useDesign } from '/@/hooks/web/useDesign';
 import logoBoxBg from '/@/assets/svg/login-box-bg.svg';
+import Application from '/@/components/Application';
 import './index.less';
+
+const { AppLogo } = Application;
 
 const Login: React.FC = () => {
   const { prefixCls } = useDesign('login');
   return (
     <div className={`${prefixCls} relative w-full h-full px-4`}>
-      <div className="absolute text-white top-4 right-4 enter-x xl:text-gray-600">1</div>
+      {/* <div className="absolute text-white top-4 right-4 enter-x xl:text-gray-600">1</div> */}
       <div className="absolute top-3 right-7 enter-x">2</div>
-      <span className="-enter-x xl:hidden">logo</span>
+      <span className="-enter-x xl:hidden">
+        <AppLogo alwaysShowTitle />
+      </span>
       <div className="container relative h-full py-2 mx-auto sm:px-10">
         <div className="flex h-full">
           <div className="hidden min-h-full pl-4 mr-4 xl:flex xl:flex-col xl:w-6/12">
-            <div className="-enter-x">AppLogo</div>
+            <div className="-enter-x">
+              <AppLogo />
+            </div>
             <div className="my-auto">
               <img src={logoBoxBg} className="w-1/2 -mt-16 -enter-x" />
               <div className="mt-10 font-medium text-white -enter-x">

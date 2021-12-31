@@ -7,7 +7,6 @@
 ## 技术栈
 
 * React17
-* unstated-next
 * TypeScript
 * React-Router
 * Vite 2

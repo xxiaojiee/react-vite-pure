@@ -1,6 +1,11 @@
 
-import appProvider from './src/AppProvider';
+import AppProvider from './src/AppProvider';
+import AppLogo from './src/AppLogo';
 
 export { useAppContainer } from './src/useAppContext';
 
-export const AppProvider = appProvider;
+
+export default {
+  AppProvider,
+  AppLogo
+}

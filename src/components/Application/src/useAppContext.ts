@@ -1,15 +1,14 @@
 import { useImmer } from 'use-immer';
 import { createContainer } from 'unstated-next';
-import { prefixCls } from '/@/settings/designSetting';
 
-export interface ICurrentApp {
+export interface AppContainerProp  {
   prefixCls: string;
   isMobile: boolean;
 }
 
-export const useApp = (initialState = { prefixCls, isMobile: false }) => {
-  const [app, updateApp] = useImmer<ICurrentApp>(initialState);
-  const saveApp = (apps: ICurrentApp) => {
+export const useApp = (initialState) => {
+  const [app, updateApp] = useImmer<AppContainerProp>(initialState);
+  const saveApp = (apps: AppContainerProp) => {
     updateApp(() => apps);
   };
   return { app, saveApp };
