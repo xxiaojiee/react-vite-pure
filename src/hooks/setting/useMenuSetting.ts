@@ -12,13 +12,6 @@ export function useMenuSetting() {
   const { getFullContent: fullContent } = useFullContent();
   const appState = useStoreState('app');
 
-  const getShowSidebar = () => {
-    return (
-      getSplit() ||
-      (getShowMenu() && getMenuMode() !== MenuModeEnum.HORIZONTAL && !fullContent())
-    );
-  };
-
   const getCollapsed = () => appState.projectConfig?.menuSetting.collapsed;
 
   const getMenuType = () => appState.projectConfig?.menuSetting.type;
@@ -60,6 +53,14 @@ export function useMenuSetting() {
   const getCollapsedShowTitle = () => appState.projectConfig?.menuSetting.collapsedShowTitle;
 
   const getShowTopMenu = () => getMenuMode() === MenuModeEnum.HORIZONTAL || getSplit();
+
+  const getShowSidebar = () => {
+    return (
+      getSplit() ||
+      (getShowMenu() && getMenuMode() !== MenuModeEnum.HORIZONTAL && !fullContent())
+    );
+  };
+
 
   const getShowHeaderTrigger = () => {
     if (

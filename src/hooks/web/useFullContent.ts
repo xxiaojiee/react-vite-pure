@@ -1,26 +1,23 @@
-import { computed, unref } from 'vue';
+
 
 import { useStoreState } from '/@/store';
-
-import { useRouter } from 'vue-router';
+import { useLocation } from 'react-router-dom'
+import queryString from 'query-string';
 
 /**
- * @description: Full screen display content
+ * @description: 全屏显示内容
  */
 export const useFullContent = () => {
   const appState = useStoreState('app');
-  const router = useRouter();
-  const { currentRoute } = router;
-
-  // Whether to display the content in full screen without displaying the menu
+  const location = useLocation();
+  const query = queryString.parse(location.search)
+  // 是否全屏显示内容而不显示菜单
   const getFullContent = () => {
-    // Query parameters, the full screen is displayed when the address bar has a full parameter
-    const route = currentRoute;
-    const query = route.query;
+    // 查询参数，地址栏有全参数时全屏显示
     if (query && Reflect.has(query, '__full__')) {
       return true;
     }
-    // Return to the configuration in the configuration file
+    // 返回配置文件中的配置
     return appState.projectConfig?.fullContent;
   };
 

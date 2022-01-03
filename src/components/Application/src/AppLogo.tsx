@@ -2,8 +2,11 @@ import React from 'react';
 import { useHistory } from 'react-router-dom'
 import { getGlobSetting } from '/@/hooks/setting';
 import { useDesign } from '/@/hooks/web/useDesign';
-// import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
+import { actions } from '/@/store';
+import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import logo from '/@/assets/images/logo.png';
+
+const userActions = actions.user;
 
 interface AppLogoProp {
   /**
@@ -23,8 +26,7 @@ interface AppLogoProp {
 const AppLogo: React.FC<AppLogoProp> = () => {
   const { prefixCls } = useDesign('app-logo');
   const history = useHistory();
-  console.log('history:', history);
-  // const { getCollapsedShowTitle } = useMenuSetting();
+  const { getCollapsedShowTitle } = useMenuSetting();
   return <div>logo</div>;
 };
 
