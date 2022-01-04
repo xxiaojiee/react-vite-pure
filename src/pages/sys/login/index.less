@@ -2,6 +2,8 @@
 
 @prefix-cls: ~'@{namespace}-login';
 @logo-prefix-cls: ~'@{namespace}-app-logo';
+@dark-switch-prefix-cls: ~'@{namespace}-dark-switch';
+@locale-prefix-cls: ~'@{namespace}-app-locale';
 @countdown-prefix-cls: ~'@{namespace}-countdown-input';
 @dark-bg: #293146;
 
@@ -65,7 +67,16 @@ html[data-theme='dark'] {
       display: none;
     }
   }
-
+  .@{locale-prefix-cls}{
+    img {
+      width: 20px;
+    }
+  }
+  .@{dark-switch-prefix-cls}{
+    img {
+      width: 15px;
+    }
+  }
   .@{logo-prefix-cls} {
     position: absolute;
     top: 12px;

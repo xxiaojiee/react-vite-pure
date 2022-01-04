@@ -1,17 +1,36 @@
 import React from 'react';
 import { useDesign } from '/@/hooks/web/useDesign';
+import { useStoreState } from '/@/store';
+import { getGlobSetting } from '/@/hooks/setting';
 import logoBoxBg from '/@/assets/svg/login-box-bg.svg';
 import Application from '/@/components/Application';
 import './index.less';
 
-const { AppLogo } = Application;
+const { AppLogo, AppLocalePicker, AppDarkModeToggle } = Application;
 
-const Login: React.FC = () => {
+interface LoginProps {
+  sessionTimeout: boolean;
+}
+
+const Login: React.FC<LoginProps> = (props) => {
+  const { sessionTimeout } = props;
   const { prefixCls } = useDesign('login');
+  const localeState = useStoreState('locale');
+  const globSetting = getGlobSetting();
+  const showLocale = !!localeState.localInfo?.showPicker;
+  const title = globSetting?.title ?? '';
   return (
     <div className={`${prefixCls} relative w-full h-full px-4`}>
-      {/* <div className="absolute text-white top-4 right-4 enter-x xl:text-gray-600">1</div> */}
-      <div className="absolute top-3 right-7 enter-x">2</div>
+      {!sessionTimeout && showLocale ? (
+        <div className="absolute text-white top-4 right-4 enter-x xl:text-gray-600">
+          <AppLocalePicker showText={false} />
+        </div>
+      ) : null}
+      {!sessionTimeout ? (
+        <div className="absolute top-3 right-13 enter-x">
+          <AppDarkModeToggle />
+        </div>
+      ) : null}
       <span className="-enter-x xl:hidden">
         <AppLogo alwaysShowTitle />
       </span>
@@ -22,7 +41,7 @@ const Login: React.FC = () => {
               <AppLogo />
             </div>
             <div className="my-auto">
-              <img src={logoBoxBg} className="w-1/2 -mt-16 -enter-x" />
+              <img src={logoBoxBg} alt={title} className="w-1/2 -mt-16 -enter-x" />
               <div className="mt-10 font-medium text-white -enter-x">
                 <span className="inline-block mt-4 text-3xl"> 开箱即用的中后台管理系统</span>
               </div>
