@@ -1,6 +1,7 @@
 import React from 'react';
+import { useMount } from 'ahooks';
 import { AppProvider, AppContainerProp } from './useAppContext';
-import { initAppConfigStore } from '/@/logics/initAppConfig';
+import { useInitAppConfigStore } from '/@/logics/initAppConfig';
 import { prefixCls } from '/@/settings/designSetting';
 
 interface AppProviderIndexProp {
@@ -8,8 +9,11 @@ interface AppProviderIndexProp {
 }
 
 const AppProviderIndex: React.FC<AppProviderIndexProp> = ({ children }) => {
-  // 初始化系统内部配置
-  initAppConfigStore();
+  const initAppConfig = useInitAppConfigStore();
+  useMount(() => {
+    // 初始化系统内部配置
+    initAppConfig();
+  })
   const appInitialState: AppContainerProp = {
     prefixCls,
     isMobile: false,

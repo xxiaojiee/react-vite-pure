@@ -50,9 +50,7 @@ export class Persistent {
   }
 
   static setLocal(key: LocalKeys, value: LocalStore[LocalKeys], immediate = false): void {
-    console.log('value:', key, value);
     localMemory.set(key, value);
-    console.log('localMemory.getCache:', localMemory.getCache);
     immediate && ls.set(APP_LOCAL_CACHE_KEY, localMemory.getCache);
   }
 

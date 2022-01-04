@@ -20,7 +20,6 @@ const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
             </Comp>
           );
         } else {
-          console.log('route:', route.path);
           Component = (
             <>
               <DynamicRoute routes={route.children} />

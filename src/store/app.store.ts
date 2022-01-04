@@ -50,6 +50,7 @@ export default {
     },
     setProjectConfig(this: any, config: DeepPartial<ProjectConfig>): void {
       const newConfig = deepMerge(this.state.projectConfig || {}, config);
+      console.log('newConfig:', newConfig);
       this.setCurrentState({
         projectConfig: newConfig,
       })

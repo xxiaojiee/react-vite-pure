@@ -1,9 +1,9 @@
 import type { ProjectConfig } from '/#/config';
-
+import { useDispatch } from 'react-redux'
 import { PROJ_CFG_KEY } from '/@/enums/cacheEnum';
 import projectSetting from '/@/settings/projectSetting';
 
-import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updateBackground';
+import { useUpdateHeaderBgColor, useUpdateSidebarBgColor } from '/@/logics/theme/updateBackground';
 import { updateColorWeak } from '/@/logics/theme/updateColorWeak';
 import { updateGrayMode } from '/@/logics/theme/updateGrayMode';
 import { updateDarkTheme } from '/@/logics/theme/dark';
@@ -16,52 +16,50 @@ import { Persistent } from '/@/utils/cache/persistent';
 import { deepMerge } from '/@/utils';
 import { ThemeEnum } from '/@/enums/appEnum';
 
-import { actions, store } from '/@/store';
+import { actions, useStoreState } from '/@/store';
 
 const appActions = actions.app;
 const localeActions = actions.locale;
 
 // Initial project configuration
-export function initAppConfigStore() {
-  const appState = store.getState().app;
-  let projCfg: ProjectConfig = Persistent.getLocal(PROJ_CFG_KEY) as ProjectConfig;
-  projCfg = deepMerge(projectSetting, projCfg || {});
-  const { darkMode } = appState;
-  const {
-    colorWeak,
-    grayMode,
-    themeColor,
+export function useInitAppConfigStore() {
+  const appState = useStoreState('app');
+  const dispatch = useDispatch();
+  const updateHeaderBgColor = useUpdateHeaderBgColor();
+  const updateSidebarBgColor = useUpdateSidebarBgColor();
+  return function initAppConfig(){
+    let projCfg: ProjectConfig = Persistent.getLocal(PROJ_CFG_KEY) as ProjectConfig;
+    projCfg = deepMerge(projectSetting, projCfg || {});
+    const { darkMode } = appState;
+    const {
+      colorWeak,
+      grayMode,
+      themeColor,
 
-    headerSetting: { bgColor: headerBgColor } = {},
-    menuSetting: { bgColor } = {},
-  } = projCfg;
-  try {
-    if (themeColor && themeColor !== primaryColor) {
-      changeTheme(themeColor);
+      headerSetting: { bgColor: headerBgColor } = {},
+      menuSetting: { bgColor } = {},
+    } = projCfg;
+    try {
+      if (themeColor && themeColor !== primaryColor) {
+        changeTheme(themeColor);
+      }
+
+      grayMode && updateGrayMode(grayMode);
+      colorWeak && updateColorWeak(colorWeak);
+    } catch (error) {
+      console.log(error);
     }
-
-    grayMode && updateGrayMode(grayMode);
-    colorWeak && updateColorWeak(colorWeak);
-  } catch (error) {
-    console.log(error);
+    dispatch(appActions.setProjectConfig(projCfg));
+    // init dark mode
+    updateDarkTheme(darkMode);
+    updateHeaderBgColor(headerBgColor && darkMode !== ThemeEnum.DARK ? headerBgColor : undefined);
+    updateSidebarBgColor(bgColor && darkMode !== ThemeEnum.DARK ? bgColor : undefined);
+    // init store
+    dispatch(localeActions.initLocale());
+    setTimeout(() => {
+      clearObsoleteStorage();
+    }, 16);
   }
-  appActions.setProjectConfig(projCfg);
-
-  // init dark mode
-  updateDarkTheme(darkMode);
-  if (darkMode === ThemeEnum.DARK) {
-    updateHeaderBgColor();
-    updateSidebarBgColor();
-  } else {
-    headerBgColor && updateHeaderBgColor(headerBgColor);
-    bgColor && updateSidebarBgColor(bgColor);
-  }
-  // init store
-  localeActions.initLocale();
-
-  setTimeout(() => {
-    clearObsoleteStorage();
-  }, 16);
 }
 
 /**

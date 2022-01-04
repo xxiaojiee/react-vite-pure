@@ -1,4 +1,5 @@
 import type { MenuSetting } from '/#/config';
+import { useDispatch } from 'react-redux'
 import { useStoreState, actions } from '/@/store';
 import { SIDE_BAR_MINI_WIDTH, SIDE_BAR_SHOW_TIT_MINI_WIDTH } from '/@/enums/appEnum';
 import { MenuModeEnum, MenuTypeEnum, TriggerEnum } from '/@/enums/menuEnum';
@@ -10,6 +11,7 @@ const appActions = actions.app;
 
 export function useMenuSetting() {
   const { getFullContent: fullContent } = useFullContent();
+  const dispatch = useDispatch();
   const appState = useStoreState('app');
 
   const getCollapsed = () => appState.projectConfig?.menuSetting.collapsed;
@@ -114,7 +116,7 @@ export function useMenuSetting() {
 
   // Set menu configuration
   function setMenuSetting(menuSetting: Partial<MenuSetting>): void {
-    appActions.setProjectConfig({ menuSetting });
+    dispatch(appActions.setProjectConfig({ menuSetting }));
   }
 
   function toggleCollapsed() {
