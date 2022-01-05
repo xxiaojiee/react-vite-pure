@@ -3,7 +3,8 @@ import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 // import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
-import { getAuthCache, setAuthCache } from '/@/utils/auth';
+import { setAuthCache } from '/@/utils/auth';
+import { LoginStateEnum } from '/@/enums/pageEnum'
 
 
 // import { GetUserInfoModel, LoginParams } from '/@/api/sys/model/userModel';
@@ -14,18 +15,18 @@ import { getAuthCache, setAuthCache } from '/@/utils/auth';
 // import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 // import { isArray } from '/@/utils/is';
 
-
-interface UserState {
-  userInfo: Nullable<UserInfo>;
-  token?: string;
-  roleList: RoleEnum[];
-  sessionTimeout?: boolean;
-  lastUpdateTime: number;
-}
+// interface UserState {
+//   userInfo: Nullable<UserInfo>;
+//   token?: string;
+//   roleList: RoleEnum[];
+//   sessionTimeout?: boolean;
+//   lastUpdateTime: number;
+// }
 
 export default {
   id: 'user',
   state: {
+    loginState: LoginStateEnum.LOGIN,
     // user info
     userInfo: null,
     // token
@@ -43,6 +44,11 @@ export default {
         token: info || ''
       })
       setAuthCache(TOKEN_KEY, info);
+    },
+    setLoginState(this: any, state: LoginStateEnum) {
+      this.setCurrentState({
+        loginState: state
+      })
     },
     setRoleList(this: any, roleList: RoleEnum[]) {
       this.setCurrentState({
@@ -62,12 +68,12 @@ export default {
         sessionTimeout: flag,
       })
     },
-    resetState(this: any, ) {
+    resetState(this: any,) {
       this.setCurrentState({
         userInfo: null,
         token: '',
-        roleList:[],
-        sessionTimeout:false,
+        roleList: [],
+        sessionTimeout: false,
       })
     },
   },

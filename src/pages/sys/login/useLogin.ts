@@ -1,23 +1,19 @@
-import type { ValidationRule } from 'antd/lib/form/Form';
-import type { RuleObject } from 'antd/lib/form/interface';
-import { ref,  Ref } from 'vue';
 
-export enum LoginStateEnum {
-  LOGIN,
-  REGISTER,
-  RESET_PASSWORD,
-  MOBILE,
-  QR_CODE,
-}
+import { LoginStateEnum } from '/@/enums/pageEnum'
+import { actions, useStoreState } from '/@/store';
+import { useDispatch } from 'react-redux'
 
-const currentState = ref(LoginStateEnum.LOGIN);
+const userActions = actions.user
+
 
 export function useLoginState() {
+  const userState = useStoreState('user');
+  const dispatch = useDispatch();
   function setLoginState(state: LoginStateEnum) {
-    currentState.value = state;
+    dispatch(userActions.setLoginState(state));
   }
 
-  const getLoginState = () => currentState.value;
+  const getLoginState = () => userState.loginState;
 
   function handleBackLogin() {
     setLoginState(LoginStateEnum.LOGIN);
@@ -37,19 +33,32 @@ export function useFormValid<T extends Object = any>(formRef: any) {
   return { validForm };
 }
 
-export function useFormRules(formData?: Recordable) {
 
+function createRule(message: string) {
+  return [
+    {
+      required: true,
+      message,
+      trigger: 'change',
+    },
+  ];
+}
+
+
+export function useFormRules(formData?: Recordable) {
   const getAccountFormRule = () => createRule('请输入账号');
   const getPasswordFormRule = () => createRule('请输入密码');
   const getSmsFormRule = () => createRule('请输入验证码');
   const getMobileFormRule = () => createRule('请输入手机号码');
 
-  const validatePolicy = async (_: RuleObject, value: boolean) => {
+  const userState = useStoreState('user');
+
+  const validatePolicy = async (_: unknown, value: boolean) => {
     return !value ? Promise.reject('勾选后才能注册') : Promise.resolve();
   };
 
   const validateConfirmPassword = (password: string) => {
-    return async (_: RuleObject, value: string) => {
+    return async (_: unknown, value: string) => {
       if (!value) {
         return Promise.reject('请输入密码');
       }
@@ -60,7 +69,7 @@ export function useFormRules(formData?: Recordable) {
     };
   };
 
-  const getFormRules = (): { [k: string]: ValidationRule | ValidationRule[] } => {
+  const getFormRules = (): { [k: string]: unknown | unknown[] } => {
     const accountFormRule = getAccountFormRule();
     const passwordFormRule = getPasswordFormRule();
     const smsFormRule = getSmsFormRule();
@@ -70,7 +79,7 @@ export function useFormRules(formData?: Recordable) {
       sms: smsFormRule,
       mobile: mobileFormRule,
     };
-    switch (currentState()) {
+    switch (userState.loginState) {
       // register form rules
       case LoginStateEnum.REGISTER:
         return {
@@ -103,14 +112,4 @@ export function useFormRules(formData?: Recordable) {
     }
   };
   return { getFormRules };
-}
-
-function createRule(message: string) {
-  return [
-    {
-      required: true,
-      message,
-      trigger: 'change',
-    },
-  ];
 }

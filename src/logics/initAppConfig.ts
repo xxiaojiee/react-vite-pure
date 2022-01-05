@@ -52,8 +52,13 @@ export function useInitAppConfigStore() {
     dispatch(appActions.setProjectConfig(projCfg));
     // init dark mode
     updateDarkTheme(darkMode);
-    updateHeaderBgColor(headerBgColor && darkMode !== ThemeEnum.DARK ? headerBgColor : undefined);
-    updateSidebarBgColor(bgColor && darkMode !== ThemeEnum.DARK ? bgColor : undefined);
+    if (darkMode === ThemeEnum.DARK) {
+      updateHeaderBgColor();
+      updateSidebarBgColor();
+    } else {
+      headerBgColor && updateHeaderBgColor(headerBgColor);
+      bgColor && updateSidebarBgColor(bgColor);
+    }
     // init store
     dispatch(localeActions.initLocale());
     setTimeout(() => {

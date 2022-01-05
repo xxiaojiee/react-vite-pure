@@ -8,3 +8,11 @@ export enum PageEnum {
   // error log page path
   ERROR_LOG_PAGE = '/error-log/list',
 }
+
+export enum LoginStateEnum {
+  LOGIN,
+  REGISTER,
+  RESET_PASSWORD,
+  MOBILE,
+  QR_CODE,
+}

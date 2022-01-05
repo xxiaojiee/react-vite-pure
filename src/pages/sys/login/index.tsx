@@ -4,6 +4,7 @@ import { useStoreState } from '/@/store';
 import { getGlobSetting } from '/@/hooks/setting';
 import logoBoxBg from '/@/assets/svg/login-box-bg.svg';
 import Application from '/@/components/Application';
+import LoginForm from './LoginForm';
 import './index.less';
 
 const { AppLogo, AppLocalePicker, AppDarkModeToggle } = Application;
@@ -54,7 +55,7 @@ const Login: React.FC<LoginProps> = (props) => {
             <div
               className={`${prefixCls}-form relative w-full px-5 py-8 mx-auto my-auto rounded-md shadow-md xl:ml-16 xl:bg-transparent sm:px-8 xl:p-4 xl:shadow-none sm:w-3/4 lg:w-2/4 xl:w-auto enter-x`}
             >
-              内容
+              <LoginForm />
             </div>
           </div>
         </div>

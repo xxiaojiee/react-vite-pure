@@ -1,8 +1,8 @@
 import React from 'react';
-import { LoginStateEnum, useLoginState } from '../useLogin';
+import { useLoginState } from '../useLogin';
+import { LoginStateEnum } from '/@/enums/pageEnum';
 
 const LoginFormTitle: React.FC = () => {
-
   const { getLoginState } = useLoginState();
 
   const getFormTitle = () => {
@@ -16,8 +16,8 @@ const LoginFormTitle: React.FC = () => {
     return titleObj[getLoginState()];
   };
   return (
-    <h2 className='mb-3 text-2xl font-bold text-center xl:text-3xl enter-x xl:text-left'>
-      {{ getFormTitle }}
+    <h2 className="mb-3 text-2xl font-bold text-center xl:text-3xl enter-x xl:text-left">
+      {getFormTitle()}
     </h2>
   );
 };
