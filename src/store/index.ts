@@ -93,13 +93,11 @@ function rootReducer(state = initialState, action) {
   }
   return state;
 }
-
-export const store: Store = createStore(rootReducer, initialState);
-
-
 export const actions = allActions;
+
 
 export const useStoreState = (key: string) => {
   return useSelector((state: Record<string, any>) => get(state, key));
 
 }
+export const store: Store = createStore(rootReducer, initialState);

@@ -16,7 +16,7 @@ const LoginFormTitle: React.FC = () => {
     return titleObj[getLoginState()];
   };
   return (
-    <h2 className="mb-3 text-2xl font-bold text-center xl:text-3xl enter-x xl:text-left">
+    <h2 className="mb-3 text-2xl font-bold xl:text-3xl enter-x !xl:text-left enter-x text-center">
       {getFormTitle()}
     </h2>
   );

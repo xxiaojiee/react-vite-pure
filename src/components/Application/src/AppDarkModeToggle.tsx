@@ -16,7 +16,7 @@ const AppLocalePicker: React.FC = () => {
   const updateSidebarBgColor = useUpdateSidebarBgColor();
   const { getDarkMode, setDarkMode, getShowDarkModeToggle } = useRootSetting();
   const isDark = getDarkMode() === ThemeEnum.DARK;
-  const getClass = classNames(prefixCls, {
+  const getClass = classNames(prefixCls, 'absolute top-3 right-13 enter-x', {
     [`${prefixCls}--dark`]: isDark,
   });
 

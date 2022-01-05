@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import LoginFormTitle from '../LoginFormTitle';
 import { LoginStateEnum } from '/@/enums/pageEnum';
 import { getMessage } from '/@/hooks/web/getMessage';
@@ -17,58 +18,60 @@ import {
 
 const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const formRef = useRef<ProFormInstance | null>(null);
   const { notification, createErrorModal } = getMessage();
   const { prefixCls } = useDesign('login');
   const { setLoginState, getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
 
   const formData = {
-    account: 'vben',
-    password: '123456',
+    // account: 'vben',
+    // password: '123456',
   };
   const getShow = getLoginState() === LoginStateEnum.LOGIN;
-  const handleLogin = useCallback(() => {
-    // const data = await validForm();
-    // if (!data) return;
-    // try {
-    //   loading.value = true;
-    //   const userInfo = await userStore.login({
-    //     password: data.password,
-    //     username: data.account,
-    //     mode: 'none', // 不要默认的错误提示
-    //   });
-    //   if (userInfo) {
-    //     notification.success({
-    //       message: '登录成功',
-    //       description: `欢迎回来: ${userInfo.realName}`,
-    //       duration: 3,
-    //     });
-    //   }
-    // } catch (error) {
-    //   createErrorModal({
-    //     title: '错误提示',
-    //     content: (error as unknown as Error).message || '网络异常，请检查您的网络连接是否正常!',
-    //     getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
-    //   });
-    // } finally {
-    //   loading.value = false;
-    // }
+  const handleLogin = useCallback(async () => {
+    const data = await formRef.current?.validateFields();
+    if (!data) {
+      return;
+    }
+    try {
+      setLoading(true);
+
+      // const userInfo = await userStore.login({
+      //   password: data.password,
+      //   username: data.account,
+      //   mode: 'none', // 不要默认的错误提示
+      // });
+      // if (userInfo) {
+      //   notification.success({
+      //     message: '登录成功',
+      //     description: `欢迎回来: ${userInfo.realName}`,
+      //     duration: 3,
+      //   });
+      // }
+    } catch (error) {
+      createErrorModal({
+        title: '错误提示',
+        content: (error as unknown as Error).message || '网络异常，请检查您的网络连接是否正常!',
+        getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
+      });
+    } finally {
+      setLoading(false);
+    }
   }, []);
   if (!getShow) {
     return null;
   }
-  const singInWayClass = classNames('flex justify-evenly enter-x', `${prefixCls}-sign-in-way`);
   return (
     <>
-      <div className="enter-x">
-        <LoginFormTitle />
-      </div>
+      <LoginFormTitle />
       <Form
         name="login-form"
         className="p-4 enter-x"
         initialValues={formData}
         onKeyPress={handleLogin}
         autoComplete="off"
+        ref={formRef}
       >
         <Form.Item
           name="account"
@@ -162,7 +165,7 @@ const LoginForm: React.FC = () => {
 
         <Divider className="enter-x">其他登录方式</Divider>
 
-        <div className={singInWayClass}>
+        <div className={classNames('flex justify-evenly enter-x', `${prefixCls}-sign-in-way`)}>
           <GithubFilled />
           <WechatFilled />
           <AlipayCircleFilled />

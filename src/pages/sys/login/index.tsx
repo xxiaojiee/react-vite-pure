@@ -23,15 +23,11 @@ const Login: React.FC<LoginProps> = (props) => {
   return (
     <div className={`${prefixCls} relative w-full h-full px-4`}>
       {!sessionTimeout && showLocale ? (
-        <div className="absolute text-white top-4 right-4 enter-x xl:text-gray-600">
+        <span className="app-locale-picker-overlay absolute text-white top-4 right-4 enter-x xl:text-gray-600">
           <AppLocalePicker showText={false} />
-        </div>
+        </span>
       ) : null}
-      {!sessionTimeout ? (
-        <div className="absolute top-3 right-13 enter-x">
-          <AppDarkModeToggle />
-        </div>
-      ) : null}
+      {!sessionTimeout ? <AppDarkModeToggle /> : null}
       <span className="-enter-x xl:hidden">
         <AppLogo alwaysShowTitle />
       </span>
