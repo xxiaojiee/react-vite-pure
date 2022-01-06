@@ -1,8 +1,8 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { map } from 'lodash-es';
-import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
-import { routes, basicRoutes } from '../router/routes';
+import type { AppRouteRecordRaw } from '/@/router/types';
+import { useAppContainer } from '/@/components/Application';
 
 const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
   const Comp = route.component;
@@ -44,5 +44,6 @@ const DynamicRoute = ({ routes: rous }: { routes?: AppRouteRecordRaw[] }) => {
 };
 
 export default function Routes() {
-  return <DynamicRoute routes={basicRoutes} />;
+  const { app } = useAppContainer();
+  return <DynamicRoute routes={app.routes} />;
 }

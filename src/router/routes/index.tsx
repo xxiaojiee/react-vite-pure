@@ -9,6 +9,51 @@ import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 import { mainOutRoutes } from './mainOut';
 import { PageEnum } from '/@/enums/pageEnum';
 
+import { dealRoutersPath } from '/@/utils/index';
+
+const modules = import.meta.globEager('./modules/**/*.ts');
+
+const routeModuleList: AppRouteModule[] = [];
+
+Object.keys(modules).forEach((key) => {
+  const mod = modules[key].default || {};
+  const modList = Array.isArray(mod) ? [...mod] : [mod];
+  routeModuleList.push(...modList);
+});
+
+export const asyncRoutes = [...dealRoutersPath(routeModuleList), PAGE_NOT_FOUND_ROUTE];
+
+console.log('asyncRoutes:', asyncRoutes);
+
+export const RootRoute: AppRouteRecordRaw = {
+  path: '/',
+  name: 'Root',
+  redirect: PageEnum.BASE_HOME,
+  meta: {
+    title: 'Root',
+  },
+};
+
+export const LoginRoute: AppRouteRecordRaw = {
+  path: '/login',
+  name: 'Login',
+  component: load(() => import('../../pages/sys/login')),
+  meta: {
+    title: '登录',
+  },
+};
+
+// 无需权限的路由
+export const basicRoutes = [
+  LoginRoute,
+  REDIRECT_ROUTE,
+  ...mainOutRoutes,
+  PAGE_NOT_FOUND_ROUTE,
+  RootRoute,
+];
+
+console.log('basicRoutes:', basicRoutes);
+
 // export const routes: AppRouteRecordRaw = [
 //   // {
 //   //   path: '/auth',
@@ -62,14 +107,6 @@ import { PageEnum } from '/@/enums/pageEnum';
 //                 },
 //                 component: load(() => import('../../pages/home/Home')),
 //               },
-//               {
-//                 name: 'Home',
-//                 path: '/home',
-//                 meta: {
-//                   title: 'Home',
-//                 },
-//                 redirect: '/home/manage',
-//               },
 //             ],
 //           },
 //           {
@@ -120,44 +157,3 @@ import { PageEnum } from '/@/enums/pageEnum';
 //     ],
 //   },
 // ];
-
-// const modules = import.meta.globEager('./modules/**/*.ts');
-
-// const routeModuleList: AppRouteModule[] = [];
-
-// Object.keys(modules).forEach((key) => {
-//   const mod = modules[key].default || {};
-//   const modList = Array.isArray(mod) ? [...mod] : [mod];
-//   routeModuleList.push(...modList);
-// });
-
-// console.log('routeModuleList:', routeModuleList);
-
-// export const asyncRoutes = [PAGE_NOT_FOUND_ROUTE, ...routeModuleList];
-
-export const RootRoute: AppRouteRecordRaw = {
-  path: '/',
-  name: 'Root',
-  redirect: PageEnum.BASE_HOME,
-  meta: {
-    title: 'Root',
-  },
-};
-
-export const LoginRoute: AppRouteRecordRaw = {
-  path: '/login',
-  name: 'Login',
-  component: load(() => import('../../pages/sys/login')),
-  meta: {
-    title: '登录',
-  },
-};
-
-// 无需权限的路由
-export const basicRoutes = [
-  LoginRoute,
-  REDIRECT_ROUTE,
-  PAGE_NOT_FOUND_ROUTE,
-  ...mainOutRoutes,
-  RootRoute,
-];

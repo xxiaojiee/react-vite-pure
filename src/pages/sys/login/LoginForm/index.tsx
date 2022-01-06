@@ -6,7 +6,7 @@ import { getMessage } from '/@/hooks/web/getMessage';
 import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'antd';
 import classNames from 'classnames';
 import { actions, useStoreState } from '/@/store';
-import { useLoginState, useFormRules, useFormValid } from '../useLogin';
+import { useLoginState, useFormRules, useLogin } from '../useLogin';
 import { useDesign } from '/@/hooks/web/useDesign';
 import {
   GithubFilled,
@@ -22,11 +22,12 @@ const LoginForm: React.FC = () => {
   const { notification, createErrorModal } = getMessage();
   const { prefixCls } = useDesign('login');
   const { setLoginState, getLoginState } = useLoginState();
+  const login = useLogin();
   const { getFormRules } = useFormRules();
 
   const formData = {
-    // account: 'vben',
-    // password: '123456',
+    account: 'vben',
+    password: '123456',
   };
   const getShow = getLoginState() === LoginStateEnum.LOGIN;
   const handleLogin = useCallback(async () => {
@@ -37,11 +38,11 @@ const LoginForm: React.FC = () => {
     try {
       setLoading(true);
 
-      // const userInfo = await userStore.login({
-      //   password: data.password,
-      //   username: data.account,
-      //   mode: 'none', // 不要默认的错误提示
-      // });
+      const userInfo = await login({
+        password: data.password,
+        username: data.account,
+        mode: 'none', // 不要默认的错误提示
+      });
       // if (userInfo) {
       //   notification.success({
       //     message: '登录成功',
@@ -50,6 +51,7 @@ const LoginForm: React.FC = () => {
       //   });
       // }
     } catch (error) {
+      console.error('错误：', error)
       createErrorModal({
         title: '错误提示',
         content: (error as unknown as Error).message || '网络异常，请检查您的网络连接是否正常!',

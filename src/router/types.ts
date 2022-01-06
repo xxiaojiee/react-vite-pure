@@ -27,7 +27,7 @@ export interface Menu {
 
   icon?: string;
 
-  path: string;
+  path?: string | readonly string[] | undefined;
 
   // path contains param, auto assignment.
   paramPath?: string;
