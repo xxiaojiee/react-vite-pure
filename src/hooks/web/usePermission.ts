@@ -15,6 +15,9 @@ import { PageEnum } from '/@/enums/pageEnum';
 import projectSetting from '/@/settings/projectSetting';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
 
+import { getMenuList } from '/@/api/sys/menu';
+import { getPermCode } from '/@/api/sys/user';
+
 const { createMessage } = getMessage();
 
 const permissionActions = actions.permission
@@ -43,6 +46,7 @@ export function useBuildRoutesAction() {
     let routes: AppRouteRecordRaw[] = [];
     let menuList: Menu[] = [];
     let routeList: AppRouteRecordRaw[] = [];
+    let backMenuList: Menu[] = [];
     const getRoleList = (): RoleEnum[] => {
       return userState.roleList.length > 0 ? userState.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
     }
@@ -128,27 +132,26 @@ export function useBuildRoutesAction() {
         });
         // !模拟从后台获取权限代码，
         // 这个函数可能只需要执行一次，实际项目可以自己放到合适的时间
-        // try {
-        //   const codeList = await getPermCode();
-        //   this.setPermCodeList(codeList);
-        //   routeList = (await getMenuList()) as AppRouteRecordRaw[];
-        // } catch (error) {
-        //   console.error(error);
-        // }
+        try {
+          const codeList = await getPermCode();
+          dispatch(permissionActions.setPermCodeList(codeList))
+          routeList = (await getMenuList()) as AppRouteRecordRaw[];
+        } catch (error) {
+          console.error(error);
+        }
 
-        // Dynamically introduce components
-        // routeList = transformObjToRoute(routeList);
+        // 动态引入组件
+        routeList = transformObjToRoute(routeList);
 
-        //  Background routing to menu structure
-        // const backMenuList = transformRouteToMenu(routeList);
-        // this.setBackMenuList(backMenuList);
-
+        //  通过后台路由获取菜单结构
+        backMenuList = transformRouteToMenu(routeList);
+        dispatch(permissionActions.setBackMenuList(backMenuList))
         // remove meta.ignoreRoute item
         routeList = filter(routeList, routeRemoveIgnoreFilter);
         routeList = routeList.filter(routeRemoveIgnoreFilter);
 
         routeList = flatMultiLevelRoutes(routeList);
-        routes = [PAGE_NOT_FOUND_ROUTE, ...routeList];
+        routes = routeList;
         break;
       default:
         break;

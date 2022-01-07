@@ -9,7 +9,7 @@ const permission: AppRouteModule = {
   path: '/permission',
   name: 'Permission',
   component: LAYOUT,
-  redirect: '/permission/front/page',
+  // redirect: '/permission/front/page',
   meta: {
     orderNo: 15,
     icon: 'ion:key-outline',

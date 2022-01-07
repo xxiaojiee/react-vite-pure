@@ -1,14 +1,17 @@
 
 import { LoginStateEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
+import { PageEnum } from '/@/enums/pageEnum';
 import { getToken } from '/@/utils/auth';
 import type { ErrorMessageMode } from '/#/axios';
-import { doLogout, getUserInfo, loginApi } from './api';
+import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
-import { GetUserInfoModel, LoginParams } from './type';
+import { GetUserInfoModel, LoginParams } from '/@/api/sys/types/user';
 import { actions, useStoreState } from '/@/store';
 import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
+import { useHistory } from 'react-router-dom';
+import { useAppContainer } from '/@/components/Application';
 
 import type { UserInfo } from '/#/store';
 
@@ -55,28 +58,27 @@ export function useAfterLoginAction() {
   const userState = useStoreState('user');
   const permissionState = useStoreState('permission');
   const disPatch = useDispatch();
-  const getUserInfoAction = useGetUserInfoAction()
-  const buildRoutesAction = useBuildRoutesAction()
-  return async function afterLoginAction(token: string, goHome?: boolean): Promise<GetUserInfoModel | null> {
-    console.log('userState:', userState);
+  const getUserInfoAction = useGetUserInfoAction();
+  const buildRoutesAction = useBuildRoutesAction();
+  const history = useHistory();
+  const { app, saveApp } = useAppContainer();
+  return async function afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
     if (!getToken()) return null;
     // get user info
     const userInfo = await getUserInfoAction();
-    console.log('userInfo:', userInfo);
     const { sessionTimeout } = userState;
     if (sessionTimeout) {
       disPatch(userActions.setSessionTimeout(false))
-    } else {
+    }else {
       if (!permissionState.isDynamicAddedRoute) {
         const routes = await buildRoutesAction();
-        console.log(90909090, routes);
-        // routes.forEach((route) => {
-        //   router.addRoute(route as unknown as RouteRecordRaw);
-        // });
-        // router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw);
-        // disPatch(permissionActions.setDynamicAddedRoute(true))
+        saveApp({
+          ...app,
+          routes:[...routes, ...app.routes]
+        })
+        disPatch(permissionActions.setDynamicAddedRoute(true))
       }
-      // goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
+      goHome && (await history.replace(userInfo?.homePath || PageEnum.BASE_HOME));
     }
     return userInfo;
   }
@@ -95,7 +97,7 @@ export function useLogin() {
       const { token } = data;
       // save token
       dispatch(userActions.setToken(token));
-      return afterLoginAction(token, goHome);
+      return afterLoginAction(goHome);
     } catch (error) {
       return Promise.reject(error);
     }

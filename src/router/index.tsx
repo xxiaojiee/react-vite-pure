@@ -10,21 +10,25 @@ const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
     <Route
       path={route.path}
       render={(props: any) => {
-        let Component = null;
+        let Component: JSX.Element | null = null;
         if (route.redirect) {
           Component = <Redirect to={route.redirect} />;
+        } else if (route.children) {
+          if (Comp) {
+            Component = (
+              <Comp {...props} route={route}>
+                <DynamicRoute routes={route.children} />
+              </Comp>
+            );
+          } else {
+            Component = (
+              <>
+                <DynamicRoute routes={route.children} />
+              </>
+            );
+          }
         } else if (Comp) {
-          Component = (
-            <Comp {...props} route={route}>
-              <DynamicRoute routes={route.children} />
-            </Comp>
-          );
-        } else {
-          Component = (
-            <>
-              <DynamicRoute routes={route.children} />
-            </>
-          );
+          Component = <Comp {...props} />;
         }
         return Component;
       }}
@@ -45,5 +49,6 @@ const DynamicRoute = ({ routes: rous }: { routes?: AppRouteRecordRaw[] }) => {
 
 export default function Routes() {
   const { app } = useAppContainer();
+  console.log('routes:', app.routes);
   return <DynamicRoute routes={app.routes} />;
 }

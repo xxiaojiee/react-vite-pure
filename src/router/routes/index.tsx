@@ -1,5 +1,3 @@
-import React, { ComponentType, ReactNode } from 'react';
-import { ContainerOutlined, HomeOutlined } from '@ant-design/icons';
 import { load } from '../constant';
 
 import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
@@ -21,7 +19,7 @@ Object.keys(modules).forEach((key) => {
   routeModuleList.push(...modList);
 });
 
-export const asyncRoutes = [...dealRoutersPath(routeModuleList), PAGE_NOT_FOUND_ROUTE];
+export const asyncRoutes = dealRoutersPath(routeModuleList);
 
 console.log('asyncRoutes:', asyncRoutes);
 

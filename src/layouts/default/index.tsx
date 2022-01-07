@@ -6,6 +6,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
 }
 
 const Layout = (props: BasicLayoutProps) => {
+  console.log('props:', props);
   const { children } = props;
   return (
     <div>

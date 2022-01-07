@@ -23,7 +23,6 @@ const LoginForm: React.FC = () => {
   const { prefixCls } = useDesign('login');
   const { setLoginState, getLoginState } = useLoginState();
   const login = useLogin();
-  const { getFormRules } = useFormRules();
 
   const formData = {
     account: 'vben',
@@ -43,24 +42,22 @@ const LoginForm: React.FC = () => {
         username: data.account,
         mode: 'none', // 不要默认的错误提示
       });
-      // if (userInfo) {
-      //   notification.success({
-      //     message: '登录成功',
-      //     description: `欢迎回来: ${userInfo.realName}`,
-      //     duration: 3,
-      //   });
-      // }
+      if (userInfo) {
+        notification.success({
+          message: '登录成功',
+          description: `欢迎回来: ${userInfo.realName}`,
+          duration: 3,
+        });
+      }
     } catch (error) {
-      console.error('错误：', error)
+      setLoading(false);
       createErrorModal({
         title: '错误提示',
         content: (error as unknown as Error).message || '网络异常，请检查您的网络连接是否正常!',
         getContainer: () => document.body.querySelector(`.${prefixCls}`) || document.body,
       });
-    } finally {
-      setLoading(false);
     }
-  }, []);
+  }, [createErrorModal, login, notification, prefixCls]);
   if (!getShow) {
     return null;
   }
@@ -89,7 +86,6 @@ const LoginForm: React.FC = () => {
             size="large"
             className="fix-auto-fill"
             placeholder="账号"
-            defaultValue={formData.account}
           />
         </Form.Item>
         <Form.Item
@@ -102,7 +98,7 @@ const LoginForm: React.FC = () => {
             },
           ]}
         >
-          <Input.Password size="large" placeholder="密码" defaultValue={formData.password} />
+          <Input.Password size="large" placeholder="密码" />
         </Form.Item>
 
         <Row className="enter-x">

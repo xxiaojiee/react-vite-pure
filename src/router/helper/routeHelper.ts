@@ -1,96 +1,97 @@
-import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
-// import type { Router, RouteRecordNormalized } from 'vue-router';
 
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '/@/router/constant';
+import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
+
+import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 // import { createRouter, createWebHashHistory } from 'vue-router';
 
 export type LayoutMapKey = 'LAYOUT';
-// const IFRAME = () => import('/@/views/sys/iframe/FrameBlank.vue');
+const IFRAME = load(() => import('/@/pages/sys/iframe/FrameBlank'));
 
-// const LayoutMap = new Map<string, () => Promise<typeof import('*.tsx')>>();
+const LayoutMap = new Map<string, (props: any) => JSX.Element>();
 
-// LayoutMap.set('LAYOUT', LAYOUT);
-// LayoutMap.set('IFRAME', IFRAME);
+LayoutMap.set('LAYOUT', LAYOUT);
+LayoutMap.set('IFRAME', IFRAME);
 
-// let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
+let dynamicViewsModules: Record<string, () => Promise<any>>;
 
 // Dynamic introduction
-// function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
-//   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
-//   if (!routes) return;
-//   routes.forEach((item) => {
-//     if (!item.component && item.meta?.frameSrc) {
-//       item.component = 'IFRAME';
-//     }
-//     const { component, name } = item;
-//     const { children } = item;
-//     if (component) {
-//       const layoutFound = LayoutMap.get(component.toUpperCase());
-//       if (layoutFound) {
-//         item.component = layoutFound;
-//       } else {
-//         item.component = dynamicImport(dynamicViewsModules, component as string);
-//       }
-//     } else if (name) {
-//       item.component = getParentLayout();
-//     }
-//     children && asyncImportRoute(children);
-//   });
-// }
+function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
+  dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../pages/**/*.tsx');
+  if (!routes) return;
+  routes.forEach((item) => {
+    const component = item.component as unknown as string;
+    if (!item.component && item.meta?.frameSrc) {
+      item.component = 'IFRAME';
+    }
+    const { name } = item;
+    const { children } = item;
+    if (component) {
+      const layoutFound = LayoutMap.get(component.toUpperCase());
+      if (layoutFound) {
+        item.component = layoutFound;
+      } else {
+        item.component = dynamicImport(dynamicViewsModules, component as string);
+      }
+    } else if (name) {
+      item.component = getParentLayout();
+    }
+    children && asyncImportRoute(children);
+  });
+}
 
-// function dynamicImport(
-//   dynamicViewsModules: Record<string, () => Promise<Recordable>>,
-//   component: string,
-// ) {
-//   const keys = Object.keys(dynamicViewsModules);
-//   const matchKeys = keys.filter((key) => {
-//     const k = key.replace('../../views', '');
-//     const startFlag = component.startsWith('/');
-//     const endFlag = component.endsWith('.vue') || component.endsWith('.tsx');
-//     const startIndex = startFlag ? 0 : 1;
-//     const lastIndex = endFlag ? k.length : k.lastIndexOf('.');
-//     return k.substring(startIndex, lastIndex) === component;
-//   });
-//   if (matchKeys?.length === 1) {
-//     const matchKey = matchKeys[0];
-//     return dynamicViewsModules[matchKey];
-//   } else if (matchKeys?.length > 1) {
-//     warn(
-//       'Please do not create `.vue` and `.TSX` files with the same file name in the same hierarchical directory under the views folder. This will cause dynamic introduction failure',
-//     );
-//     return;
-//   } else {
-//     warn('在src/views/下找不到`' + component + '.vue` 或 `' + component + '.tsx`, 请自行创建!');
-//     return EXCEPTION_COMPONENT;
-//   }
-// }
+function dynamicImport(
+  dynamicViewsModuleList: Record<string, () => Promise<any>>,
+  component: string,
+) {
+  const keys = Object.keys(dynamicViewsModuleList);
+  const matchKeys = keys.filter((key) => {
+    const k = key.replace('../../pages', '');
+    const startFlag = component.startsWith('/');
+    const endFlag = component.endsWith('.tsx');
+    const startIndex = startFlag ? 0 : 1;
+    const lastIndex = endFlag ? k.length : k.lastIndexOf('.');
+    return k.substring(startIndex, lastIndex) === component;
+  });
+  if (matchKeys?.length === 1) {
+    const matchKey = matchKeys[0];
+    return load(dynamicViewsModuleList[matchKey]);
+  } else if (matchKeys?.length > 1) {
+    warn(
+      '请不要在pages文件夹下的同一层级目录中创建同名的`.tsx`文件。 这会导致动态引入失败',
+    );
+    return undefined;
+  } else {
+    warn(`在src/pages/下找不到“${component}.tsx文件”, 请自行创建!`);
+    return EXCEPTION_COMPONENT;
+  }
+}
 
-// Turn background objects into routing objects
-// export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
-//   routeList.forEach((route) => {
-//     const component = route.component as string;
-//     if (component) {
-//       if (component.toUpperCase() === 'LAYOUT') {
-//         route.component = LayoutMap.get(component.toUpperCase());
-//       } else {
-//         route.children = [cloneDeep(route)];
-//         route.component = LAYOUT;
-//         route.name = `${route.name}Parent`;
-//         route.path = '';
-//         const meta = route.meta || {};
-//         meta.single = true;
-//         meta.affix = false;
-//         route.meta = meta;
-//       }
-//     } else {
-//       warn('请正确配置路由：' + route?.name + '的component属性');
-//     }
-//     route.children && asyncImportRoute(route.children);
-//   });
-//   return routeList as unknown as T[];
-// }
+// 将背景对象变成路由对象
+export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
+  routeList.forEach((route) => {
+    const component = route.component as unknown as string;
+    if (component) {
+      if (component.toUpperCase() === 'LAYOUT') {
+        route.component = LayoutMap.get(component.toUpperCase());
+      } else {
+        route.children = [cloneDeep(route)];
+        route.component = LAYOUT;
+        route.name = `${route.name}Parent`;
+        route.path = '';
+        const meta = route.meta || {};
+        meta.single = true;
+        meta.affix = false;
+        route.meta = meta;
+      }
+    } else {
+      warn(`请正确配置路由：${route?.name}的component属性`);
+    }
+    route.children && asyncImportRoute(route.children);
+  });
+  return routeList as unknown as T[];
+}
 
 /**
  * 将多级路由转换为 2 级路由
