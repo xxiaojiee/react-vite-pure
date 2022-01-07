@@ -46,8 +46,8 @@ export const basicRoutes = [
   LoginRoute,
   REDIRECT_ROUTE,
   ...mainOutRoutes,
-  PAGE_NOT_FOUND_ROUTE,
   RootRoute,
+  PAGE_NOT_FOUND_ROUTE,
 ];
 
 console.log('basicRoutes:', basicRoutes);
