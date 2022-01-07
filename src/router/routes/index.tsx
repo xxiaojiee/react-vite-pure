@@ -26,6 +26,7 @@ console.log('asyncRoutes:', asyncRoutes);
 export const RootRoute: AppRouteRecordRaw = {
   path: '/',
   name: 'Root',
+  exact: true,
   redirect: PageEnum.BASE_HOME,
   meta: {
     title: 'Root',

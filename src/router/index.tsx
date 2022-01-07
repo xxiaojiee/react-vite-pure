@@ -3,12 +3,17 @@ import type { UserInfo } from '/#/store';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { actions, useStoreState } from '/@/store';
+import { useDispatch } from 'react-redux'
+import { useGetUserInfoAction } from '/@/pages/sys/login/useLogin'
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { map } from 'lodash-es';
+import { useMount } from 'ahooks';
 import { PageEnum } from '/@/enums/pageEnum';
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import type { AppRouteRecordRaw } from '/@/router/types';
 import { useAppContainer } from '/@/components/Application';
+import { useBuildRoutesAction } from '/@/hooks/web/usePermission'
+import { useAfterLoginAction } from '/@/pages/sys/login'
 
 import { RootRoute } from '/@/router/routes';
 
@@ -16,30 +21,39 @@ const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
 const ROOT_PATH = RootRoute.path;
 
-// function usePermissionGuard(route) {
+const permissionActions = actions.permission
+
+// async function usePermissionGuard(route) {
+//   const dispatch = useDispatch();
 //   const userState = useStoreState('user');
-//   const permissionStore = usePermissionStoreWithOut();
+//   const permissionState = useStoreState('permission');
+//   const afterLoginAction = useAfterLoginAction()
+//   const getUserInfoAction = useGetUserInfoAction();
+//   const buildRoutesAction = useBuildRoutesAction();
 //   const getUserInfo = (): UserInfo => {
 //     return userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
 //   }
+//   const getToken = (): string => {
+//     return userState.token || getAuthCache<string>(TOKEN_KEY);
+//   };
 //   if (
 //     from.path === ROOT_PATH &&
 //     to.path === PageEnum.BASE_HOME &&
 //     getUserInfo().homePath &&
 //     getUserInfo().homePath !== PageEnum.BASE_HOME
 //   ) {
-//     next(userStore.getUserInfo.homePath);
+//     next(getUserInfo().homePath);
 //     return;
 //   }
 
-//   const token = userStore.getToken;
+//   const token = getToken();
 //   // 可以直接进入白名单
 //   if (whitePathList.includes(to.path as PageEnum)) {
 //     // 如果是登录页面且存在token
 //     if (to.path === LOGIN_PATH && token) {
-//       const isSessionTimeout = userStore.getSessionTimeout;
+//       const isSessionTimeout = userState.sessionTimeout;
 //       try {
-//         await userStore.afterLoginAction();
+//         await afterLoginAction();
 //         if (!isSessionTimeout) {
 //           next((to.query?.redirect as string) || '/');
 //           return;
@@ -74,33 +88,32 @@ const ROOT_PATH = RootRoute.path;
 //   if (
 //     from.path === LOGIN_PATH &&
 //     to.name === PAGE_NOT_FOUND_ROUTE.name &&
-//     to.fullPath !== (userStore.getUserInfo.homePath || PageEnum.BASE_HOME)
+//     to.fullPath !== (getUserInfo().homePath || PageEnum.BASE_HOME)
 //   ) {
-//     next(userStore.getUserInfo.homePath || PageEnum.BASE_HOME);
+//     next(getUserInfo().homePath || PageEnum.BASE_HOME);
 //     return;
 //   }
 //   // get userinfo while last fetch time is empty
-//   if (userStore.getLastUpdateTime === 0) {
+//   if (userState.getLastUpdateTime === 0) {
 //     try {
-//       await userStore.getUserInfoAction();
+//       await getUserInfoAction();
 //     } catch (err) {
 //       next();
 //       return;
 //     }
 //   }
-//   if (permissionStore.getIsDynamicAddedRoute) {
+//   if (permissionState.isDynamicAddedRoute) {
 //     next();
 //     return;
 //   }
 
-//   const routes = await permissionStore.buildRoutesAction();
+//   const routes = await buildRoutesAction();
 //   routes.forEach((route) => {
 //     router.addRoute(route as unknown as RouteRecordRaw);
 //   });
 
 //   router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw);
-
-//   permissionStore.setDynamicAddedRoute(true);
+//   dispatch(permissionActions.setDynamicAddedRoute(true))
 //   if (to.name === PAGE_NOT_FOUND_ROUTE.name) {
 //     // 动态添加路由后，此处应当重定向到fullPath，否则会加载404页面内容
 //     next({ path: to.fullPath, replace: true, query: to.query });
@@ -113,21 +126,22 @@ const ROOT_PATH = RootRoute.path;
 // }
 
 const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
-  // console.log('我是RouteWithSubRoutes', route);
+  // usePermissionGuard(route);
   return (
     <Route
       path={route.path}
+      exact ={route.exact}
       render={(props: any) => {
+        console.log('我是Route', route);
         const Comp = route.component;
         let Component: JSX.Element | null = null;
         if (route.redirect) {
           console.log('redirect:', route);
           Component = (
             <Redirect
-              push
               to={{
                 pathname: route.redirect,
-                state: { referrer: route.path }
+                state: { fromPath: route.path }
               }}
             />
           );
