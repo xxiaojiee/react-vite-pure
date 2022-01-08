@@ -1,4 +1,6 @@
-import type { AppRouteRecordRaw, Menu } from '/@/router/types';
+import type {  Menu } from '/@/router/types';
+import { setAuthCache } from '/@/utils/auth';
+import { IS_DYNAMIC_ADDED_ROUTE_KEY } from '/@/enums/cacheEnum';
 
 interface PermissionState {
   // 权限code列表
@@ -57,6 +59,7 @@ export default {
     },
 
     setDynamicAddedRoute(this: any, added: boolean) {
+      setAuthCache(IS_DYNAMIC_ADDED_ROUTE_KEY, added);
       this.setCurrentState({
         isDynamicAddedRoute: added
       })

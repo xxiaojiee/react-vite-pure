@@ -1,6 +1,6 @@
 import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
+import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, SESSION_TIMEOUT_KEY, LAST_UPDATE_TIME_KEY } from '/@/enums/cacheEnum';
 import { setAuthCache } from '/@/utils/auth';
 import { LoginStateEnum } from '/@/enums/pageEnum'
 
@@ -23,17 +23,17 @@ export default {
     token: undefined,
     // roleList
     roleList: [],
-    // Whether the login expired
+    // 登录是否过期
     sessionTimeout: false,
     // Last fetch time
     lastUpdateTime: 0,
   },
   reducers: {
     setToken(this: any, info: string | undefined) {
+      setAuthCache(TOKEN_KEY, info);
       this.setCurrentState({
         token: info || ''
       })
-      setAuthCache(TOKEN_KEY, info);
     },
     setLoginState(this: any, state: LoginStateEnum) {
       this.setCurrentState({
@@ -41,19 +41,22 @@ export default {
       })
     },
     setRoleList(this: any, roleList: RoleEnum[]) {
+      setAuthCache(ROLES_KEY, roleList);
       this.setCurrentState({
         roleList
       })
-      setAuthCache(ROLES_KEY, roleList);
     },
     setUserInfo(this: any, info: UserInfo | null) {
+      const time = new Date().getTime();
+      setAuthCache(USER_INFO_KEY, info);
+      setAuthCache(LAST_UPDATE_TIME_KEY, time);
       this.setCurrentState({
         userInfo: info,
-        lastUpdateTime: new Date().getTime(),
+        lastUpdateTime: time,
       })
-      setAuthCache(USER_INFO_KEY, info);
     },
     setSessionTimeout(this: any, flag: boolean) {
+      setAuthCache(SESSION_TIMEOUT_KEY, flag);
       this.setCurrentState({
         sessionTimeout: flag,
       })

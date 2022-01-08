@@ -40,6 +40,7 @@ export function useGetUserInfoAction() {
   const dispatch = useDispatch();
   return async function getUserInfoAction(): Promise<UserInfo | null> {
     if (!getToken()) return null;
+    // 获取用户信息
     const userInfo = await getUserInfo();
     const { roles = [] } = userInfo;
     if (isArray(roles)) {
@@ -64,12 +65,14 @@ export function useAfterLoginAction() {
   const { app, saveApp } = useAppContainer();
   return async function afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
     if (!getToken()) return null;
-    // get user info
+    // 1.获取用户信息
     const userInfo = await getUserInfoAction();
     const { sessionTimeout } = userState;
+    // 登录是否过期
     if (sessionTimeout) {
       disPatch(userActions.setSessionTimeout(false))
     }else {
+      // 路由是否已经动态添加
       if (!permissionState.isDynamicAddedRoute) {
         const routes = await buildRoutesAction();
         saveApp({

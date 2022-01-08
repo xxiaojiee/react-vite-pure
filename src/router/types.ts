@@ -13,6 +13,7 @@ export interface AppRouteRecordRaw extends Omit<RouteProps, 'component'> {
   components?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined | string | (() => Promise<any>);
   children?: AppRouteRecordRaw[];
   props?: Recordable;
+  isChildrenRoute?: boolean;
   fullPath?: string;
 }
 

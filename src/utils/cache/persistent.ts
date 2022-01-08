@@ -11,6 +11,9 @@ import {
   PROJ_CFG_KEY,
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
+  SESSION_TIMEOUT_KEY,
+  LAST_UPDATE_TIME_KEY,
+  IS_DYNAMIC_ADDED_ROUTE_KEY,
   // MULTIPLE_TABS_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
@@ -21,6 +24,9 @@ interface BasicStore {
   [ROLES_KEY]: string[];
   [LOCK_INFO_KEY]: LockInfo;
   [PROJ_CFG_KEY]: ProjectConfig;
+  [SESSION_TIMEOUT_KEY]: boolean;
+  [LAST_UPDATE_TIME_KEY]: number;
+  [IS_DYNAMIC_ADDED_ROUTE_KEY]: boolean;
 }
 
 type LocalStore = BasicStore;
