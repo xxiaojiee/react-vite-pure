@@ -1,4 +1,4 @@
-import { load } from '../constant';
+import { load, ROOT_NAME, LOGIN_NAME } from '../constant';
 
 import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
 
@@ -25,7 +25,7 @@ console.log('asyncRoutes:', asyncRoutes);
 
 export const RootRoute: AppRouteRecordRaw = {
   path: '/',
-  name: 'Root',
+  name: ROOT_NAME,
   exact: true,
   redirect: PageEnum.BASE_HOME,
   meta: {
@@ -35,7 +35,7 @@ export const RootRoute: AppRouteRecordRaw = {
 
 export const LoginRoute: AppRouteRecordRaw = {
   path: '/login',
-  name: 'Login',
+  name: LOGIN_NAME,
   component: load(() => import('../../pages/sys/login')),
   meta: {
     title: '登录',

@@ -11,6 +11,7 @@ import { actions, useStoreState } from '/@/store';
 import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
 import { useHistory } from 'react-router-dom';
+import { basicRoutes } from '/@/router/routes';
 import { useAppContainer } from '/@/components/Application';
 
 import type { UserInfo } from '/#/store';
@@ -72,14 +73,15 @@ export function useAfterLoginAction() {
     if (sessionTimeout) {
       disPatch(userActions.setSessionTimeout(false))
     }else {
-      // 路由是否已经动态添加
+      // 动态添加路由
       if (!permissionState.isDynamicAddedRoute) {
         const routes = await buildRoutesAction();
         saveApp({
           ...app,
-          routes:[...routes, ...app.routes]
+          routes:[...routes, ...basicRoutes]
         })
         disPatch(permissionActions.setDynamicAddedRoute(true))
+        console.log('获取路由成功：', routes);
       }
       goHome && (await history.replace(userInfo?.homePath || PageEnum.BASE_HOME));
     }

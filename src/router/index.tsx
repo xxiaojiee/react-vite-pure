@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import type { UserInfo } from '/#/store';
 import { Redirect, Route, Switch, RouteComponentProps } from 'react-router-dom';
-import { useHistory, Location } from 'react-router-dom';
+import * as H from 'history';
 import queryString from 'query-string';
 import { actions, useStoreState } from '/@/store';
 import { useDispatch } from 'react-redux';
@@ -18,12 +18,13 @@ import {
   LAST_UPDATE_TIME_KEY,
   IS_DYNAMIC_ADDED_ROUTE_KEY,
 } from '/@/enums/cacheEnum';
+import { ROOT_NAME, LOGIN_NAME, PAGE_NOT_FOUND_NAME } from '/@/router/constant';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import type { AppRouteRecordRaw } from '/@/router/types';
 import { useAppContainer } from '/@/components/Application';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 
-import { RootRoute } from '/@/router/routes';
+import { RootRoute, LoginRoute } from '/@/router/routes';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -32,6 +33,9 @@ const ROOT_PATH = RootRoute.path;
 const permissionActions = actions.permission;
 
 const whitePathList: PageEnum[] = [LOGIN_PATH];
+
+// 需要鉴权的路由
+const authRouteList: string[] = [ROOT_NAME, LOGIN_NAME, PAGE_NOT_FOUND_NAME];
 
 enum CompoentType {
   FRAGMENT = 'fragment',
@@ -53,25 +57,30 @@ interface RouterRenderProp extends RouteComponentProps {
 }
 
 const getType = (route, componentType = CompoentType.FRAGMENT) => {
-  let type = componentType;
   const Comp = route.component;
+  const { state } = route.location as H.Location;
+  console.log('state:', state);
+  const { redirect: fromRedirect } = (state as Record<string, any>)?.from?.[0] || {};
+
   if (route.redirect) {
-    type = CompoentType.REDIRECT;
+    // 防止无法渲染子路由，一直重定向到父路由
+    if (!fromRedirect || !fromRedirect.startsWith(route.path)) {
+      return CompoentType.REDIRECT;
+    }
   }
   if (route.children && Comp) {
-    type = CompoentType.COMDYNAMIC;
+    return CompoentType.COMDYNAMIC;
   }
   if (route.children && !Comp) {
-    type = CompoentType.DYNAMIC;
+    return CompoentType.DYNAMIC;
   }
   if (!route.children && Comp) {
-    type = CompoentType.COMPONENT;
+    return CompoentType.COMPONENT;
   }
-
-  return type;
+  return componentType;
 };
 
-function usePermissionRoute(route: AppRouteRecordRaw, routerConfig: RouterConfigProp) {
+function usePermissionRoute(route: AppRouteRecordRaw) {
   const dispatch = useDispatch();
   const userState = useStoreState('user');
   const permissionState = useStoreState('permission');
@@ -80,142 +89,94 @@ function usePermissionRoute(route: AppRouteRecordRaw, routerConfig: RouterConfig
   const buildRoutesAction = useBuildRoutesAction();
   const { app, saveApp } = useAppContainer();
   return async function getRouteConfig() {
-    console.log('进入鉴权');
-    const { pathname, search, hash, state = {} } = route.location as Location;
-    const { fromLocation } = state;
-    const fromQuery = queryString.parse(fromLocation?.search);
+    console.log('进入鉴权', route);
+    const { name: routeName } = route;
+    const { pathname, search, hash } = route.location as H.Location;
     const query = queryString.parse(search);
     const fullPath = `${pathname}${search || ''}${hash || ''}`;
-    const userInfo = userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
+    let userInfo = userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
     const token = userState.token || getAuthCache<string>(TOKEN_KEY);
     const sessionTimeout = userState.sessionTimeout || getAuthCache<string>(SESSION_TIMEOUT_KEY);
     const lastUpdateTime = userState.lastUpdateTime || getAuthCache<string>(LAST_UPDATE_TIME_KEY);
     const { isDynamicAddedRoute } = permissionState;
+    console.log('是否获取了动态路由：', isDynamicAddedRoute);
 
-    const compType = getType(route, routerConfig.componentType);
-
-    // 当用户已登录，用户配置的首页与路由首页不匹配时， 当跳到路由首页时重定向到用户的首页
-    if (
-      fromLocation?.pathname === ROOT_PATH &&
-      pathname === PageEnum.BASE_HOME &&
-      userInfo.homePath &&
-      userInfo.homePath !== PageEnum.BASE_HOME
-    ) {
-      console.log('当跳到路由首页时重定向到用户的首页');
-      return {
-        componentType: CompoentType.REDIRECT,
-        redirectPath: userInfo.homePath,
-      };
-    }
-
-    // 可以直接进入白名单
-    if (whitePathList.includes(pathname as PageEnum)) {
-      console.log('进入白名单');
-      // 如果是登录页面且存在token
-      if (pathname === LOGIN_PATH && token) {
-        try {
-          await afterLoginAction();
-          // 登录是否过期
-          if (!sessionTimeout) {
-            return {
-              componentType: CompoentType.REDIRECT,
-              redirectPath: (query?.redirect as string) || '/',
-            };
-          }
-        } catch {}
-      }
-
+    const compType = getType(route);
+    console.log('获取type:', route);
+    // 如果该页面不需要授权，将直接访问（需要将路由 meta.ignoreAuth 设置为 true）
+    if (route.meta.ignoreAuth) {
       return {
         componentType: compType,
       };
     }
 
-    // token 不存在
-    if (!token) {
-      console.log('进入没登录');
-      // 如果该页面不需要授权，将直接访问（需要将路由 meta.ignoreAuth 设置为 true）
-      if (route.meta.ignoreAuth) {
+    // 已登录并已经动态添加了路由
+    if (isDynamicAddedRoute) {
+      // 如果有重定向，直接重定向
+      if (route.redirect) {
         return {
-          componentType: compType,
+          componentType: CompoentType.REDIRECT,
         };
       }
-      // 重定向到登录页面
+      console.log('已登录并获得了动态路由，直接跳转');
+      // 处理登录后跳转到404页面
+      // 当用户已登录，用户配置的首页与路由首页不匹配时， 当跳到路由首页时重定向到用户的首页
+      if (
+        routeName === PAGE_NOT_FOUND_NAME &&
+        fullPath !== (userInfo.homePath || PageEnum.BASE_HOME)
+      ) {
+        console.log('处理登录后');
+        return {
+          componentType: CompoentType.REDIRECT,
+          redirectPath: userInfo.homePath || PageEnum.BASE_HOME,
+        };
+      }
+      return {
+        componentType: compType,
+      };
+    }
+
+    // 未登录或者已登录但过期的
+    if (!token || (token && sessionTimeout)) {
+      console.log('未登录， 跳到登录页');
+      // 未登录， 跳到登录页
       const config: RouterConfigProp = {
         componentType: CompoentType.REDIRECT,
         redirectPath: LOGIN_PATH,
       };
-      if (pathname && pathname !== ROOT_PATH) {
+      if (pathname && routeName === PAGE_NOT_FOUND_NAME) {
         config.redirectSearch = `?redirect=${pathname}`;
       }
-
       return config;
-    }
-
-    // 处理登录后跳转到404页面
-    if (
-      fromLocation?.pathname === LOGIN_PATH &&
-      pathname === PAGE_NOT_FOUND_ROUTE.name &&
-      fullPath !== (userInfo.homePath || PageEnum.BASE_HOME)
-    ) {
-      console.log('处理登录后');
-      return {
-        componentType: CompoentType.REDIRECT,
-        redirectPath: userInfo.homePath || PageEnum.BASE_HOME,
-      };
-    }
-
-    // 当上次获取用户信息时间为空时获取用户信息
-    if (lastUpdateTime === 0) {
-      console.log('获取用户信息');
-      try {
-        await getUserInfoAction();
-      } catch (err) {
-        return {
-          componentType: compType,
-        };
-      }
-    }
-
-    // 路由是否已经动态添加
-    if (isDynamicAddedRoute) {
-      console.log('已添加路由');
-      return {
-        componentType: compType,
-      };
-    }
-
-    console.log('添加路由');
-    const routes = await buildRoutesAction();
-    console.log('获取到了routes', routes);
-    saveApp({
-      ...app,
-      routes: [...routes, ...app.routes],
-    });
-    dispatch(permissionActions.setDynamicAddedRoute(true));
-
-    if (pathname === PAGE_NOT_FOUND_ROUTE.name) {
-      console.log('重定向到fullPath');
-      // 动态添加路由后，此处应当重定向到fullPath，否则会加载404页面内容
-      return {
-        componentType: CompoentType.REDIRECT,
-        redirectPath: fullPath,
-      };
     } else {
-      console.log('重定向到最后');
-      const redirectPath = (fromQuery?.redirect || pathname) as string;
-      const redirect = decodeURIComponent(redirectPath);
-      const nextData =
-        pathname === redirect
-          ? {
-              componentType: compType,
-            }
-          : {
-              componentType: CompoentType.REDIRECT,
-              redirectPath: redirect,
-            };
-
-      return nextData;
+      console.log('已有token，获取用户信息', token, pathname);
+      // 获取动态路由后，会重新渲染页面，不在其他处理
+      afterLoginAction();
+      // 如果有重定向，直接重定向
+      // if (route.redirect) {
+      //   console.log('我重定向啦');
+      //   return {
+      //     componentType: CompoentType.REDIRECT,
+      //   };
+      // }
+      // if (['ROOT_NAME', 'LOGIN_PATH'].includes(routeName)) {
+      //   console.log(333333333, userInfo?.homePath || PageEnum.BASE_HOME);
+      //   return {
+      //     componentType: CompoentType.REDIRECT,
+      //     redirectPath: userInfo?.homePath || PageEnum.BASE_HOME,
+      //   };
+      // }
+      // if (routeName === PAGE_NOT_FOUND_NAME) {
+      //   console.log(444444444444444, fullPath);
+      //   // 动态添加路由后，此处应当重定向到fullPath，否则会加载404页面内容
+      //   return {
+      //     componentType: CompoentType.REDIRECT,
+      //     redirectPath: fullPath,
+      //   };
+      // }
     }
+    console.log('没找到相关配置');
+    return false;
   };
 }
 
@@ -223,14 +184,19 @@ function RouterRender(props: RouterRenderProp) {
   const { route, routerConfig, ...routerRenderProp } = props;
   const { componentType, redirectPath, redirectSearch } = routerConfig;
   const Comp = route.component!;
+  const { state } = route.location as H.Location;
+  const fromRoute = (state as Record<string, any>)?.from || [];
   switch (componentType) {
     case CompoentType.REDIRECT:
+      console.log(6666, [route, ...fromRoute]);
       return (
         <Redirect
           to={{
             pathname: redirectPath || route.redirect,
             search: redirectSearch || '',
-            state: { fromLocation: route.location },
+            state: {
+              from: [route, ...fromRoute],
+            },
           }}
         />
       );
@@ -251,30 +217,50 @@ function RouterRender(props: RouterRenderProp) {
 }
 
 const RouteWithSubRoutes = (route: AppRouteRecordRaw) => {
+  console.log('route:', route);
   const isGone = useRef(false); // 是否卸载
   const { app } = useAppContainer();
-  const [routerConfig, setRouterConfig] = useState({
-    componentType: route.isChildrenRoute ? getType(route) : CompoentType.FRAGMENT,
+  const getRouteConfig = usePermissionRoute(route);
+  const { state } = route.location as H.Location;
+  const fromRoute = (state as Record<string, any>)?.from;
+  const getIsNeedAuth = () => {
+    if (authRouteList.includes(route.name)) {
+      if (!fromRoute) {
+        return true;
+      }
+      if (fromRoute) {
+        // 是否之前授权过
+        const isBeAuth = fromRoute.some((i) => {
+          return authRouteList.includes(i.name);
+        });
+        console.log('isBeAuth:', isBeAuth);
+        return !isBeAuth;
+      }
+    }
+    return false; // 是否需要鉴权
+  };
+  const [routerConfig, setRouterConfig] = useState(() => {
+    console.log('是否需要鉴权：', getIsNeedAuth());
+    return {
+      componentType: getIsNeedAuth() ? CompoentType.FRAGMENT : getType(route),
+    };
   });
-  const getRouteConfig = usePermissionRoute(route, routerConfig);
   useMount(async () => {
-    console.log('调用useMount00000000');
-    if (route.isChildrenRoute) {
+    if (!getIsNeedAuth()) {
       return;
     }
-    console.log('初始化', route);
+    console.log('1111111111111111111111');
     const config = await getRouteConfig();
-    if (isGone.current) {
-      console.log('获取配置失败', route);
+
+    if (isGone.current || !config) {
       return;
     }
-    console.log('获取配置成功', config, app.routes);
+    console.log('999999999999999', config, app.routes);
     setRouterConfig(config);
   });
   useUnmount(async () => {
     isGone.current = true;
   });
-  console.log('是否是子路由:', route.name, route.isChildrenRoute, routerConfig.componentType);
   return (
     <Route
       path={route.path}
@@ -305,6 +291,6 @@ const DynamicRoute = ({
 
 export default function Routes() {
   const { app } = useAppContainer();
-  console.log('我是主路由1111111111111111111111111');
+  console.log('路由：', app.routes);
   return <DynamicRoute routes={app.routes} />;
 }
