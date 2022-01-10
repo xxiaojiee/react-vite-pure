@@ -15,7 +15,6 @@ export const mainOutRoutes: AppRouteModule[] = [
     component: load(() => import('../../pages/main-out')),
     meta: {
       title: 'MainOut',
-      ignoreAuth: true,
     },
   },
 ];

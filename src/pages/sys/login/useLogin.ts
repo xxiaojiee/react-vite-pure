@@ -3,17 +3,17 @@ import { LoginStateEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { PageEnum } from '/@/enums/pageEnum';
 import { getToken } from '/@/utils/auth';
-import type { ErrorMessageMode } from '/#/axios';
 import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
-import { GetUserInfoModel, LoginParams } from '/@/api/sys/types/user';
+import { LoginParams } from '/@/api/sys/types/user';
 import { actions, useStoreState } from '/@/store';
 import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
 import { useHistory } from 'react-router-dom';
 import { basicRoutes } from '/@/router/routes';
-import { useAppContainer } from '/@/components/Application';
 
+import type { ErrorMessageMode } from '/#/axios';
+import type { AppRouteRecordRaw } from '/@/router/types';
 import type { UserInfo } from '/#/store';
 
 const userActions = actions.user
@@ -63,8 +63,7 @@ export function useAfterLoginAction() {
   const getUserInfoAction = useGetUserInfoAction();
   const buildRoutesAction = useBuildRoutesAction();
   const history = useHistory();
-  const { app, saveApp } = useAppContainer();
-  return async function afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
+  return async function afterLoginAction(goHome?: boolean): Promise<UserInfo | null> {
     if (!getToken()) return null;
     // 1.获取用户信息
     const userInfo = await getUserInfoAction();
@@ -72,14 +71,13 @@ export function useAfterLoginAction() {
     // 登录是否过期
     if (sessionTimeout) {
       disPatch(userActions.setSessionTimeout(false))
-    }else {
+    } else {
       // 动态添加路由
       if (!permissionState.isDynamicAddedRoute) {
         const routes = await buildRoutesAction();
-        saveApp({
-          ...app,
-          routes:[...routes, ...basicRoutes]
-        })
+        if (userInfo) {
+          userInfo.routes = [...routes, ...basicRoutes]
+        }
         disPatch(permissionActions.setDynamicAddedRoute(true))
         console.log('获取路由成功：', routes);
       }
@@ -95,7 +93,7 @@ export function useLogin() {
   return async function login(params: LoginParams & {
     goHome?: boolean;
     mode?: ErrorMessageMode;
-  }): Promise<GetUserInfoModel | null> {
+  }): Promise<UserInfo | null> {
     try {
       const { goHome = true, mode, ...loginParams } = params;
       const data = await loginApi(loginParams, mode);

@@ -1,6 +1,7 @@
 import { ErrorTypeEnum } from '/@/enums/exceptionEnum';
 import { MenuModeEnum, MenuTypeEnum } from '/@/enums/menuEnum';
-import { RoleInfo } from '/@/api/sys/model/userModel';
+import type { AppRouteRecordRaw } from '/@/router/types';
+import { RoleInfo } from '/@/api/sys/types/user';
 
 // Lock screen information
 export interface LockInfo {
@@ -38,6 +39,7 @@ export interface UserInfo {
   desc?: string;
   homePath?: string;
   roles: RoleInfo[];
+  routes: AppRouteRecordRaw[]
 }
 
 export interface BeforeMiniState {

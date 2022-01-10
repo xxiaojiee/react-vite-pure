@@ -38,6 +38,7 @@ const LoginForm: React.FC = () => {
       setLoading(true);
 
       const userInfo = await login({
+        goHome: true,
         password: data.password,
         username: data.account,
         mode: 'none', // 不要默认的错误提示
@@ -82,11 +83,7 @@ const LoginForm: React.FC = () => {
             },
           ]}
         >
-          <Input
-            size="large"
-            className="fix-auto-fill"
-            placeholder="账号"
-          />
+          <Input size="large" className="fix-auto-fill" placeholder="账号" />
         </Form.Item>
         <Form.Item
           name="password"

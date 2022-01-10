@@ -12,12 +12,6 @@ export const ROLES_KEY = 'ROLES__KEY__';
 // session timeout key
 export const SESSION_TIMEOUT_KEY = 'SESSION__TIMEOUT__KEY__';
 
-// last update time key
-export const LAST_UPDATE_TIME_KEY = 'LAST__UPDATE__TIMT__KEY__';
-
-// is Dynamic Added Route  key
-export const IS_DYNAMIC_ADDED_ROUTE_KEY = 'IS__DYNAMIC__ADDED__ROUTE__KEY__';
-
 // project config key
 export const PROJ_CFG_KEY = 'PROJ__CFG__KEY__';
 

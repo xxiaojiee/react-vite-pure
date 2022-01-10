@@ -1,11 +1,9 @@
 import { useImmer } from 'use-immer';
 import { createContainer } from 'unstated-next';
-import type { AppRouteModule } from '/@/router/types';
 
 export interface AppContainerProp {
   prefixCls: string;
   isMobile: boolean;
-  routes: AppRouteModule[];
 }
 
 export const useApp = (initialState) => {

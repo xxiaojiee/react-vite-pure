@@ -2,7 +2,6 @@ import React from 'react';
 import { useMount } from 'ahooks';
 import { AppProvider, AppContainerProp } from './useAppContext';
 import { useInitAppConfigStore } from '/@/logics/initAppConfig';
-import { basicRoutes } from '/@/router/routes';
 import { prefixCls } from '/@/settings/designSetting';
 
 interface AppProviderIndexProp {
@@ -18,7 +17,6 @@ const AppProviderIndex: React.FC<AppProviderIndexProp> = ({ children }) => {
   const appInitialState: AppContainerProp = {
     prefixCls,
     isMobile: false,
-    routes: basicRoutes,
   };
   return <AppProvider initialState={appInitialState}>{children}</AppProvider>;
 };

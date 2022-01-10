@@ -1,6 +1,6 @@
 import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, SESSION_TIMEOUT_KEY, LAST_UPDATE_TIME_KEY } from '/@/enums/cacheEnum';
+import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, SESSION_TIMEOUT_KEY } from '/@/enums/cacheEnum';
 import { setAuthCache } from '/@/utils/auth';
 import { LoginStateEnum } from '/@/enums/pageEnum'
 
@@ -49,7 +49,6 @@ export default {
     setUserInfo(this: any, info: UserInfo | null) {
       const time = new Date().getTime();
       setAuthCache(USER_INFO_KEY, info);
-      setAuthCache(LAST_UPDATE_TIME_KEY, time);
       this.setCurrentState({
         userInfo: info,
         lastUpdateTime: time,
