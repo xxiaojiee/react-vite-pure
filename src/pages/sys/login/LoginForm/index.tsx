@@ -5,8 +5,7 @@ import { LoginStateEnum } from '/@/enums/pageEnum';
 import { getMessage } from '/@/hooks/web/getMessage';
 import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'antd';
 import classNames from 'classnames';
-import { actions, useStoreState } from '/@/store';
-import { useLoginState, useFormRules, useLogin } from '../useLogin';
+import { useLoginState, useLogin } from '../useLogin';
 import { useDesign } from '/@/hooks/web/useDesign';
 import {
   GithubFilled,

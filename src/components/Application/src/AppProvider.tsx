@@ -11,6 +11,7 @@ interface AppProviderIndexProp {
 const AppProviderIndex: React.FC<AppProviderIndexProp> = ({ children }) => {
   const initAppConfig = useInitAppConfigStore();
   useMount(() => {
+    console.log('初始化系统内部配置initAppConfig');
     // 初始化系统内部配置
     initAppConfig();
   });

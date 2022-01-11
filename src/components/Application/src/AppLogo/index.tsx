@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import logo from '/@/assets/images/logo.png';
 import { PageEnum } from '/@/enums/pageEnum';
-import './AppLogo.less';
+import './index.less';
 
 interface AppLogoProp {
   /**

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { localeList, LOCALE } from '/@/settings/localeSetting';
 import { useDesign } from '/@/hooks/web/useDesign';
 import language from '/@/assets/images/language.png';
-import './AppLocalePicker.less';
+import './index.less';
 
 interface AppLocalePickerProp {
   /**

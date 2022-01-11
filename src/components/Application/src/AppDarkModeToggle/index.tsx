@@ -8,7 +8,7 @@ import { ThemeEnum } from '/@/enums/appEnum';
 import moon from '/@/assets/icon/moon.svg';
 import sun from '/@/assets/icon/sun.svg';
 
-import './AppDarkModeToggle.less';
+import './index.less';
 
 const AppLocalePicker: React.FC = () => {
   const { prefixCls } = useDesign('dark-switch');
