@@ -8,7 +8,7 @@ import { useLoginState } from '../useLogin';
 import login from '/@/assets/images/logo.png';
 
 const QrCodeForm: React.FC = () => {
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('https://vvbin.cn/next/login');
+  const [qrCodeUrl] = useState<string>('https://vvbin.cn/next/login');
   const { handleBackLogin, getLoginState } = useLoginState();
 
   const getShow = getLoginState() === LoginStateEnum.QR_CODE;

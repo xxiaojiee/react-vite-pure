@@ -13,7 +13,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import { useLockPage } from '/@/hooks/web/useLockPage';
-import { load } from '/@/router/constant';
+import { load, getAuthority } from '/@/router/constant';
 
 import { BasicLayoutProps as ProLayoutProps } from '@ant-design/pro-layout';
 
@@ -61,4 +61,4 @@ const DefaultLayout = (props: BasicLayoutProps) => {
   );
 };
 
-export default DefaultLayout;
+export default getAuthority(DefaultLayout);
