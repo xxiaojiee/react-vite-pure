@@ -108,12 +108,11 @@ export function useLogin() {
 
 export function useFormValid<T extends Object = any>(formRef: any) {
   async function validForm() {
-    const form = formRef();
+    const form = formRef.current;
     if (!form) return;
-    const data = await form.validate();
+    const data = await form.validateFields();
     return data as T;
   }
-
   return { validForm };
 }
 

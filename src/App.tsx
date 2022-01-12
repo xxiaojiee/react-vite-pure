@@ -8,9 +8,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import Routes from './router';
 import { ConfigProvider } from 'antd';
-import Application from '/@/components/Application';
-
-const { AppProvider } = Application;
+import { AppProvider } from '/@/components/Application';
 
 const App = () => {
   return (

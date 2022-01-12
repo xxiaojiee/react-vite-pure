@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useRef } from 'react';
 import { Form, Input, Button } from 'antd';
 import { CountdownInput } from '/@/components/CountDown';
-import type { ProFormInstance } from '@ant-design/pro-form';
+import type { FormInstance } from 'antd/lib/form';
 
 import { LoginStateEnum } from '/@/enums/pageEnum';
 import { useLoginState } from '../useLogin';
@@ -10,7 +10,7 @@ import LoginFormTitle from '../LoginFormTitle';
 
 const ForgetPasswordForm: React.FC = () => {
   const [loading] = useState(false);
-  const formRef = useRef<ProFormInstance | null>(null);
+  const formRef = useRef<FormInstance | null>(null);
   const { handleBackLogin, getLoginState } = useLoginState();
   const formData = {
     account: '',

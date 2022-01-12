@@ -1,15 +1,8 @@
 
-import AppProvider from './src/AppProvider';
-import AppLocalePicker from './src/AppLocalePicker';
-import AppDarkModeToggle from './src/AppDarkModeToggle';
-import AppLogo from './src/AppLogo';
+
+export { default as AppProvider } from './src/AppProvider';
+export { default as AppDarkModeToggle } from './src/AppDarkModeToggle';
+export { default as AppLogo } from './src/AppLogo';
+export { default as AppLocalePicker } from './src/AppLocalePicker';
 
 export { useAppContainer } from './src/useAppContext';
-
-
-export default {
-  AppProvider,
-  AppLogo,
-  AppLocalePicker,
-  AppDarkModeToggle,
-}

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useRef } from 'react';
 import LoginFormTitle from '../LoginFormTitle';
 import { Form, Input, Button, Checkbox } from 'antd';
-import type { ProFormInstance } from '@ant-design/pro-form';
+import type { FormInstance } from 'antd/lib/form';
 import { StrengthMeter } from '/@/components/StrengthMeter';
 import { CountdownInput } from '/@/components/CountDown';
 import { LoginStateEnum } from '/@/enums/pageEnum';
@@ -13,7 +13,7 @@ const InputPassword = Input.Password;
 const ForgetPasswordForm: React.FC = () => {
   const [loading] = useState(false);
   const { handleBackLogin, getLoginState } = useLoginState();
-  const formRef = useRef<ProFormInstance | null>(null);
+  const formRef = useRef<FormInstance | null>(null);
   const getShow = getLoginState() === LoginStateEnum.REGISTER;
   const { validForm } = useFormValid(formRef);
   const formData = {
@@ -35,7 +35,6 @@ const ForgetPasswordForm: React.FC = () => {
   }
   return (
     <>
-      {' '}
       <LoginFormTitle />
       <Form className="p-4 enter-x" initialValues={formData} ref={formRef}>
         <FormItem

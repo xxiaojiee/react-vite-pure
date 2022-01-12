@@ -3,13 +3,15 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useStoreState } from '/@/store';
 import { getGlobSetting } from '/@/hooks/setting';
 import logoBoxBg from '/@/assets/svg/login-box-bg.svg';
-import Application from '/@/components/Application';
+import { AppLogo, AppLocalePicker, AppDarkModeToggle } from '/@/components/Application';
 import ForgetPasswordForm from './ForgetPasswordForm';
 import RegisterForm from './RegisterForm';
+import MobileForm from './MobileForm';
+import QrCodeForm from './QrCodeForm';
 import LoginForm from './LoginForm';
 import './index.less';
 
-const { AppLogo, AppLocalePicker, AppDarkModeToggle } = Application;
+
 
 interface LoginProps {
   sessionTimeout: boolean;
@@ -56,6 +58,8 @@ const Login: React.FC<LoginProps> = (props) => {
               <LoginForm />
               <ForgetPasswordForm />
               <RegisterForm />
+              <MobileForm />
+              <QrCodeForm />
             </div>
           </div>
         </div>

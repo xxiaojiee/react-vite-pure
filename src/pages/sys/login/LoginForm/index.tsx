@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
-import type { ProFormInstance } from '@ant-design/pro-form';
+import type { FormInstance } from 'antd/lib/form';
 import LoginFormTitle from '../LoginFormTitle';
 import { LoginStateEnum } from '/@/enums/pageEnum';
 import { getMessage } from '/@/hooks/web/getMessage';
@@ -17,7 +17,7 @@ import {
 
 const LoginForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const formRef = useRef<ProFormInstance | null>(null);
+  const formRef = useRef<FormInstance | null>(null);
   const { notification, createErrorModal } = getMessage();
   const { prefixCls } = useDesign('login');
   const { setLoginState, getLoginState } = useLoginState();
