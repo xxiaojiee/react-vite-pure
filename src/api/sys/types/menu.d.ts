@@ -1,4 +1,5 @@
 import type { RouteMeta } from 'react-router';
+
 export interface RouteItem {
   path: string;
   component: any;

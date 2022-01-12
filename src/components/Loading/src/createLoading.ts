@@ -1,7 +1,8 @@
-import React, { createElement, useRef } from 'react';
+import React, { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import type { LoadingProps } from './typing';
 import Loading from './Loading';
+import type { PortalRef } from './Loading';
 
 function getPopupContainer() {
   const div = document.createElement('div');
@@ -9,21 +10,25 @@ function getPopupContainer() {
   return div;
 };
 
-export function createLoading(props?: LoadingProps, target: HTMLElement = getPopupContainer()) {
+export interface LoadProps {
+  Vm: React.ReactElement<any, string | React.JSXElementConstructor<any>>;
+  close: () => void;
+  open: () => void;
+  setTip: (tip: string) => void;
+  setLoading: (loading: boolean) => void;
+  readonly loading: boolean | undefined;
+  readonly $el: PortalRef;
+}
 
+export function createLoading(props?: LoadingProps, target: HTMLElement = getPopupContainer()): loadProps {
+  const loadingRef = React.createRef<PortalRef>();
   const data: LoadingProps = {
     tip: '',
     loading: true,
     ...props,
   };
 
-  const Vm: React.ReactElement = createElement(Loading, { ...data });
-
-
-  setTimeout(() => {
-
-
-  }, 2000);
+  const Vm: React.ReactElement = createElement(Loading, { ref: loadingRef, ...data });
 
   function close() {
     unmountComponentAtNode(target);
@@ -38,18 +43,17 @@ export function createLoading(props?: LoadingProps, target: HTMLElement = getPop
     close,
     open,
     setTip: (tip: string) => {
-      data.tip = tip;
+      loadingRef.current?.setTips(tip);
     },
     setLoading: (loading: boolean) => {
-      data.loading = loading;
-      console.log(4444444, data.loading);
+      loadingRef.current?.setLoading(loading);
     },
-    get isshow() {
-      console.log(66666666666);
+    get loading() {
+      loadingRef.current?.getLoading();
       return data.loading;
     },
     get $el() {
-      return Vm as React.ReactElement;
+      return loadingRef.current as PortalRef;
     },
   };
 }

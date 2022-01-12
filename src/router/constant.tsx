@@ -1,5 +1,5 @@
 import React, { ComponentType, lazy, Suspense } from 'react';
-import { createLoading } from '/@/components/Loading';
+import { createLoading, LoadProps } from '/@/components/Loading';
 import { Spin } from 'antd';
 import { useMount } from 'ahooks';
 import { SizeEnum } from '/@/enums/sizeEnum';
@@ -53,20 +53,11 @@ export const LAYOUT = load(() => import('/@/layouts/default/index'));
  * @description: 组件添加授权
  */
 export const getAuthority = (Compoent) => {
-  const loading = createLoading({
-    tip: '加载中。。。',
-  });
+  // const loading = createLoading();
   return function (props) {
-    useMount(() => {
-      loading.open();
-      setTimeout(() => {
-        loading.setLoading(false);
-        console.log('loading1:', loading.loading);
-      }, 1000);
-      setTimeout(() => {
-        console.log('loading2:', loading.loading);
-      }, 3000);
-    });
+    // useMount(() => {
+    //   loading.open();
+    // });
     return <Compoent {...props} />;
   };
 };
