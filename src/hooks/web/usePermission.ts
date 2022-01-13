@@ -9,7 +9,7 @@ import { getMessage } from '/@/hooks/web/getMessage';
 import { useDispatch } from 'react-redux'
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
-import { ERROR_LOG_ROUTE, PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
+import { ERROR_LOG_ROUTE } from '/@/router/routes/basic';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { PageEnum } from '/@/enums/pageEnum';
 import projectSetting from '/@/settings/projectSetting';
@@ -69,18 +69,18 @@ export function useBuildRoutesAction() {
     /**
      * @description 根据设置的首页path，修正routes中的affix标记（固定首页）
      * */
-    const patchHomeAffix = (routeList: AppRouteRecordRaw[]) => {
-      if (!routeList || routeList.length === 0) return;
+    const patchHomeAffix = (routeLists: AppRouteRecordRaw[]) => {
+      if (!routeLists || routeLists.length === 0) return;
       const getUserInfo = (): UserInfo => {
         return userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
       };
       let homePath: string = getUserInfo().homePath || PageEnum.BASE_HOME;
-      function patcher(routeLists: AppRouteRecordRaw[], parentPath = '') {
+      function patcher(routeListsd: AppRouteRecordRaw[], parentPath = '') {
         let newParentPath = parentPath;
         if (newParentPath) {
           newParentPath += '/'
         };
-        routeLists.forEach((route: AppRouteRecordRaw) => {
+        routeListsd.forEach((route: AppRouteRecordRaw) => {
           const { path, children, redirect } = route;
           const currentPath = (path as string).startsWith('/') ? (path as string) : `${newParentPath}${path}`;
           if (currentPath === homePath) {
@@ -95,12 +95,11 @@ export function useBuildRoutesAction() {
         });
       }
       try {
-        patcher(routeList);
+        patcher(routeLists);
       } catch (e) {
         // 已处理完毕跳出循环
       }
     };
-    console.log('permissionMode:', permissionMode);
     switch (permissionMode) {
       case PermissionModeEnum.ROLE:
         routes = filter(asyncRoutes, routeFilter);
@@ -157,7 +156,7 @@ export function useBuildRoutesAction() {
         break;
     }
     patchHomeAffix(routes);
-    routes = ERROR_LOG_ROUTE.concat(routes);
+    routes = [...ERROR_LOG_ROUTE, ...routes];
     return routes;
   }
 }

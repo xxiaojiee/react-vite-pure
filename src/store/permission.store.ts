@@ -1,5 +1,5 @@
 import type {  Menu } from '/@/router/types';
-import { setAuthCache } from '/@/utils/auth';
+// import { basicRoutes } from '/@/router/routes';
 
 interface PermissionState {
   // 权限code列表
@@ -22,6 +22,8 @@ export default {
     isDynamicAddedRoute: false,
     // 触发菜单更新
     lastBuildMenuTime: 0,
+    // 路由列表
+    // routes: basicRoutes,
     // 后台菜单列表
     backMenuList: [],
     // menu List

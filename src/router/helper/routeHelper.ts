@@ -1,18 +1,12 @@
 
 import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
 
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
+import { getParentLayout, IFRAME, LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 // import { createRouter, createWebHashHistory } from 'vue-router';
 
 export type LayoutMapKey = 'LAYOUT';
-const IFRAME = load(() => import('/@/pages/sys/iframe/FrameBlank'));
-
-const LayoutMap = new Map<string, (props: any) => JSX.Element>();
-
-LayoutMap.set('LAYOUT', LAYOUT);
-LayoutMap.set('IFRAME', IFRAME);
 
 let dynamicViewsModules: Record<string, () => Promise<any>>;
 
@@ -28,10 +22,11 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
     const { name } = item;
     const { children } = item;
     if (component) {
-      const layoutFound = LayoutMap.get(component.toUpperCase());
-      if (layoutFound) {
-        item.component = layoutFound;
-      } else {
+      if (component.toUpperCase() === 'LAYOUT') {
+        item.component = LAYOUT;
+      } else if (component.toUpperCase() === 'IFRAME') {
+        item.component = IFRAME;
+      } else{
         item.component = dynamicImport(dynamicViewsModules, component as string);
       }
     } else if (name) {
@@ -74,7 +69,7 @@ export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModul
     const component = route.component as unknown as string;
     if (component) {
       if (component.toUpperCase() === 'LAYOUT') {
-        route.component = LayoutMap.get(component.toUpperCase());
+        route.component = LAYOUT;
       } else {
         route.children = [cloneDeep(route)];
         route.component = LAYOUT;

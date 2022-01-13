@@ -25,9 +25,7 @@ const Loading = forwardRef<PortalRef, LoadingProps>((props, ref) => {
   } = props!;
   const [load, setLoad] = useState<boolean>(loading);
   const [tips, setTips] = useState<string>(tip);
-  console.log('load:', load);
   useUpdateEffect(() => {
-    console.log('loading11111:', loading);
     setLoad(loading);
   }, [loading]);
   useUpdateEffect(() => {

@@ -1,9 +1,8 @@
 
-import { LoginStateEnum } from '/@/enums/pageEnum';
+import { LoginStateEnum, PageEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
-import { PageEnum } from '/@/enums/pageEnum';
 import { getToken } from '/@/utils/auth';
-import { doLogout, getUserInfo, loginApi } from '/@/api/sys/user';
+import {  getUserInfo, loginApi } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { LoginParams } from '/@/api/sys/types/user';
 import { actions, useStoreState } from '/@/store';

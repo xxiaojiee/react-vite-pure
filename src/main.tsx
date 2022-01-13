@@ -1,4 +1,5 @@
 import React from 'react';
+import '/@/design/index.less';
 import ReactDOM from 'react-dom';
 import App from './App';
 import 'virtual:windi.css';
