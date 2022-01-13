@@ -1,9 +1,11 @@
 import { useImmer } from 'use-immer';
 import { createContainer } from 'unstated-next';
+import type { LoadProps } from '/@/components/Loading/src/createLoading';
 
 export interface AppContainerProp {
   prefixCls: string;
   isMobile: boolean;
+  loading: LoadProps;
 }
 
 export const useApp = (initialState) => {

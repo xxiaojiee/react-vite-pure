@@ -1,5 +1,6 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { Spin } from 'antd';
+import { useUpdateEffect } from 'ahooks';
 import classNames from 'classnames';
 import { ThemeEnum } from '/@/enums/appEnum';
 import type { LoadingProps } from '../typing';
@@ -24,10 +25,12 @@ const Loading = forwardRef<PortalRef, LoadingProps>((props, ref) => {
   } = props!;
   const [load, setLoad] = useState<boolean>(loading);
   const [tips, setTips] = useState<string>(tip);
-  useEffect(() => {
+  console.log('load:', load);
+  useUpdateEffect(() => {
+    console.log('loading11111:', loading);
     setLoad(loading);
   }, [loading]);
-  useEffect(() => {
+  useUpdateEffect(() => {
     setTips(tip);
   }, [tip]);
   useImperativeHandle(ref, () => ({

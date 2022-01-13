@@ -1,8 +1,7 @@
 import React, { ComponentType, lazy, Suspense } from 'react';
-import { createLoading, LoadProps } from '/@/components/Loading';
 import { Spin } from 'antd';
 import { useMount } from 'ahooks';
-import { SizeEnum } from '/@/enums/sizeEnum';
+import { useLoading } from '/@/hooks/web/useLoading';
 
 export const ROOT_NAME = 'Root';
 export const LOGIN_NAME = 'Login';
@@ -53,11 +52,8 @@ export const LAYOUT = load(() => import('/@/layouts/default/index'));
  * @description: 组件添加授权
  */
 export const getAuthority = (Compoent) => {
-  // const loading = createLoading();
   return function (props) {
-    // useMount(() => {
-    //   loading.open();
-    // });
+    const loading = useLoading(true);
     return <Compoent {...props} />;
   };
 };

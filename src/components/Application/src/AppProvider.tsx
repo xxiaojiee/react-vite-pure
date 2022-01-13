@@ -15,7 +15,7 @@ const AppProviderIndex: React.FC<AppProviderIndexProp> = ({ children }) => {
     // 初始化系统内部配置
     initAppConfig();
   });
-  const appInitialState: AppContainerProp = {
+  const appInitialState: Omit<AppContainerProp, 'loading'> = {
     prefixCls,
     isMobile: false,
   };
