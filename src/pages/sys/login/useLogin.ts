@@ -2,7 +2,7 @@
 import { LoginStateEnum, PageEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { getToken } from '/@/utils/auth';
-import {  getUserInfo, loginApi } from '/@/api/sys/user';
+import { getUserInfo, loginApi } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { LoginParams } from '/@/api/sys/types/user';
 import { actions, useStoreState } from '/@/store';
@@ -72,11 +72,9 @@ export function useAfterLoginAction() {
     } else {
       // 动态添加路由
       if (!permissionState.isDynamicAddedRoute) {
-        const routes = await buildRoutesAction();
-        if (userInfo) {
-          userInfo.routes = [...routes, ...basicRoutes]
-        }
-        disPatch(permissionActions.setDynamicAddedRoute(true))
+        const actionroutes = await buildRoutesAction();
+        const routes = [...actionroutes, ...basicRoutes];
+        disPatch(permissionActions.setRoutes(routes))
         console.log('获取路由成功：', routes);
       }
       goHome && (await history.replace(userInfo?.homePath || PageEnum.BASE_HOME));

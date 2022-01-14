@@ -10,10 +10,11 @@ import LayoutMultipleHeader from './header/MultipleHeader';
 import { useMount } from 'ahooks';
 import { useAppInject } from '/@/hooks/web/useAppInject';
 import { useDesign } from '/@/hooks/web/useDesign';
+import { getAuthority } from '/@/hooks/web/usePermission';
 import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import { useLockPage } from '/@/hooks/web/useLockPage';
-import { load, getAuthority } from '/@/router/constant';
+import { load } from '/@/router/constant';
 
 import { BasicLayoutProps as ProLayoutProps } from '@ant-design/pro-layout';
 

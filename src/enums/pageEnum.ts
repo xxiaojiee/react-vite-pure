@@ -1,4 +1,6 @@
 export enum PageEnum {
+  // basic root path
+  BASE_ROOT = '/',
   // basic login path
   BASE_LOGIN = '/login',
   // basic home path

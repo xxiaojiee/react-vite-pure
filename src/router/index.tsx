@@ -1,30 +1,27 @@
-import React, { useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import type { RouteComponentProps } from 'react-router-dom';
 import * as H from 'history';
-import { basicRoutes } from '/@/router/routes';
-import { map, cloneDeep } from 'lodash-es';
+import { map } from 'lodash-es';
 import type { AppRouteRecordRaw } from '/@/router/types';
+import { useStoreState } from '/@/store';
+import { useMount } from 'ahooks';
 
 interface RouterRenderProp extends RouteComponentProps {
   route: AppRouteRecordRaw;
 }
 
 function RouterRender(props: RouterRenderProp) {
-  const { route } = props;
-  const { redirect, component, children, location = {} } = route;
-  const { state } = location as H.Location;
-  const fromRoute = (state as Record<string, any>)?.from || [];
+  const { route, history, location = {} } = props;
+  const { redirect,path, component, children  } = route;
+  const { pathname } = location as H.Location;
   const Comp = component!;
-  if (redirect) {
-    const redirectProp = {
-      pathname: route.redirect,
-      state: {
-        from: [route, ...fromRoute],
-      },
-    };
-    return <Redirect to={redirectProp} />;
-  }
+  useMount(() => {
+    // 重定向
+    if(redirect && path === pathname){
+      history.replace(redirect);
+    }
+  })
   if (children && Comp) {
     return (
       <Comp {...props}>
@@ -55,7 +52,6 @@ const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[] }> = ({ routes: rous
 );
 
 export default function Routes() {
-  // const [routes, setRoutes] = useState<AppRouteRecordRaw[]>();
-  const routes = cloneDeep(basicRoutes)
-  return <DynamicRoute routes={routes} />;
+  const permission = useStoreState('permission');
+  return <DynamicRoute routes={permission.routes} />;
 }

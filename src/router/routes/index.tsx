@@ -5,7 +5,7 @@ import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
 import { mainOutRoutes } from './mainOut';
-import { PageEnum } from '/@/enums/pageEnum';
+
 
 import { dealRoutersPath } from '/@/utils/index';
 
@@ -23,15 +23,15 @@ export const asyncRoutes = dealRoutersPath(routeModuleList);
 
 console.log('asyncRoutes:', asyncRoutes);
 
-export const RootRoute: AppRouteRecordRaw = {
-  path: '/',
-  name: ROOT_NAME,
-  exact: true,
-  redirect: PageEnum.BASE_HOME,
-  meta: {
-    title: 'Root',
-  },
-};
+// export const RootRoute: AppRouteRecordRaw = {
+//   path: '/',
+//   name: ROOT_NAME,
+//   exact: true,
+//   redirect: PageEnum.BASE_HOME,
+//   meta: {
+//     title: 'Root',
+//   },
+// };
 
 export const LoginRoute: AppRouteRecordRaw = {
   path: '/login',
@@ -47,7 +47,7 @@ export const basicRoutes = [
   LoginRoute,
   REDIRECT_ROUTE,
   ...mainOutRoutes,
-  RootRoute,
+  // RootRoute,
   PAGE_NOT_FOUND_ROUTE,
 ];
 

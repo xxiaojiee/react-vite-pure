@@ -1,5 +1,6 @@
-import type {  Menu } from '/@/router/types';
-// import { basicRoutes } from '/@/router/routes';
+
+import { basicRoutes } from '/@/router/routes';
+import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 
 interface PermissionState {
   // 权限code列表
@@ -8,6 +9,8 @@ interface PermissionState {
   isDynamicAddedRoute: boolean;
   // 触发菜单更新
   lastBuildMenuTime: number;
+  // 路由列表
+  routes: AppRouteRecordRaw[],
   // 后台菜单列表
   backMenuList: Menu[];
   frontMenuList: Menu[];
@@ -23,7 +26,7 @@ export default {
     // 触发菜单更新
     lastBuildMenuTime: 0,
     // 路由列表
-    // routes: basicRoutes,
+    routes: basicRoutes,
     // 后台菜单列表
     backMenuList: [],
     // menu List
@@ -45,6 +48,13 @@ export default {
         newState.lastBuildMenuTime = new Date().getTime();
       }
       this.setCurrentState(newState)
+    },
+
+    setRoutes(this: any, list: AppRouteRecordRaw[]) {
+      this.setCurrentState({
+        routes: list,
+        isDynamicAddedRoute: true,
+      })
     },
 
     setFrontMenuList(this: any, list: Menu[]) {
