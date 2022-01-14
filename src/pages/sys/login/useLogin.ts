@@ -2,7 +2,7 @@
 import { LoginStateEnum, PageEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { getToken } from '/@/utils/auth';
-import { getUserInfo, loginApi } from '/@/api/sys/user';
+import { getUserInfo, loginApi, doLogout } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { LoginParams } from '/@/api/sys/types/user';
 import { actions, useStoreState } from '/@/store';
@@ -102,6 +102,31 @@ export function useLogin() {
     }
   }
 }
+
+/**
+ * @description: logout
+ */
+export function useLogout() {
+  const userState = useStoreState('user')
+  const history = useHistory();
+  return async function logout(goLogin = false) {
+    if (userState.token) {
+      try {
+        await doLogout();
+      } catch {
+        console.log('注销Token失败');
+      }
+    }
+    userActions.setToken(undefined);
+    userActions.setSessionTimeout(false);
+    userActions.setUserInfo(null);
+    goLogin && history.push(PageEnum.BASE_LOGIN);
+  }
+
+}
+
+
+
 
 export function useFormValid<T extends Object = any>(formRef: any) {
   async function validForm() {

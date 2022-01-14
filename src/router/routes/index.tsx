@@ -36,7 +36,7 @@ console.log('asyncRoutes:', asyncRoutes);
 export const LoginRoute: AppRouteRecordRaw = {
   path: '/login',
   name: LOGIN_NAME,
-  component: load(() => import('../../pages/sys/login')),
+  component: load(() => import('../../pages/sys/login/Login')),
   meta: {
     title: '登录',
   },
