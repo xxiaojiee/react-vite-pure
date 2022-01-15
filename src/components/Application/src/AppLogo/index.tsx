@@ -13,6 +13,14 @@ interface AppLogoProp {
   /**
    * 当前父组件的主题
    */
+  className?: string;
+  /**
+   * 当前父组件的主题
+   */
+  style?: React.CSSProperties;
+  /**
+   * 当前父组件的主题
+   */
   theme?: 'light' | 'dark';
   /**
    * 是否显示标题
@@ -25,7 +33,7 @@ interface AppLogoProp {
 }
 
 const AppLogo: React.FC<AppLogoProp> = (props) => {
-  const { theme, showTitle = true, alwaysShowTitle } = props;
+  const { theme, showTitle = true, alwaysShowTitle, className = '', style = {} } = props;
   const { prefixCls } = useDesign('app-logo');
   const history = useHistory();
   const { getCollapsedShowTitle } = useMenuSetting();
@@ -41,7 +49,7 @@ const AppLogo: React.FC<AppLogoProp> = (props) => {
     history.push(userState.userInfo?.homePath || PageEnum.BASE_HOME);
   };
   return (
-    <div className={appLogoClass} onClick={goHome}>
+    <div className={`${appLogoClass} ${className}`} style={style} onClick={goHome}>
       <img src={logo} />
       {showTitle ? <div className={titleClass}>{title}</div> : null}
     </div>

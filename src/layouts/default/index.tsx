@@ -44,12 +44,13 @@ const DefaultLayout = (props: BasicLayoutProps) => {
   }, [getIsMixSidebar, getShowMenu]);
 
   useMount(() => {
-    console.log('我是Layout，我渲染了', props);
+    console.log('我是Layout，我渲染了', getShowFullHeaderRef(), props);
   });
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />
-      {getShowFullHeaderRef() ? <LayoutHeader fixed /> : null}
+      <LayoutHeader fixed />
+      {/* {getShowFullHeaderRef() ? <LayoutHeader fixed /> : null} */}
       <Layout className={classNames(layoutClass)}>
         {getShowSidebar() || getIsMobile() ? <LayoutSideBar /> : null}
         <Layout className={classNames(`${prefixCls}-main`)}>

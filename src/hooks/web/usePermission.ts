@@ -5,6 +5,7 @@ import { RoleEnum } from '/@/enums/roleEnum';
 import { useStoreState, actions } from '/@/store';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { useAfterLoginAction } from '/@/pages/sys/login/useLogin';
+import type { RouterRenderProp } from '/@/router';
 import { asyncRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { getMessage } from '/@/hooks/web/getMessage';
@@ -214,15 +215,19 @@ export function useLoginPermission(props: any) {
  * @description: 组件添加授权
  */
 export function getAuthority(Compoent) {
-  return function (props) {
+  return function (props: RouterRenderProp) {
     const { isDynamicAddedRoute } = useStoreState('permission');
     const getLoginPermission = useLoginPermission(props);
+    // 用函数包裹，获取最初的状态，否则加载完动态路由，显示layout
+    const getShow = () => {
+      return isDynamicAddedRoute
+    }
     useMount(() => {
-      if(!isDynamicAddedRoute){
+      if (!isDynamicAddedRoute) {
         getLoginPermission();
       }
     });
-    if(isDynamicAddedRoute){
+    if (getShow()) {
       return React.createElement(Compoent, props);
     }
     return null;

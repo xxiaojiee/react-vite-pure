@@ -28,7 +28,7 @@ export const getParentLayout = () => {
  * @description: 路由加载添加事件
  */
 export const Fallback = (props: any) => {
-  const { location } = props || {};
+  const { location, loading = false } = props || {};
   let axiosCanceler: Nullable<AxiosCanceler>;
   const { removeAllHttpPending } = projectSetting;
   if (removeAllHttpPending) {
@@ -45,13 +45,19 @@ export const Fallback = (props: any) => {
   useUnmount(() => {
     nProgress.done();
   });
-  return <Loading loading />;
+  if (loading) {
+    return <Loading loading />;
+  }
+  return null;
 };
 
-export const load = <T extends ComponentType<any>>(factory: () => Promise<{ default: T }>) => {
+export const load = <T extends ComponentType<any>>(
+  factory: () => Promise<{ default: T }>,
+  options?: Record<string, any>,
+) => {
   const Comp = lazy(factory);
   return (props: any) => (
-    <Suspense fallback={<Fallback {...props} />}>
+    <Suspense fallback={<Fallback {...props} {...(options || {})} />}>
       <Comp {...props} />
     </Suspense>
   );

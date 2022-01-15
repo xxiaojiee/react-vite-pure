@@ -7,7 +7,7 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 import { useStoreState } from '/@/store';
 import { useMount } from 'ahooks';
 
-interface RouterRenderProp extends RouteComponentProps {
+export interface RouterRenderProp extends RouteComponentProps {
   route: AppRouteRecordRaw;
 }
 

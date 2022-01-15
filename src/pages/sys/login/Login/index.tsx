@@ -11,8 +11,6 @@ import QrCodeForm from '../QrCodeForm';
 import LoginForm from '../LoginForm';
 import './index.less';
 
-
-
 interface LoginProps {
   sessionTimeout: boolean;
 }
@@ -38,9 +36,7 @@ const Login: React.FC<LoginProps> = (props) => {
       <div className="container relative h-full py-2 mx-auto sm:px-10">
         <div className="flex h-full">
           <div className="hidden min-h-full pl-4 mr-4 xl:flex xl:flex-col xl:w-6/12">
-            <div className="-enter-x">
-              <AppLogo />
-            </div>
+            <AppLogo className="-enter-x" />
             <div className="my-auto">
               <img src={logoBoxBg} alt={title} className="w-1/2 -mt-16 -enter-x" />
               <div className="mt-10 font-medium text-white -enter-x">
