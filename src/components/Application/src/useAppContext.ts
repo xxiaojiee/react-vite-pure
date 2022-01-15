@@ -12,8 +12,10 @@ export const useApp = (initialState) => {
   const [app, updateApp] = useImmer<AppContainerProp>(initialState);
   const saveApp = (apps: AppContainerProp) => {
     updateApp((state) => {
-      console.log('state:', state, app)
-      return apps
+      return {
+        ...state,
+        ...apps,
+      }
     });
   };
   return { app, saveApp };

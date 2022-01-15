@@ -9,19 +9,41 @@
 }
 
 /* fade-slide */
-.fade-slide-leave-active,
-.fade-slide-enter-active {
-  transition: all 0.3s;
-}
+// .fade-slide-leave-active,
+// .fade-slide-enter-active {
+//   transition: all 0.3s;
+// }
 
-.fade-slide-enter-from {
+// .fade-slide-enter-from {
+//   opacity: 0;
+//   transform: translateX(-30px);
+// }
+
+// .fade-slide-leave-to {
+//   opacity: 0;
+//   transform: translateX(30px);
+// }
+
+
+.fade-slide-enter {
   opacity: 0;
   transform: translateX(-30px);
 }
+.fade-slide-enter-active{
+  opacity: 1;
+  transform: translateX(0px);
+  transition: all 0.3s;
+}
 
-.fade-slide-leave-to {
+.fade-slide-exit {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+.fade-slide-exit-active{
   opacity: 0;
   transform: translateX(30px);
+  transition: all 0.3s;
 }
 
 // ///////////////////////////////////////////////
@@ -29,19 +51,26 @@
 // ///////////////////////////////////////////////
 
 // Speed: 1x
-.fade-bottom-enter-active,
-.fade-bottom-leave-active {
-  transition: opacity 0.25s, transform 0.3s;
-}
 
-.fade-bottom-enter-from {
+.fade-bottom-enter {
   opacity: 0;
   transform: translateY(-10%);
 }
+.fade-bottom-enter-active{
+  opacity: 1;
+  transform: translateY(0px);
+  transition: opacity 0.25s, transform 0.3s;
+}
 
-.fade-bottom-leave-to {
+.fade-bottom-exit {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.fade-bottom-exit-active{
   opacity: 0;
   transform: translateY(10%);
+  transition: opacity 0.25s, transform 0.3s;
 }
 
 // fade-scale

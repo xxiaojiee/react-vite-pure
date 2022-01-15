@@ -16,7 +16,6 @@ const LayoutLockPage = load(() => import('/@/pages/sys/lock'));
 const SettingDrawer = load(() => import('/@/layouts/default/setting'));
 
 const Feature: React.FC = () => {
-  console.log(6666666666666);
   const { getUseOpenBackTop, getShowSettingButton, getSettingButtonPosition, getFullContent } =
     useRootSetting();
   const userState = useStoreState('user');

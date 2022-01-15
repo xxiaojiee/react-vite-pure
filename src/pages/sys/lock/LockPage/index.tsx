@@ -7,6 +7,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useLogout } from '/@/pages/sys/login/useLogin';
 import { LockOutlined } from '@ant-design/icons';
 import headerImg from '/@/assets/images/header.jpg';
+import { CSSTransition } from 'react-transition-group';
 
 import './index.less';
 
@@ -29,6 +30,7 @@ const LockPage = () => {
   const { hour, month, minute, meridiem, year, day, week } = useNow(true);
 
   const userinfo = userState.userInfo || {};
+
 
   /**
    * @description: unLock
@@ -56,8 +58,9 @@ const LockPage = () => {
   };
 
   const onPasswordChange = (e) => {
-    setPassword(e.target.value)
-  }
+    setPassword(e.target.value);
+  };
+
   return (
     <div
       className={classNames(
@@ -95,7 +98,7 @@ const LockPage = () => {
           <span> {minute}</span>
         </div>
       </div>
-      {!showDate ? (
+      <CSSTransition in={!showDate} timeout={300} classNames="fade-slide" unmountOnExit>
         <div className={`${prefixCls}-entry`}>
           <div className={`${prefixCls}-entry-content`}>
             <div className={`${prefixCls}-entry__header enter-x`}>
@@ -142,16 +145,15 @@ const LockPage = () => {
             </div>
           </div>
         </div>
-      ) : null}
-
+      </CSSTransition>
       <div className="absolute bottom-5 w-full text-gray-300 xl:text-xl 2xl:text-3xl text-center enter-y">
         {!showDate ? (
           <div className="text-5xl mb-4 enter-x">
-            { hour }:{ minute } <span className="text-3xl">{ meridiem }</span>
+            {hour}:{minute} <span className="text-3xl">{meridiem}</span>
           </div>
         ) : null}
         <div className="text-2xl">
-          { year }/{ month }/{ day } { week }
+          {year}/{month}/{day} {week}
         </div>
       </div>
     </div>
