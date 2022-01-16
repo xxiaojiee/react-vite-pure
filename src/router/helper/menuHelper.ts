@@ -3,14 +3,13 @@ import type { MenuModule, Menu, AppRouteRecordRaw } from '/@/router/types';
 import { findPath, treeMap } from '/@/utils/helper/treeHelper';
 import { cloneDeep } from 'lodash-es';
 import { isUrl } from '/@/utils/is';
-import Menu from 'rc-menu/lib/Menu';
 // import { RouteParams } from 'vue-router';
 // import { toRaw } from 'vue';
 
-// export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
-//   const menuList = findPath(treeData, (n) => n.path === path) as Menu[];
-//   return (menuList || []).map((item) => item.path);
-// }
+export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
+  const menuList = findPath(treeData, (n) => n.path === path) as Menu[];
+  return (menuList || []).map((item) => item.path);
+}
 
 function joinParentPath(menus: Menu[], parentPath = '') {
   for (let index = 0; index < menus.length; index++) {
@@ -30,14 +29,14 @@ function joinParentPath(menus: Menu[], parentPath = '') {
 }
 
 // // Parsing the menu module
-// export function transformMenuModule(menuModule: MenuModule): Menu {
-//   const { menu } = menuModule;
+export function transformMenuModule(menuModule: MenuModule): Menu {
+  const { menu } = menuModule;
 
-//   const menuList = [menu];
+  const menuList = [menu];
 
-//   joinParentPath(menuList);
-//   return menuList[0];
-// }
+  joinParentPath(menuList);
+  return menuList[0];
+}
 
 export function transformRouteToMenu(routeModList: AppRouteModule[], routerMapping = false) {
   const cloneRouteModList = cloneDeep(routeModList);
@@ -54,7 +53,7 @@ export function transformRouteToMenu(routeModList: AppRouteModule[], routerMappi
       routeList.push(item);
     }
   });
-  const list= treeMap(routeList, {
+  const list = treeMap(routeList, {
     conversion: (node: AppRouteRecordRaw) => {
       const { meta: { title, hideMenu = false } = {} } = node;
 

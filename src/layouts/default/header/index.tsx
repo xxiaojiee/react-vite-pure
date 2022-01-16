@@ -3,7 +3,7 @@ import { actions, useStoreState } from '/@/store';
 import { propTypes } from '/@/utils/propTypes';
 
 import { Layout } from 'antd';
-import { load } from '/@/router/constant'
+import { load } from '/@/router/constant';
 import classNames from 'classnames';
 import { AppLogo } from '/@/components/Application';
 import LayoutMenu from '../menu';
@@ -33,7 +33,6 @@ const SettingDrawer = load(() => import('/@/layouts/default/setting'), {
 const { Header } = Layout;
 
 interface HeaderProp {
-  theme: 'dark' | 'light';
   fixed: boolean;
 }
 
@@ -98,6 +97,7 @@ const LayoutHeader: React.FC<HeaderProp> = (props) => {
   const getMenuMode = () => {
     return getSplit() ? MenuModeEnum.HORIZONTAL : null;
   };
+  console.log('show:', getShowContent() && getShowBread())
   return (
     <Header className={getHeaderClass()}>
       {/* left start */}
@@ -119,14 +119,17 @@ const LayoutHeader: React.FC<HeaderProp> = (props) => {
       {/* left end */}
 
       {/* menu start */}
-      <div className="`${prefixCls}-menu`" v-if="getShowTopMenu && !getIsMobile">
-        <LayoutMenu
-          isHorizontal
-          theme={getHeaderTheme()}
-          splitType={getSplitType()}
-          menuMode={getMenuMode()}
-        />
-      </div>
+      {getShowTopMenu() && !getIsMobile() ? (
+        <div className={`${prefixCls}-menu`}>
+          <LayoutMenu
+            isHorizontal
+            theme={getHeaderTheme()}
+            splitType={getSplitType()}
+            menuMode={getMenuMode()}
+          />
+        </div>
+      ) : null}
+
       {/* menu-end */}
 
       {/* action */}
