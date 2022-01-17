@@ -1,5 +1,5 @@
 
-import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
+import type { AppRouteRecordRaw, AppRouteRecordRaw } from '/@/router/types';
 
 import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
@@ -69,7 +69,7 @@ function dynamicImport(
 }
 
 // 将背景对象变成路由对象
-export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
+export function transformObjToRoute<T = AppRouteRecordRaw>(routeList: AppRouteRecordRaw[]): T[] {
   routeList.forEach((route) => {
     const component = route.component as unknown as string;
     if (component) {
@@ -96,8 +96,8 @@ export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModul
 /**
  * 将多级路由转换为 2 级路由
  */
-export function flatMultiLevelRoutes(routeModules: AppRouteModule[]) {
-  const modules: AppRouteModule[] = cloneDeep(routeModules);
+export function flatMultiLevelRoutes(routeModules: AppRouteRecordRaw[]) {
+  const modules: AppRouteRecordRaw[] = cloneDeep(routeModules);
   for (let index = 0; index < modules.length; index++) {
     const routeModule = modules[index];
     // 判断等级是否超过2级
@@ -130,7 +130,7 @@ function addToChildren(
 }
 
 // 判断等级是否超过2级
-function isMultipleRoute(routeModule: AppRouteModule) {
+function isMultipleRoute(routeModule: AppRouteRecordRaw) {
   if (!routeModule || !Reflect.has(routeModule, 'children') || !routeModule.children?.length) {
     return false;
   }

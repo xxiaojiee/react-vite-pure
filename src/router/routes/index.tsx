@@ -1,6 +1,6 @@
 import { load, ROOT_NAME, LOGIN_NAME } from '../constant';
 
-import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
+import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
@@ -11,7 +11,7 @@ import { dealRoutersPath } from '/@/utils/index';
 
 const modules = import.meta.globEager('./modules/**/*.ts');
 
-const routeModuleList: AppRouteModule[] = [];
+const routeModuleList: AppRouteRecordRaw[] = [];
 
 Object.keys(modules).forEach((key) => {
   const mod = modules[key].default || {};

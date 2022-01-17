@@ -1,9 +1,9 @@
-import type { AppRouteModule } from '/@/router/types';
+import type { AppRouteRecordRaw } from '/@/router/types';
 import { load } from '../../constant';
 
 import { LAYOUT } from '/@/router/constant';
 
-const dashboard: AppRouteModule = {
+const dashboard: AppRouteRecordRaw = {
   path: '/dashboard',
   name: 'Dashboard',
   component: LAYOUT,

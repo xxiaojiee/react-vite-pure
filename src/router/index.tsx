@@ -1,36 +1,40 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import type { RouteComponentProps } from 'react-router-dom';
+import { useAppContainer } from '/@/components/Application';
 import * as H from 'history';
-import { map } from 'lodash-es';
-import type { AppRouteRecordRaw } from '/@/router/types';
+import { map, cloneDeep } from 'lodash-es';
+import type { AppRouteRecordRaw, RouterRenderProp } from '/@/router/types';
 import { useStoreState } from '/@/store';
 import { useMount } from 'ahooks';
 
-export interface RouterRenderProp extends RouteComponentProps {
-  route: AppRouteRecordRaw;
-}
-
 function RouterRender(props: RouterRenderProp) {
-  const { route, history, location = {} } = props;
-  const { redirect,path, component, children  } = route;
+  const { route, history, location = {}, matched = [] } = props;
+  const { redirect, path, component, children } = route;
   const { pathname } = location as H.Location;
+  const {  saveApp } = useAppContainer();
+
   const Comp = component!;
   useMount(() => {
-    // 重定向
-    if(redirect && path === pathname){
-      history.replace(redirect);
+    if (path === pathname) {
+      // 重定向
+      if (redirect) {
+        history.replace(redirect);
+        return;
+      }
+      // 保存当前props
+      saveApp(cloneDeep(props));
     }
-  })
+  });
   if (children && Comp) {
     return (
       <Comp {...props}>
-        <DynamicRoute routes={children} />
+        <DynamicRoute routes={children} matched={matched} />
       </Comp>
     );
   }
   if (children && !Comp) {
-    return <DynamicRoute routes={children} />;
+    return <DynamicRoute routes={children} matched={matched} />;
   }
   if (!children && Comp) {
     return <Comp {...props} />;
@@ -38,14 +42,25 @@ function RouterRender(props: RouterRenderProp) {
   return null;
 }
 
-const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[] }> = ({ routes: rous }) => (
+const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[]; matched?: AppRouteRecordRaw[] }> = ({
+  routes: rous,
+  matched = [],
+}) => (
   <Switch>
     {map(rous, (route, index) => (
       <Route
         key={index}
         path={route.path}
         exact={route.exact}
-        render={(props: RouteComponentProps) => <RouterRender {...props} route={route} />}
+        render={(props: RouteComponentProps) => {
+          const { match, ...otherProp } = props;
+          const routerRenderProps = {
+            ...otherProp,
+            route:{ ...route, match },
+            matched: [...matched, { ...route, match }],
+          };
+          return <RouterRender {...routerRenderProps} />;
+        }}
       />
     ))}
   </Switch>

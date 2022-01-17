@@ -1,4 +1,4 @@
-import { AppRouteModule } from '/@/router/types';
+import { AppRouteRecordRaw } from '/@/router/types';
 import type { MenuModule, Menu, AppRouteRecordRaw } from '/@/router/types';
 import { findPath, treeMap } from '/@/utils/helper/treeHelper';
 import { cloneDeep } from 'lodash-es';
@@ -38,7 +38,7 @@ export function transformMenuModule(menuModule: MenuModule): Menu {
   return menuList[0];
 }
 
-export function transformRouteToMenu(routeModList: AppRouteModule[], routerMapping = false) {
+export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMapping = false) {
   const cloneRouteModList = cloneDeep(routeModList);
   const routeList: AppRouteRecordRaw[] = [];
 

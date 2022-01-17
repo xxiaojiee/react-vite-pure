@@ -5,17 +5,24 @@ import type {
 } from 'react-router-dom';
 import { RoleEnum } from '/@/enums/roleEnum';
 
+export interface RouterRenderProp extends Omit<RouteComponentProps, 'match'> {
+  matched: AppRouteRecordRaw[];
+  route: AppRouteRecordRaw;
+}
+
 export interface AppRouteRecordRaw extends Omit<RouteProps, 'component'> {
   name: string;
   meta: RouteMeta;
   redirect?: string;
-  component?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined | string | (() => Promise<any>);
-  components?: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any> | undefined | string | (() => Promise<any>);
+  component?: React.ComponentType<RouterRenderProp> | React.ComponentType<any> | undefined | string | (() => Promise<any>);
+  components?: React.ComponentType<RouterRenderProp> | React.ComponentType<any> | undefined | string | (() => Promise<any>);
   children?: AppRouteRecordRaw[];
   props?: Recordable;
   isChildrenRoute?: boolean;
-  fullPath?: string;
+  path: string;
+  match?: RouteComponentProps['match']
 }
+
 
 export interface MenuTag {
   type?: 'primary' | 'error' | 'warn' | 'success';
@@ -28,7 +35,7 @@ export interface Menu {
 
   icon?: string;
 
-  path?: string | readonly string[] | undefined;
+  path: string;
 
   // path contains param, auto assignment.
   paramPath?: string;
@@ -53,5 +60,5 @@ export interface MenuModule {
   menu: Menu;
 }
 
-// export type AppRouteModule = RouteModule | AppRouteRecordRaw;
-export type AppRouteModule = AppRouteRecordRaw;
+// export type AppRouteRecordRaw = RouteModule | AppRouteRecordRaw;
+// export type AppRouteRecordRaw = AppRouteRecordRaw;

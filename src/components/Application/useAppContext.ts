@@ -1,8 +1,9 @@
 import { useImmer } from 'use-immer';
 import { createContainer } from 'unstated-next';
+import type { RouterRenderProp } from '/@/router/types';
 import type { LoadProps } from '/@/components/Loading/src/createLoading';
 
-export interface AppContainerProp {
+export interface AppContainerProp extends RouterRenderProp {
   prefixCls: string;
   isMobile: boolean;
   loading: LoadProps;
@@ -10,7 +11,7 @@ export interface AppContainerProp {
 
 export const useApp = (initialState) => {
   const [app, updateApp] = useImmer<AppContainerProp>(initialState);
-  const saveApp = (apps: AppContainerProp) => {
+  const saveApp = (apps: Partial<AppContainerProp>) => {
     updateApp((state) => {
       return {
         ...state,

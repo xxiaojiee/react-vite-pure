@@ -1,11 +1,11 @@
-import type { AppRouteModule } from '/@/router/types';
+import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 import { load } from '../../../constant';
 
-const permission: AppRouteModule = {
+const permission: AppRouteRecordRaw = {
   path: '/permission',
   name: 'Permission',
   component: LAYOUT,

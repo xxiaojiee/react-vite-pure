@@ -52,6 +52,7 @@ function useAsyncMenus() {
   const permissionState = useStoreState('permission');
   const isBackMode = useIsBackMode();
   const isRouteMappingMode = useIsRouteMappingMode();
+  console.log(333333, isBackMode, isRouteMappingMode, staticMenus);
   if (isBackMode) {
     return permissionState.backMenuList.filter((item) => !item.meta?.hideMenu && !item.hideMenu);
   }

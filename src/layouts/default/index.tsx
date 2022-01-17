@@ -6,6 +6,7 @@ import LayoutHeader from './header';
 import LayoutContent from './content';
 import LayoutSideBar from './sider';
 import LayoutMultipleHeader from './header/MultipleHeader';
+import { useAppContainer } from '/@/components/Application';
 
 import { useMount } from 'ahooks';
 import { useAppInject } from '/@/hooks/web/useAppInject';
@@ -26,6 +27,7 @@ export interface BasicLayoutProps extends ProLayoutProps {
 }
 
 const DefaultLayout = (props: BasicLayoutProps) => {
+  const { app } = useAppContainer();
   const { children } = props;
   const { prefixCls } = useDesign('default-layout');
   const { getIsMobile } = useAppInject();
@@ -46,6 +48,7 @@ const DefaultLayout = (props: BasicLayoutProps) => {
   useMount(() => {
     console.log('我是Layout，我渲染了', getShowFullHeaderRef(), props);
   });
+  console.log('app.route:', app);
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />
