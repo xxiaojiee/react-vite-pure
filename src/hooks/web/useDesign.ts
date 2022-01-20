@@ -1,9 +1,9 @@
 import { useAppContainer } from '/@/components/Application';
 
 export function useDesign(scope: string) {
-  const { app } = useAppContainer();
+  const { prefixCls } = useAppContainer();
   return {
-    prefixCls: `${app.prefixCls}-${scope}`,
-    prefixVar: app.prefixCls,
+    prefixCls: `${prefixCls}-${scope}`,
+    prefixVar: prefixCls,
   };
 }

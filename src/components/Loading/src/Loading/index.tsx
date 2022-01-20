@@ -36,6 +36,7 @@ const Loading = forwardRef<PortalRef, LoadingProps>((props, ref) => {
       setTips(val);
     },
     setLoading: (val) => {
+      console.log('setLoading:',val )
       setLoad(val);
     },
     getLoading: () => {

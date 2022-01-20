@@ -66,4 +66,4 @@ const DefaultLayout = (props: BasicLayoutProps) => {
   );
 };
 
-export default getAuthority(DefaultLayout);
+export default DefaultLayout;

@@ -1,40 +1,20 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import type { RouteComponentProps } from 'react-router-dom';
-import { useAppContainer } from '/@/components/Application';
-import * as H from 'history';
-import { map, cloneDeep } from 'lodash-es';
+import { map } from 'lodash-es';
+import { useGuard } from './guard';
 import type { AppRouteRecordRaw, RouterRenderProp } from '/@/router/types';
 import { useStoreState } from '/@/store';
-import { useMount, useUnmount } from 'ahooks';
 
 function RouterRender(props: RouterRenderProp) {
-  const { route, history, location = {}, matched = [] } = props;
-  const { redirect, path, component, children } = route;
-  const { pathname } = location as H.Location;
-  const { app, saveApp } = useAppContainer();
+  const { route, matched = [] } = props;
+  const { component, children } = route;
   const Comp = component!;
-  // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
-  const isGetCurrentRoute = app.route?.path === path;
-  useMount(() => {
-    console.log('我要挂载啦！！！！', pathname, route);
-    // 如果页面地址为当前路由地址（说明已重定向到最终的路由地址）
-    if (path === pathname) {
-      // 重定向
-      if (redirect) {
-        history.replace(redirect);
-        return;
-      }
-      // 保存当前props
-      saveApp(cloneDeep(props));
-    }
-  });
-  useUnmount(() => {
-    console.log('我要卸载啦！！！！', route);
-  });
+  // 是否显示组件 （在useGuard里进行鉴权）
+  const isShowComponent = useGuard(props);
   if (children && Comp) {
-    if (!isGetCurrentRoute) {
-      <DynamicRoute routes={children} matched={matched} />;
+    if (!isShowComponent) {
+      return <DynamicRoute routes={children} matched={matched} />;
     }
     return (
       <Comp {...props}>
@@ -45,7 +25,7 @@ function RouterRender(props: RouterRenderProp) {
   if (children && !Comp) {
     return <DynamicRoute routes={children} matched={matched} />;
   }
-  if (!children && Comp && isGetCurrentRoute) {
+  if (!children && Comp && isShowComponent) {
     return <Comp {...props} />;
   }
   return null;

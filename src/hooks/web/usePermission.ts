@@ -8,7 +8,7 @@ import { useAfterLoginAction } from '/@/pages/sys/login/useLogin';
 import { asyncRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { getMessage } from '/@/hooks/web/getMessage';
-import { useLoading } from '/@/hooks/web/useLoading';
+import { useAppContainer } from '/@/components/Application';
 import { useDispatch } from 'react-redux'
 import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, SESSION_TIMEOUT_KEY } from '/@/enums/cacheEnum';
 import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
@@ -177,7 +177,7 @@ export function useBuildRoutesAction() {
 export function useLoginPermission(props: any) {
   const userState = useStoreState('user');
   const afterLoginAction = useAfterLoginAction();
-  const loading = useLoading(false);
+  const { loading } = useAppContainer();
   return async function getLoginPermission() {
     let redirectPath = '';
     const { route, location, history } = props;
@@ -197,9 +197,9 @@ export function useLoginPermission(props: any) {
     } else {
       loading.setLoading(true);
       const userInfo: UserInfo | null = await afterLoginAction();
-      loading.setLoading(false);
       if (pathname === PageEnum.BASE_ROOT) {
         history.replace(userInfo?.homePath || PageEnum.BASE_HOME)
+        loading.setLoading(false);
       }
     }
   };

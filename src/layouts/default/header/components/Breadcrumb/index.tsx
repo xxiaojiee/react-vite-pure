@@ -46,10 +46,8 @@ interface LayoutBreadcrumbProp {
 
 const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
   const [routeList, setRouteList] = useState<Menu[]>([]);
-  const { app } = useAppContainer();
-  const { route, matched  } = app
+  const { route, matched, history } = useAppContainer();
   const menus = useMenus();
-  console.log('app:', app);
   console.log('menus:', menus);
   const { prefixCls } = useDesign('layout-breadcrumb');
   const { getShowBreadCrumbIcon } = useRootSetting();
@@ -100,7 +98,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
     }
 
     if (redirect && isString(redirect)) {
-      app.history.push(redirect);
+      history.push(redirect);
     } else {
       let goPath = '';
       if (paths.length === 1) {
@@ -111,7 +109,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
         goPath = `${lastPath}`;
       }
       goPath = /^\//.test(goPath) ? goPath : `/${goPath}`;
-      app.history.push(goPath);
+      history.push(goPath);
     }
   }
 

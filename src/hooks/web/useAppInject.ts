@@ -2,8 +2,8 @@ import { useAppContainer } from '/@/components/Application';
 
 
 export function useAppInject() {
-  const {app} = useAppContainer();
+  const { isMobile } = useAppContainer();
   return {
-    getIsMobile: () => app.isMobile,
+    getIsMobile: () => isMobile,
   };
 }
