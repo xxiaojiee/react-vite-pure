@@ -18,16 +18,17 @@ import { useLockPage } from '/@/hooks/web/useLockPage';
 import { load } from '/@/router/constant';
 
 import { BasicLayoutProps as ProLayoutProps } from '@ant-design/pro-layout';
+import type { RouterRenderProp } from '/@/router/types';
 
 const LayoutFeatures = load(() => import('/@/layouts/default/feature'));
 const LayoutFooter = load(() => import('/@/layouts/default/footer'));
 
-export interface BasicLayoutProps extends ProLayoutProps {
-  children: ReactNode;
-}
+export type BasicLayoutProps = ProLayoutProps &
+  RouterRenderProp & {
+    children: ReactNode;
+  };
 
 const DefaultLayout = (props: BasicLayoutProps) => {
-  const { app } = useAppContainer();
   const { children } = props;
   const { prefixCls } = useDesign('default-layout');
   const { getIsMobile } = useAppInject();
@@ -48,7 +49,6 @@ const DefaultLayout = (props: BasicLayoutProps) => {
   useMount(() => {
     console.log('我是Layout，我渲染了', getShowFullHeaderRef(), props);
   });
-  console.log('app.route:', app);
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />

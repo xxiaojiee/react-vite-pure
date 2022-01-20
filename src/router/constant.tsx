@@ -2,8 +2,8 @@ import React, { ComponentType, lazy, Suspense } from 'react';
 import nProgress from 'nprogress';
 import { useMount, useUnmount } from 'ahooks';
 import { Loading } from '/@/components/Loading';
-import projectSetting from '/@/settings/projectSetting';
-import { AxiosCanceler } from '/@/utils/http/axios/axiosCancel';
+// import projectSetting from '/@/settings/projectSetting';
+// import { AxiosCanceler } from '/@/utils/http/axios/axiosCancel';
 
 export const ROOT_NAME = 'Root';
 export const LOGIN_NAME = 'Login';
@@ -13,34 +13,22 @@ export const PAGE_NOT_FOUND_NAME = 'PageNotFound';
 export const PAGE_NOT_FOUND_CHILD_NAME = 'PageNotFoundChild';
 
 /**
- * @description: parent-layout
- */
-export const getParentLayout = () => {
-  return () =>
-    new Promise((resolve) => {
-      resolve({
-        name: PARENT_LAYOUT_NAME,
-      });
-    });
-};
-
-/**
  * @description: 路由加载添加事件
  */
 export const Fallback = (props: any) => {
-  const { location, loading = false } = props || {};
-  let axiosCanceler: Nullable<AxiosCanceler>;
-  const { removeAllHttpPending } = projectSetting;
-  if (removeAllHttpPending) {
-    axiosCanceler = new AxiosCanceler();
-  }
+  const { loading = false } = props || {};
+  // let axiosCanceler: Nullable<AxiosCanceler>;
+  // const { removeAllHttpPending } = projectSetting;
+  // if (removeAllHttpPending) {
+  //   axiosCanceler = new AxiosCanceler();
+  // }
   useMount(() => {
     // 加载进度条
     nProgress.start();
     // 滚动条回顶部
-    location?.pathname && document.body.scrollTo(0, 0);
+    // location?.pathname && document.body.scrollTo(0, 0);
     // 切换路由会删除之前的请求
-    axiosCanceler?.removeAllPending();
+    // axiosCanceler?.removeAllPending();
   });
   useUnmount(() => {
     nProgress.done();

@@ -10,6 +10,8 @@ import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
 import { useHistory } from 'react-router-dom';
 import { basicRoutes } from '/@/router/routes';
+import { dealRoutersPath } from '/@/utils/index';
+
 
 import type { ErrorMessageMode } from '/#/axios';
 import type { UserInfo } from '/#/store';
@@ -73,7 +75,7 @@ export function useAfterLoginAction() {
       // 动态添加路由
       if (!permissionState.isDynamicAddedRoute) {
         const actionroutes = await buildRoutesAction();
-        const routes = [...actionroutes, ...basicRoutes];
+        const routes = [...dealRoutersPath(actionroutes), ...basicRoutes];
         disPatch(permissionActions.setRoutes(routes))
         console.log('获取路由成功：', routes);
       }

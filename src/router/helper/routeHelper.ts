@@ -1,7 +1,7 @@
 
-import type { AppRouteRecordRaw, AppRouteRecordRaw } from '/@/router/types';
+import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
+import { LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
 // import { createRouter, createWebHashHistory } from 'vue-router';
@@ -34,8 +34,6 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
       } else {
         item.component = dynamicImport(dynamicViewsModules, component as string);
       }
-    } else if (name) {
-      item.component = getParentLayout();
     }
     children && asyncImportRoute(children);
   });

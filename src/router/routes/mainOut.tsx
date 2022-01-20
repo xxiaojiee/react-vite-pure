@@ -15,6 +15,7 @@ export const mainOutRoutes: AppRouteRecordRaw[] = [
     component: load(() => import('../../pages/main-out')),
     meta: {
       title: 'MainOut',
+      ignoreAuth: true,
     },
   },
 ];

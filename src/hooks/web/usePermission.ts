@@ -1,11 +1,10 @@
 import * as H from 'history';
-import type { AppRouteRecordRaw, Menu } from '/@/router/types';
+import type { AppRouteRecordRaw, Menu, RouterRenderProp } from '/@/router/types';
 import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { useStoreState, actions } from '/@/store';
-import { getAuthCache, setAuthCache } from '/@/utils/auth';
+import { getAuthCache } from '/@/utils/auth';
 import { useAfterLoginAction } from '/@/pages/sys/login/useLogin';
-import type { RouterRenderProp } from '/@/router';
 import { asyncRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { getMessage } from '/@/hooks/web/getMessage';
@@ -23,7 +22,7 @@ import { getMenuList } from '/@/api/sys/menu';
 import { getPermCode } from '/@/api/sys/user';
 
 import { PAGE_NOT_FOUND_NAME } from '/@/router/constant'
-import React, { useState } from 'react';
+import React from 'react';
 
 const { createMessage } = getMessage();
 
@@ -184,7 +183,7 @@ export function useLoginPermission(props: any) {
     const { route, location, history } = props;
     const { name: routeName } = route;
     const { pathname, search, hash } = location as H.Location;
-    const fullPath = `${pathname}${search || ''}${hash || ''}`;
+    // const fullPath = `${pathname}${search || ''}${hash || ''}`;
     const token = userState.token || getAuthCache<string>(TOKEN_KEY);
     const sessionTimeout = userState.sessionTimeout || getAuthCache<string>(SESSION_TIMEOUT_KEY);
     // 未登录或者已登录但过期的
@@ -201,11 +200,6 @@ export function useLoginPermission(props: any) {
       loading.setLoading(false);
       if (pathname === PageEnum.BASE_ROOT) {
         history.replace(userInfo?.homePath || PageEnum.BASE_HOME)
-        return;
-      }
-      if (routeName === PAGE_NOT_FOUND_NAME) {
-        // 动态添加路由后，此处应当重定向到fullPath，否则会加载404页面内容
-        history.replace(fullPath)
       }
     }
   };
