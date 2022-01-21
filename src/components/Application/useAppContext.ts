@@ -23,6 +23,7 @@ export const useApp = () => {
     }),
   } as any);
   const saveApp = (apps: Partial<AppContainerProp>) => {
+    console.log('设置了Container：', apps);
     updateApp((state) => {
       return {
         ...state,

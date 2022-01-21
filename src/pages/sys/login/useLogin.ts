@@ -11,6 +11,7 @@ import { isArray } from '/@/utils/is';
 import { useHistory } from 'react-router-dom';
 import { basicRoutes } from '/@/router/routes';
 import { dealRoutersPath } from '/@/utils/index';
+import queryString from 'query-string';
 
 
 import type { ErrorMessageMode } from '/#/axios';
@@ -62,8 +63,7 @@ export function useAfterLoginAction() {
   const disPatch = useDispatch();
   const getUserInfoAction = useGetUserInfoAction();
   const buildRoutesAction = useBuildRoutesAction();
-  const history = useHistory();
-  return async function afterLoginAction(goHome?: boolean): Promise<UserInfo | null> {
+  return async function afterLoginAction(): Promise<UserInfo | null> {
     if (!getToken()) return null;
     // 1.获取用户信息
     const userInfo = await getUserInfoAction();
@@ -71,15 +71,12 @@ export function useAfterLoginAction() {
     // 登录是否过期
     if (sessionTimeout) {
       disPatch(userActions.setSessionTimeout(false))
-    } else {
       // 动态添加路由
-      if (!permissionState.isDynamicAddedRoute) {
-        const actionroutes = await buildRoutesAction();
-        const routes = [...dealRoutersPath(actionroutes), ...basicRoutes];
-        disPatch(permissionActions.setRoutes(routes))
-        console.log('获取路由成功：', routes);
-      }
-      goHome && (await history.replace(userInfo?.homePath || PageEnum.BASE_HOME));
+    } else if (!permissionState.isDynamicAddedRoute) {
+      const actionroutes = await buildRoutesAction();
+      const routes = [...dealRoutersPath(actionroutes), ...basicRoutes];
+      // 设置routes, 页面会重新卸载，重新加载页面
+      disPatch(permissionActions.setRoutes(routes))
     }
     return userInfo;
   }
@@ -89,16 +86,15 @@ export function useLogin() {
   const dispatch = useDispatch();
   const afterLoginAction = useAfterLoginAction();
   return async function login(params: LoginParams & {
-    goHome?: boolean;
     mode?: ErrorMessageMode;
   }): Promise<UserInfo | null> {
     try {
-      const { goHome = true, mode, ...loginParams } = params;
+      const { mode, ...loginParams } = params;
       const data = await loginApi(loginParams, mode);
       const { token } = data;
       // save token
       dispatch(userActions.setToken(token));
-      return afterLoginAction(goHome);
+      return afterLoginAction();
     } catch (error) {
       return Promise.reject(error);
     }

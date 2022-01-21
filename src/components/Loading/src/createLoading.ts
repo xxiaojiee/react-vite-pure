@@ -49,7 +49,6 @@ export function createLoading(props?: LoadingProps, target: HTMLElement = getPop
       loadingRef.current?.setTips(tip);
     },
     setLoading: (loading: boolean) => {
-      console.log('setLoading, loading:', loading, loadingRef.current);
       if (!loadingRef.current) {
         open(loading)
         return;

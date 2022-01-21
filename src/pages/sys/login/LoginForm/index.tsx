@@ -37,7 +37,6 @@ const LoginForm: React.FC = () => {
       setLoading(true);
 
       const userInfo = await login({
-        goHome: true,
         password: data.password,
         username: data.account,
         mode: 'none', // 不要默认的错误提示

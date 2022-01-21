@@ -1,35 +1,27 @@
-import * as H from 'history';
-import type { AppRouteRecordRaw, Menu, RouterRenderProp } from '/@/router/types';
+
+import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { useStoreState, actions } from '/@/store';
 import { getAuthCache } from '/@/utils/auth';
-import { useAfterLoginAction } from '/@/pages/sys/login/useLogin';
 import { asyncRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { getMessage } from '/@/hooks/web/getMessage';
-import { useAppContainer } from '/@/components/Application';
 import { useDispatch } from 'react-redux'
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY, SESSION_TIMEOUT_KEY } from '/@/enums/cacheEnum';
+import { ROLES_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
 import { ERROR_LOG_ROUTE } from '/@/router/routes/basic';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { PageEnum } from '/@/enums/pageEnum';
 import projectSetting from '/@/settings/projectSetting';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
-import { useMount } from 'ahooks';
 import { getMenuList } from '/@/api/sys/menu';
 import { getPermCode } from '/@/api/sys/user';
-
-import { PAGE_NOT_FOUND_NAME } from '/@/router/constant'
-import React from 'react';
 
 const { createMessage } = getMessage();
 
 const permissionActions = actions.permission
 
-
-const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
 // import { useAppStore } from '/@/store/modules/app';
 // import { usePermissionStore } from '/@/store/modules/permission';
@@ -169,64 +161,6 @@ export function useBuildRoutesAction() {
     return routes;
   }
 }
-
-
-/**
- * @description: 登录鉴权
- */
-export function useLoginPermission(props: any) {
-  const userState = useStoreState('user');
-  const afterLoginAction = useAfterLoginAction();
-  const { loading } = useAppContainer();
-  return async function getLoginPermission() {
-    let redirectPath = '';
-    const { route, location, history } = props;
-    const { name: routeName } = route;
-    const { pathname, search, hash } = location as H.Location;
-    // const fullPath = `${pathname}${search || ''}${hash || ''}`;
-    const token = userState.token || getAuthCache<string>(TOKEN_KEY);
-    const sessionTimeout = userState.sessionTimeout || getAuthCache<string>(SESSION_TIMEOUT_KEY);
-    // 未登录或者已登录但过期的
-    if (!token || (token && sessionTimeout)) {
-      // 未登录， 跳到登录页
-      redirectPath = LOGIN_PATH
-      if (pathname && routeName === PAGE_NOT_FOUND_NAME) {
-        redirectPath += `?redirect=${pathname}`;
-      }
-      history.replace(redirectPath)
-    } else {
-      loading.setLoading(true);
-      const userInfo: UserInfo | null = await afterLoginAction();
-      if (pathname === PageEnum.BASE_ROOT) {
-        history.replace(userInfo?.homePath || PageEnum.BASE_HOME)
-        loading.setLoading(false);
-      }
-    }
-  };
-}
-
-/**
- * @description: 组件添加授权
- */
-export function getAuthority(Compoent) {
-  return function (props: RouterRenderProp) {
-    const { isDynamicAddedRoute } = useStoreState('permission');
-    const getLoginPermission = useLoginPermission(props);
-    // 用函数包裹，获取最初的状态，否则加载完动态路由，显示layout
-    const getShow = () => {
-      return isDynamicAddedRoute
-    }
-    useMount(() => {
-      if (!isDynamicAddedRoute) {
-        getLoginPermission();
-      }
-    });
-    if (getShow()) {
-      return React.createElement(Compoent, props);
-    }
-    return null;
-  };
-};
 
 
 // User permissions related operations

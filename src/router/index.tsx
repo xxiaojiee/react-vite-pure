@@ -57,5 +57,6 @@ const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[]; matched?: AppRouteR
 
 export default function Routes() {
   const permission = useStoreState('permission');
+  console.log('路由：', permission.routes);
   return <DynamicRoute routes={permission.routes} />;
 }
