@@ -41,6 +41,7 @@ const LoginForm: React.FC = () => {
         username: data.account,
         mode: 'none', // 不要默认的错误提示
       });
+      // 不需要做跳转动作，获取动态路由后，会重新渲染组件，由路由守卫进行跳转
       if (userInfo) {
         notification.success({
           message: '登录成功',

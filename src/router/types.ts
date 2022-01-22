@@ -40,6 +40,8 @@ export interface Menu {
   // path contains param, auto assignment.
   paramPath?: string;
 
+  redirect?: string;
+
   disabled?: boolean;
 
   children?: Menu[];

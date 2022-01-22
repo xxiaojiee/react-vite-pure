@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { useNow, useUnLock } from '../useLock';
 import { actions, useStoreState } from '/@/store';
 import { useDesign } from '/@/hooks/web/useDesign';
-import { useLogout } from '/@/pages/sys/login/useLogin';
+import { logout } from '/@/pages/sys/login/useLogin';
 import { LockOutlined } from '@ant-design/icons';
 import headerImg from '/@/assets/images/header.jpg';
 import { CSSTransition } from 'react-transition-group';
@@ -21,8 +21,6 @@ const LockPage = () => {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const [showDate, setShowDate] = useState(true);
-
-  const logout = useLogout();
 
   const { prefixCls } = useDesign('lock-page');
   const unLocks = useUnLock();
@@ -49,7 +47,7 @@ const LockPage = () => {
   }, [password, unLocks]);
 
   const goLogin = () => {
-    logout(true);
+    logout();
     lockSctions.resetLockInfo();
   };
 

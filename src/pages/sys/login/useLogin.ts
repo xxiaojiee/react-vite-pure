@@ -5,13 +5,13 @@ import { getToken } from '/@/utils/auth';
 import { getUserInfo, loginApi, doLogout } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { LoginParams } from '/@/api/sys/types/user';
-import { actions, useStoreState } from '/@/store';
+import { actions, useStoreState, store } from '/@/store';
 import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
 import { useHistory } from 'react-router-dom';
 import { basicRoutes } from '/@/router/routes';
 import { dealRoutersPath } from '/@/utils/index';
-import queryString from 'query-string';
+
 
 
 import type { ErrorMessageMode } from '/#/axios';
@@ -104,26 +104,20 @@ export function useLogin() {
 /**
  * @description: logout
  */
-export function useLogout() {
-  const userState = useStoreState('user')
-  const history = useHistory();
-  return async function logout(goLogin = false) {
-    if (userState.token) {
-      try {
-        await doLogout();
-      } catch {
-        console.log('注销Token失败');
-      }
+
+export async function logout() {
+  const { token } = store.getState().user;
+  if (token) {
+    try {
+      await doLogout();
+    } catch {
+      console.log('注销Token失败');
     }
-    userActions.setToken(undefined);
-    userActions.setSessionTimeout(false);
-    userActions.setUserInfo(null);
-    goLogin && history.push(PageEnum.BASE_LOGIN);
   }
-
+  store.dispatch(userActions.setToken(undefined));
+  store.dispatch(userActions.setSessionTimeout(false));
+  store.dispatch(userActions.setUserInfo(null));
 }
-
-
 
 
 export function useFormValid<T extends Object = any>(formRef: any) {

@@ -12,10 +12,9 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { useMount, useUnmount } from 'ahooks';
 import queryString from 'query-string';
 
-import { PAGE_NOT_FOUND_CHILD_NAME, PAGE_NOT_FOUND_NAME } from '/@/router/constant';
+import { PAGE_NOT_FOUND_CHILD_NAME } from '/@/router/constant';
 
 import * as H from 'history';
-import type { UserInfo } from '/#/store';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -30,7 +29,7 @@ export function usePermissionGuard(props: any) {
   const { loading } = useAppContainer();
   return async function getPermissionGuard() {
     const { route, location, history } = props;
-    const { pathname, search } = location as H.Location;
+    const { pathname } = location as H.Location;
     const token = userState.token || getAuthCache<string>(TOKEN_KEY);
     const sessionTimeout = userState.sessionTimeout || getAuthCache<string>(SESSION_TIMEOUT_KEY);
     // 未登录或者已登录但过期的, 跳到登录页
@@ -42,19 +41,8 @@ export function usePermissionGuard(props: any) {
       await history.replace(LOGIN_PATH);
     } else {
       loading.setLoading(true);
-      const userInfo: UserInfo | null = await afterLoginAction();
+      await afterLoginAction();
       loading.setLoading(false);
-      console.log('route999:', props);
-      if (route.path === LOGIN_PATH) {
-        history.replace(
-          (queryString.parse(search)?.redirect as string) ||
-            userInfo?.homePath ||
-            PageEnum.BASE_HOME,
-        );
-      }
-      if (pathname === PageEnum.BASE_ROOT) {
-        await history.replace(userInfo?.homePath || PageEnum.BASE_HOME);
-      }
     }
   };
 }
@@ -65,11 +53,12 @@ export function usePermissionGuard(props: any) {
 export function useGuard(props) {
   const { route, history, location = {} } = props;
   const isFirst = useRef<boolean>(true);
-  const { redirect, path, meta, name } = route;
-  const { pathname } = location as H.Location;
+  const { redirect, path, meta, name, children } = route;
+  const { pathname, search } = location as H.Location;
   const { route: appRoute, saveApp } = useAppContainer();
   const getPermissionGuard = usePermissionGuard(props);
   const userState = useStoreState('user');
+  const { userInfo, sessionTimeout } = userState || {};
   const token = userState.token || getAuthCache<string>(TOKEN_KEY);
   const { removeAllHttpPending } = projectSetting;
   // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
@@ -81,43 +70,58 @@ export function useGuard(props) {
     if (
       appRoute?.path === LOGIN_PATH &&
       route.name === PAGE_NOT_FOUND_CHILD_NAME &&
-      pathname !== (userState.userInfo?.homePath || PageEnum.BASE_HOME)
+      pathname !== (userInfo?.homePath || PageEnum.BASE_HOME)
     ) {
       return true;
     }
     return false;
-  }, [appRoute, pathname, route.name, userState.userInfo?.homePath]);
+  }, [appRoute, pathname, route.name, userInfo?.homePath]);
   // 是否是登录页，且目前已登录 (是，就自动登录到系统)
   const isLoginPageAndAuth = useMemo(() => {
-    // 如果是登录页面且存在token，且token未过期
-    if (path === LOGIN_PATH && token && !userState.sessionTimeout) {
+    // 如果是登录页面且存在token，且token已经过期
+    if (path === LOGIN_PATH && token && sessionTimeout) {
       return true;
     }
     return false;
-  }, [path, token, userState.sessionTimeout]);
-  // 子路由是否不存在
-  const isExistChildren = useMemo(() => {
-    // pathname.split()
-    // // 如果是登录页面且存在token，且token未过期
-    // if (path === LOGIN_PATH && token && !userState.sessionTimeout) {
-    //   return false;
-    // }
-    // return true;
-  }, []);
+  }, [path, token, sessionTimeout]);
+  // 子路由是否找不到
+  const isNotFoundChildren = useMemo(() => {
+    if (path.includes(':path(.*)')) {
+      return false;
+    }
+    const childrenRouter = pathname.split(path)[1];
+    if (childrenRouter) {
+      if (childrenRouter === '/') {
+        return true;
+      }
+      if (!children) {
+        return true;
+      }
+      const nextRouterName = childrenRouter.match(/^\/\w*/)?.[0];
+      const isNotFound = !children.some((rou) => {
+        const nextFullRouter = `${path}${nextRouterName}`;
+        return rou.path === nextFullRouter || rou.path.includes(':path(.*)');
+      });
+      return isNotFound;
+    }
+    return false;
+  }, [children, path, pathname]);
   const isAuthorize = (isWhite || isDynamicAddedRoute) && !isLoginPageAndAuth; // 是否已经授权（授权才显示组件）
   const isShowComponent = isAuthorize && isGetCurrentRoute && !isLoginToFount;
-  const isLastRoute = path === pathname || name === PAGE_NOT_FOUND_CHILD_NAME || !route.children; // 页面地址是否为最终路由地址
+  const isLastRoute = path === pathname || name === PAGE_NOT_FOUND_CHILD_NAME; // 页面地址是否为最终路由地址
 
   // console.log(
-  //   'isAuthorize',
-  //   isAuthorize,
+  //   'isShowComponent',
+  //   isShowComponent,
   //   {
+  //     isAuthorize,
   //     isGetCurrentRoute,
   //     isWhite,
   //     isDynamicAddedRoute,
   //     isLoginPageAndAuth,
   //     isLoginToFount,
   //     isLastRoute,
+  //     isNotFoundChildren,
   //   },
   //   props,
   // );
@@ -130,7 +134,7 @@ export function useGuard(props) {
       nProgress.start();
     }
     if (!redirect && isLastRoute) {
-      console.log('路由即将挂载', path);
+      // console.log('路由即将挂载', path);
       if (removeAllHttpPending) {
         const axiosCanceler = new AxiosCanceler();
         // 切换路由会删除之前的请求
@@ -141,26 +145,48 @@ export function useGuard(props) {
   };
   beforeMount();
   useMount(async () => {
-    // 当找不到一级路由时
-    if (isLoginToFount) {
-      history.replace(userState.userInfo.homePath || PageEnum.BASE_HOME);
-      return;
-    }
     // 重定向
-    if (redirect && !path.includes(redirect)) {
-      console.log('路由重定向啦！！！！', path, redirect);
+    if (redirect && pathname === path) {
       await history.replace(redirect);
       return;
     }
-    if (isLastRoute) {
-      console.log('路由挂载啦啦啦啦啦啦啦啦啦啦啦啦啦啦！', path);
+
+    // 当找不到一级路由时
+    if (isLoginToFount) {
+      await history.replace(userInfo.homePath || PageEnum.BASE_HOME);
+      return;
+    }
+
+    // 当子路由找不到时，重定向到当前路由
+    if (isNotFoundChildren) {
+      if (redirect) {
+        await history.replace(redirect);
+        return;
+      }
+      // 由于组件不会卸载，当做最终路由处理
+      await history.replace(path);
+    }
+
+    if (isLastRoute || isNotFoundChildren) {
       if (!isAuthorize) {
-        console.log('准备授权啦！！！！', path);
         await getPermissionGuard();
         return;
       }
+      if (token && !sessionTimeout) {
+        if (path === LOGIN_PATH) {
+          await history.replace(
+            (queryString.parse(search)?.redirect as string) ||
+              userInfo?.homePath ||
+              PageEnum.BASE_HOME,
+          );
+          return;
+        }
+        if (pathname === PageEnum.BASE_ROOT) {
+          await history.replace(userInfo?.homePath || PageEnum.BASE_HOME);
+          return;
+        }
+      }
       if (!isGetCurrentRoute) {
-        console.log('appRoute:', appRoute);
         // 保存当前props (会导致组件重新渲染)
         saveApp(cloneDeep(props));
       }
@@ -171,7 +197,7 @@ export function useGuard(props) {
   });
   useUnmount(() => {
     if (isLastRoute) {
-      console.log('路由卸载啦！！！！', path);
+      // console.log('last路由卸载啦！！！！', path);
     }
   });
   return isShowComponent;

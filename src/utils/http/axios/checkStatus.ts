@@ -1,7 +1,13 @@
 import type { ErrorMessageMode } from '/#/axios';
 import { getMessage } from '/@/hooks/web/getMessage';
-// import router from '/@/router';
-// import { PageEnum } from '/@/enums/pageEnum';
+import { store, actions } from '/@/store'
+import projectSetting from '/@/settings/projectSetting';
+import { SessionTimeoutProcessingEnum } from '/@/enums/appEnum';
+import { logout } from '/@/pages/sys/login/useLogin';
+
+const stp = projectSetting.sessionTimeoutProcessing;
+
+const userActions = actions.user;
 
 const { createMessage, createErrorModal } = getMessage();
 
@@ -23,13 +29,13 @@ export function checkStatus(
     // Jump to the login page if not logged in, and carry the path of the current page
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
-      // userStore.setToken(undefined);
+      store.dispatch(userActions.setToken(undefined));
       errMessage = msg || '用户没有权限（令牌、用户名、密码错误）!';
-      // if (stp === SessionTimeoutProcessingEnum.PAGE_COVERAGE) {
-      //   userStore.setSessionTimeout(true);
-      // } else {
-      //   userStore.logout(true);
-      // }
+      if (stp === SessionTimeoutProcessingEnum.PAGE_COVERAGE) {
+        store.dispatch(userActions.setSessionTimeout(true));
+      } else {
+        logout()
+      }
       break;
     case 403:
       errMessage = '用户得到授权，但是访问是被禁止的。!';

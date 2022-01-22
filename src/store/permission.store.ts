@@ -51,6 +51,7 @@ export default {
     },
 
     setRoutes(this: any, list: AppRouteRecordRaw[]) {
+      console.log('获取路由啦！！！', list);
       this.setCurrentState({
         routes: list,
         isDynamicAddedRoute: true,

@@ -126,10 +126,10 @@ export function useBuildRoutesAction() {
       // 如果确定不需要做后台动态权限，请在下方评论整个判断
       case PermissionModeEnum.BACK:
 
-        createMessage.loading({
-          content: '菜单加载中...',
-          duration: 1,
-        });
+        // createMessage.loading({
+        //   content: '菜单加载中...',
+        //   duration: 1,
+        // });
         // !模拟从后台获取权限代码，
         // 这个函数可能只需要执行一次，实际项目可以自己放到合适的时间
         try {

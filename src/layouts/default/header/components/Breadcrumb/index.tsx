@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import classNames from 'classnames';
+import { useMount } from 'ahooks';
+import { Breadcrumb } from 'antd';
+import { Link } from 'react-router-dom';
 import { useAppContainer } from '/@/components/Application';
-import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { isString } from '/@/utils/is';
-import { useMount } from 'ahooks';
 import { filter } from '/@/utils/helper/treeHelper';
 import { useMenus } from '/@/router/menus';
-
 import { REDIRECT_NAME } from '/@/router/constant';
 import { getAllParentPath } from '/@/router/helper/menuHelper';
+
+import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 
 function getMatched(menuList: Menu[], parent: any[]) {
   const metched: Menu[] = [];
@@ -44,8 +47,14 @@ interface LayoutBreadcrumbProp {
   theme: 'dark' | 'light';
 }
 
-const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
-  const [routeList, setRouteList] = useState<Menu[]>([]);
+interface RouteListProp extends Omit<Menu, 'children'> {
+  breadcrumbName: string;
+  children?: Array<Omit<RouteListProp, 'children'>>;
+}
+
+const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
+  const { theme } = props;
+  const [routeList, setRouteList] = useState<RouteListProp[]>([]);
   const { route, matched, history } = useAppContainer();
   const menus = useMenus();
   console.log('menus:', menus);
@@ -81,16 +90,23 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
         name: route.meta?.title || route.name,
       } as unknown as AppRouteRecordRaw);
     }
-    console.log('breadcrumbList:', breadcrumbList);
-    setRouteList(breadcrumbList);
+    const getBreadcrumbName = (breadList) => {
+      return breadList.map((menuIem) => ({
+        ...menuIem,
+        breadcrumbName: menuIem.name,
+        children: menuIem.children ? getBreadcrumbName(menuIem.children) : undefined,
+      }));
+    };
+    const breadcrumbNameList = getBreadcrumbName(breadcrumbList);
+    setRouteList(breadcrumbNameList);
   });
 
-  function handleClick(rou: AppRouteRecordRaw, paths: string[], e: Event) {
-    e?.preventDefault();
+  function handleClick(rou: RouteListProp, paths: string[]) {
+    // e?.preventDefault();
     const { children, redirect, meta } = rou;
 
     if (children?.length && !redirect) {
-      e?.stopPropagation();
+      // e?.stopPropagation();
       return;
     }
     if (meta?.carryParam) {
@@ -113,14 +129,38 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = () => {
     }
   }
 
-  function hasRedirect(rous: AppRouteRecordRaw[], rou: AppRouteRecordRaw) {
+  function hasRedirect(rous: RouteListProp[], rou: RouteListProp) {
+    console.log('rous:', rous);
     return rous.indexOf(rou) !== rous.length - 1;
   }
 
   function getIcon(rou) {
     return rou.icon || rou.meta?.icon;
   }
-  return <div>LayoutBreadcrumb</div>;
+
+  const itemRender = (
+    rou: RouteListProp,
+    _params: Record<string, any>,
+    routesMatched: RouteListProp[],
+    paths: string[],
+  ) => (
+    <>
+      {/* {getShowBreadCrumbIcon() && getIcon(rou) ? <Icon icon={getIcon(rou)} v-if="" /> : null} */}
+      {!hasRedirect(routesMatched, rou) ? (
+        <span>{rou.name || rou.meta?.title}</span>
+      ) : (
+        <Link to="" onClick={() => handleClick(rou, paths)}>
+          {rou.name || rou.meta?.title}
+        </Link>
+      )}
+    </>
+  );
+
+  return (
+    <div className={classNames(prefixCls, `${prefixCls}--${theme}`)}>
+      <Breadcrumb routes={routeList} itemRender={itemRender} />
+    </div>
+  );
 };
 
 export default LayoutBreadcrumb;
