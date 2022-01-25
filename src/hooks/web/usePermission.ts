@@ -149,7 +149,6 @@ export function useBuildRoutesAction() {
         // remove meta.ignoreRoute item
         routeList = filter(routeList, routeRemoveIgnoreFilter);
         routeList = routeList.filter(routeRemoveIgnoreFilter);
-
         routeList = flatMultiLevelRoutes(routeList);
         routes = routeList;
         break;

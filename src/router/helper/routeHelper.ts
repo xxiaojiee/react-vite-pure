@@ -4,7 +4,7 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 import { LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
-// import { createRouter, createWebHashHistory } from 'vue-router';
+import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = load(() => import('/@/pages/sys/iframe/FrameBlank'));
@@ -107,22 +107,47 @@ export function flatMultiLevelRoutes(routeModules: AppRouteRecordRaw[]) {
   return modules;
 }
 
+// 将路由平摊为一级路由
+function routerToFirstLevel(routeModules: AppRouteRecordRaw, fatherPath?: string) {
+  let routes: AppRouteRecordRaw[] = [];
+  routeModules.children?.forEach((routeItem) => {
+    const modules: AppRouteRecordRaw = cloneDeep(routeItem);
+    modules.path = `${fatherPath || ''}${routeItem.path}`;
+    const nextPath = `${fatherPath || routeModules.path}/${routeItem.path}/`;
+    routes.push(modules);
+    if (routeItem.children) {
+      const childrenRoutes = routerToFirstLevel(modules, nextPath);
+      routes = routes.concat(childrenRoutes);
+    }
+  })
+  return routes;
+}
+
 // 路由级别升级
 function promoteRouteLevel(routeModule: AppRouteRecordRaw) {
-  addToChildren(routeModule.children || [], routeModule);
+  const allChildrenRoutes = routerToFirstLevel(routeModule);
+  addToChildren(allChildrenRoutes, routeModule.children || [], routeModule);
   routeModule.children = routeModule.children?.map((item) => omit(item, 'children'));
 }
 
 // 将所有子路由添加到二级路由
 function addToChildren(
+  allChildrenRoutes: AppRouteRecordRaw[],
   children: AppRouteRecordRaw[],
   routeModule: AppRouteRecordRaw,
 ) {
   for (let index = 0; index < children.length; index++) {
     const child = children[index];
-    if (routeModule.children?.length && child.children?.length) {
-      routeModule.children = [...routeModule.children, ...child.children];
-      addToChildren(child.children, routeModule);
+    const route = allChildrenRoutes.find((item) => item.name === child.name);
+    if (!route) {
+      continue;
+    }
+    routeModule.children = routeModule.children || [];
+    if (!routeModule.children.find((item) => item.name === route.name)) {
+      routeModule.children?.push(route as unknown as AppRouteRecordRaw);
+    }
+    if (child.children?.length) {
+      addToChildren(allChildrenRoutes, child.children, routeModule);
     }
   }
 }
@@ -144,4 +169,20 @@ function isMultipleRoute(routeModule: AppRouteRecordRaw) {
     }
   }
   return flag;
+}
+
+
+/**
+ * 2级路由添加NotFoundPage路由
+ */
+export function twoLevelAddNotFoundPageAddAxact(routeModules: AppRouteRecordRaw[]) {
+  for (let index = 0; index < routeModules.length; index++) {
+    const child = routeModules[index].children;
+    if (child && child.length) {
+      child.forEach(i => {
+        i.exact = true;
+      });
+      child?.push(PAGE_NOT_FOUND_ROUTE as unknown as AppRouteRecordRaw);
+    }
+  }
 }

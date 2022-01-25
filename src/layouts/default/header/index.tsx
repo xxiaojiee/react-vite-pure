@@ -97,7 +97,7 @@ const LayoutHeader: React.FC<HeaderProp> = (props) => {
   const getMenuMode = () => {
     return getSplit() ? MenuModeEnum.HORIZONTAL : null;
   };
-  console.log('show:', getShowContent() && getShowBread())
+
   return (
     <Header className={getHeaderClass()}>
       {/* left start */}

@@ -1,7 +1,5 @@
 
 import { isObject } from '/@/utils/is';
-import type { AppRouteRecordRaw } from '/@/router/types';
-import { cloneDeep } from 'lodash-es'
 
 export const noop = () => { };
 
@@ -50,19 +48,4 @@ export function openWindow(
   noreferrer && feature.push('noreferrer=yes');
 
   window.open(url, target, feature.join(','));
-}
-
-
-export function dealRoutersPath(routes: AppRouteRecordRaw[], parentPath = '') {
-  const routeModule = cloneDeep(routes);
-  for (let index = 0; index < routes.length; index++) {
-    const element = routeModule[index];
-    if (parentPath && element.path) {
-      element.path = `${parentPath}/${element.path}`;
-    }
-    if (element?.children?.length) {
-      element.children = dealRoutersPath(element.children, element.path as string);
-    }
-  }
-  return routeModule;
 }

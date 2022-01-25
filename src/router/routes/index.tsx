@@ -1,13 +1,10 @@
-import { load, ROOT_NAME, LOGIN_NAME } from '../constant';
+import { load, LOGIN_NAME } from '../constant';
 
 import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
 import { mainOutRoutes } from './mainOut';
-
-
-import { dealRoutersPath } from '/@/utils/index';
 
 const modules = import.meta.globEager('./modules/**/*.ts');
 
@@ -19,9 +16,10 @@ Object.keys(modules).forEach((key) => {
   routeModuleList.push(...modList);
 });
 
-export const asyncRoutes = dealRoutersPath(routeModuleList);
+export const asyncRoutes = routeModuleList;
 
 console.log('asyncRoutes:', asyncRoutes);
+
 
 // export const RootRoute: AppRouteRecordRaw = {
 //   path: '/',

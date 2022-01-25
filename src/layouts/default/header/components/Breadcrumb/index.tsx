@@ -57,28 +57,20 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
   const [routeList, setRouteList] = useState<RouteListProp[]>([]);
   const { route, matched, history } = useAppContainer();
   const menus = useMenus();
-  console.log('menus:', menus);
   const { prefixCls } = useDesign('layout-breadcrumb');
   const { getShowBreadCrumbIcon } = useRootSetting();
 
   useMount(() => {
-    console.log(9999999999);
-
     if (!route || route.name === REDIRECT_NAME) return;
-    console.log('matched:', matched);
     const cur = matched?.[matched.length - 1];
     let path: string = route.path || '';
 
     if (cur && cur?.meta?.currentActiveMenu) {
       path = cur.meta.currentActiveMenu;
     }
-
-    console.log('path:', path);
     const parent = getAllParentPath(menus, path);
     const filterMenus = menus.filter((item) => item.path === parent[0]);
-    console.log('filterMenus:', filterMenus, parent);
     const matcheds = getMatched(filterMenus, parent);
-    console.log('matched:', matcheds);
 
     if (!matcheds || matcheds.length === 0) return;
 
@@ -130,7 +122,6 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
   }
 
   function hasRedirect(rous: RouteListProp[], rou: RouteListProp) {
-    console.log('rous:', rous);
     return rous.indexOf(rou) !== rous.length - 1;
   }
 

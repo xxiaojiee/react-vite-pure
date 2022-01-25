@@ -17,12 +17,10 @@ interface QrcodeProp {
 }
 
 const Qrcode: React.FC<QrcodeProp> = (props) => {
-  console.log(111111111);
   const { width = 200, tag = 'canvas', value, options = {}, logo, className = '' } = props;
   const wrapImageRef = useRef<HTMLImageElement | null>(null);
   const wrapCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const createQrcode = useCallback(async () => {
-    console.log(222222222);
     try {
       const renderValue = String(value);
       if (tag === 'canvas') {
@@ -34,7 +32,6 @@ const Qrcode: React.FC<QrcodeProp> = (props) => {
           options: options || {},
         });
         const canvasConf = { url, ctx: (wrapCanvasRef.current as HTMLCanvasElement).getContext('2d') }
-        console.log('canvasConf:', canvasConf);
         return canvasConf;
       }
 

@@ -1,17 +1,15 @@
 
-import { LoginStateEnum, PageEnum } from '/@/enums/pageEnum';
+import { LoginStateEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { getToken } from '/@/utils/auth';
 import { getUserInfo, loginApi, doLogout } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { LoginParams } from '/@/api/sys/types/user';
+import { twoLevelAddNotFoundPageAddAxact } from '/@/router/helper/routeHelper';
 import { actions, useStoreState, store } from '/@/store';
 import { useDispatch } from 'react-redux'
 import { isArray } from '/@/utils/is';
-import { useHistory } from 'react-router-dom';
 import { basicRoutes } from '/@/router/routes';
-import { dealRoutersPath } from '/@/utils/index';
-
 
 
 import type { ErrorMessageMode } from '/#/axios';
@@ -74,7 +72,9 @@ export function useAfterLoginAction() {
       // 动态添加路由
     } else if (!permissionState.isDynamicAddedRoute) {
       const actionroutes = await buildRoutesAction();
-      const routes = [...dealRoutersPath(actionroutes), ...basicRoutes];
+      const routes = [...actionroutes, ...basicRoutes];
+      twoLevelAddNotFoundPageAddAxact(routes);
+      console.log('routes333333:', routes);
       // 设置routes, 页面会重新卸载，重新加载页面
       disPatch(permissionActions.setRoutes(routes))
     }

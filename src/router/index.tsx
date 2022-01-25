@@ -7,6 +7,7 @@ import type { AppRouteRecordRaw, RouterRenderProp } from '/@/router/types';
 import { useStoreState } from '/@/store';
 
 function RouterRender(props: RouterRenderProp) {
+  console.log('props:::', props.route);
   const { route, matched = [] } = props;
   const { component, children } = route;
   const Comp = component!;
@@ -36,22 +37,30 @@ const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[]; matched?: AppRouteR
   matched = [],
 }) => (
   <Switch>
-    {map(rous, (route, index) => (
-      <Route
+    {map(rous, (route, index) => {
+      const path = route.path[0] !== '/' ? `${matched[0].path}/${route.path}` : route.path;
+      return (
+        <Route
         key={index}
-        path={route.path}
-        exact={route.exact}
+        path={path}
+        exact={!!route.exact}
         render={(props: RouteComponentProps) => {
-          const { match, ...otherProp } = props;
-          const routerRenderProps = {
-            ...otherProp,
-            route: { ...route, match },
-            matched: [...matched, { ...route, match }],
-          };
-          return <RouterRender {...routerRenderProps} />;
-        }}
-      />
-    ))}
+            const { match, ...otherProp } = props;
+            const newRoute = {
+              ...route,
+              match,
+              path,
+            };
+            const routerRenderProps = {
+              ...otherProp,
+              route: newRoute,
+              matched: [...matched, newRoute],
+            };
+            return <RouterRender {...routerRenderProps} />;
+          }}
+        />
+      );
+    })}
   </Switch>
 );
 

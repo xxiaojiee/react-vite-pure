@@ -25,7 +25,6 @@ const MobileForm: React.FC = () => {
 
   const handleLogin = useCallback(async () =>  {
     const data = await validForm();
-    console.log('data:', data);
     if (!data) {
       return;
     }

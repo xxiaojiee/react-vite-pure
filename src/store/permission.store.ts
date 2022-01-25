@@ -75,6 +75,7 @@ export default {
         isDynamicAddedRoute: added
       })
     },
+
     resetState(this: any): void {
       this.setCurrentState({
         isDynamicAddedRoute: false,

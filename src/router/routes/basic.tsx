@@ -1,11 +1,9 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
-import { dealRoutersPath } from '/@/utils/index';
 import {
   REDIRECT_NAME,
   LAYOUT,
   EXCEPTION_COMPONENT,
   PAGE_NOT_FOUND_NAME,
-  PAGE_NOT_FOUND_CHILD_NAME,
 } from '/@/router/constant';
 import { load } from '../constant';
 
@@ -13,24 +11,12 @@ import { load } from '../constant';
 export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
   path: '/:path(.*)*',
   name: PAGE_NOT_FOUND_NAME,
-  component: LAYOUT,
+  component: EXCEPTION_COMPONENT,
   meta: {
     title: 'ErrorPage',
     hideBreadcrumb: true,
     hideMenu: true,
   },
-  children: [
-    {
-      path: '/:path(.*)*',
-      name: PAGE_NOT_FOUND_CHILD_NAME,
-      component: EXCEPTION_COMPONENT,
-      meta: {
-        title: 'ErrorPage',
-        hideBreadcrumb: true,
-        hideMenu: true,
-      },
-    },
-  ],
 };
 
 export const REDIRECT_ROUTE: AppRouteRecordRaw = {
@@ -55,7 +41,7 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
   ],
 };
 
-export const ERROR_LOG_ROUTE: AppRouteRecordRaw[] = dealRoutersPath([
+export const ERROR_LOG_ROUTE: AppRouteRecordRaw[] = [
   {
     path: '/error-log',
     name: 'ErrorLog',
@@ -79,4 +65,4 @@ export const ERROR_LOG_ROUTE: AppRouteRecordRaw[] = dealRoutersPath([
       },
     ],
   },
-]);
+];
