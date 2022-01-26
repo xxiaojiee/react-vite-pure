@@ -20,6 +20,7 @@ export interface AppRouteRecordRaw extends Omit<RouteProps, 'component'> {
   props?: Recordable;
   isChildrenRoute?: boolean;
   path: string;
+  matched?: AppRouteRecordRaw[];
   match?: RouteComponentProps['match']
 }
 

@@ -113,10 +113,10 @@ function routerToFirstLevel(routeModules: AppRouteRecordRaw, fatherPath?: string
   routeModules.children?.forEach((routeItem) => {
     const modules: AppRouteRecordRaw = cloneDeep(routeItem);
     modules.path = `${fatherPath || ''}${routeItem.path}`;
-    const nextPath = `${fatherPath || routeModules.path}/${routeItem.path}/`;
+    const prefixPath = fatherPath || `${routeModules.path}/`;
     routes.push(modules);
     if (routeItem.children) {
-      const childrenRoutes = routerToFirstLevel(modules, nextPath);
+      const childrenRoutes = routerToFirstLevel(modules, `${prefixPath}${routeItem.path}/`);
       routes = routes.concat(childrenRoutes);
     }
   })

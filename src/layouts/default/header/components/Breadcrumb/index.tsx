@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useMount } from 'ahooks';
 import { Breadcrumb } from 'antd';
-import { Link } from 'react-router-dom';
 import { useAppContainer } from '/@/components/Application';
 import { useDesign } from '/@/hooks/web/useDesign';
-import { useRootSetting } from '/@/hooks/setting/useRootSetting';
+// import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { isString } from '/@/utils/is';
 import { filter } from '/@/utils/helper/treeHelper';
 import { useMenus } from '/@/router/menus';
@@ -58,7 +57,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
   const { route, matched, history } = useAppContainer();
   const menus = useMenus();
   const { prefixCls } = useDesign('layout-breadcrumb');
-  const { getShowBreadCrumbIcon } = useRootSetting();
+  // const { getShowBreadCrumbIcon } = useRootSetting();
 
   useMount(() => {
     if (!route || route.name === REDIRECT_NAME) return;
@@ -93,16 +92,14 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
     setRouteList(breadcrumbNameList);
   });
 
-  function handleClick(rou: RouteListProp, paths: string[]) {
-    // e?.preventDefault();
+  function handleClick(e: any, rou: RouteListProp, paths: string[]) {
+    e?.stopPropagation();
     const { children, redirect, meta } = rou;
-
     if (children?.length && !redirect) {
-      // e?.stopPropagation();
-      return;
+      return '';
     }
     if (meta?.carryParam) {
-      return;
+      return '';
     }
 
     if (redirect && isString(redirect)) {
@@ -125,9 +122,9 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
     return rous.indexOf(rou) !== rous.length - 1;
   }
 
-  function getIcon(rou) {
-    return rou.icon || rou.meta?.icon;
-  }
+  // function getIcon(rou) {
+  //   return rou.icon || rou.meta?.icon;
+  // }
 
   const itemRender = (
     rou: RouteListProp,
@@ -140,9 +137,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
       {!hasRedirect(routesMatched, rou) ? (
         <span>{rou.name || rou.meta?.title}</span>
       ) : (
-        <Link to="" onClick={() => handleClick(rou, paths)}>
-          {rou.name || rou.meta?.title}
-        </Link>
+        <span onClick={(e) => handleClick(e, rou, paths)}>{rou.name || rou.meta?.title}</span>
       )}
     </>
   );

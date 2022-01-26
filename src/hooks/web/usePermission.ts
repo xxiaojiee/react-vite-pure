@@ -142,7 +142,6 @@ export function useBuildRoutesAction() {
 
         // 动态引入组件
         routeList = transformObjToRoute(routeList);
-
         //  通过后台路由获取菜单结构
         backMenuList = transformRouteToMenu(routeList);
         dispatch(permissionActions.setBackMenuList(backMenuList))

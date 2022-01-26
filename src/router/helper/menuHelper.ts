@@ -1,10 +1,8 @@
-import { AppRouteRecordRaw } from '/@/router/types';
+
 import type { MenuModule, Menu, AppRouteRecordRaw } from '/@/router/types';
 import { findPath, treeMap } from '/@/utils/helper/treeHelper';
 import { cloneDeep } from 'lodash-es';
 import { isUrl } from '/@/utils/is';
-// import { RouteParams } from 'vue-router';
-// import { toRaw } from 'vue';
 
 export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
   const menuList = findPath(treeData, (n) => n.path === path) as Menu[];
@@ -15,15 +13,12 @@ function joinParentPath(menus: Menu[], parentPath = '') {
   for (let index = 0; index < menus.length; index++) {
     const menu = menus[index];
     const path = menu.path as string;
-    // https://next.router.vuejs.org/guide/essentials/nested-routes.html
-    // Note that nested paths that start with / will be treated as a root path.
-    // This allows you to leverage the component nesting without having to use a nested URL.
     if (!(path.startsWith('/') || isUrl(path))) {
       // path doesn't start with /, nor is it a url, join parent path
       menu.path = `${parentPath}/${path}`;
     }
     if (menu?.children?.length) {
-      joinParentPath(menu.children, menu.meta?.hidePathForChildren ? parentPath : path);
+      joinParentPath(menu.children, menu.meta?.hidePathForChildren ? parentPath : menu.path);
     }
   }
 }
@@ -56,7 +51,6 @@ export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMa
   const list = treeMap(routeList, {
     conversion: (node: AppRouteRecordRaw) => {
       const { meta: { title, hideMenu = false } = {} } = node;
-
       return {
         ...(node.meta || {}),
         meta: node.meta,

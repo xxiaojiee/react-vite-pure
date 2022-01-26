@@ -30,8 +30,8 @@ export function listToTree<T = any>(list: any[], config: Partial<TreeHelperConfi
 }
 
 export function treeToList<T = any>(tree: any, config: Partial<TreeHelperConfig> = {}): T {
-  config = getConfig(config);
-  const { children } = config;
+  const newConfig = getConfig(config);
+  const { children } = newConfig;
   const result: any = [...tree];
   for (let i = 0; i < result.length; i++) {
     if (!result[i][children!]) continue;
@@ -45,8 +45,8 @@ export function findNode<T = any>(
   func: Fn,
   config: Partial<TreeHelperConfig> = {},
 ): T | null {
-  config = getConfig(config);
-  const { children } = config;
+  const newConfig = getConfig(config);
+  const { children } = newConfig;
   const list = [...tree];
   for (const node of list) {
     if (func(node)) return node;
@@ -60,8 +60,8 @@ export function findNodeAll<T = any>(
   func: Fn,
   config: Partial<TreeHelperConfig> = {},
 ): T[] {
-  config = getConfig(config);
-  const { children } = config;
+  const newConfig = getConfig(config);
+  const { children } = newConfig;
   const list = [...tree];
   const result: T[] = [];
   for (const node of list) {
@@ -76,11 +76,11 @@ export function findPath<T = any>(
   func: Fn,
   config: Partial<TreeHelperConfig> = {},
 ): T | T[] | null {
-  config = getConfig(config);
+  const newConfig = getConfig(config);
   const path: T[] = [];
   const list = [...tree];
   const visitedSet = new Set();
-  const { children } = config;
+  const { children } = newConfig;
   while (list.length) {
     const node = list[0];
     if (visitedSet.has(node)) {
@@ -99,12 +99,12 @@ export function findPath<T = any>(
 }
 
 export function findPathAll(tree: any, func: Fn, config: Partial<TreeHelperConfig> = {}) {
-  config = getConfig(config);
+  const newConfig  = getConfig(config);
   const path: any[] = [];
   const list = [...tree];
   const result: any[] = [];
-  const visitedSet = new Set(),
-    { children } = config;
+  const visitedSet = new Set();
+  const  { children } = newConfig;
   while (list.length) {
     const node = list[0];
     if (visitedSet.has(node)) {
@@ -125,8 +125,8 @@ export function filter<T = any>(
   func: (n: T) => boolean,
   config: Partial<TreeHelperConfig> = {},
 ): T[] {
-  config = getConfig(config);
-  const children = config.children as string;
+  const newConfig = getConfig(config);
+  const children = newConfig.children as string;
   function listFilter(list: T[]) {
     return list
       .map((node: any) => ({ ...node }))
@@ -143,11 +143,11 @@ export function forEach<T = any>(
   func: (n: T) => any,
   config: Partial<TreeHelperConfig> = {},
 ): void {
-  config = getConfig(config);
+  const newConfig = getConfig(config);
   const list: any[] = [...tree];
-  const { children } = config;
+  const { children } = newConfig;
   for (let i = 0; i < list.length; i++) {
-    //func 返回true就终止遍历，避免大量节点场景下无意义循环，引起浏览器卡顿
+    // func 返回true就终止遍历，避免大量节点场景下无意义循环，引起浏览器卡顿
     if (func(list[i])) {
       return;
     }

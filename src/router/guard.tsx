@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import nProgress from 'nprogress';
 import { useStoreState } from '/@/store';
 import { getAuthCache } from '/@/utils/auth';
@@ -55,14 +55,14 @@ export function useGuard(props) {
   const isFirst = useRef<boolean>(true);
   const { redirect, path, meta, name, children } = route;
   const { pathname, search } = location as H.Location;
-  const { route: appRoute, saveApp } = useAppContainer();
+  const { route: appRoute, matched, saveApp } = useAppContainer();
   const getPermissionGuard = usePermissionGuard(props);
   const userState = useStoreState('user');
   const { userInfo, sessionTimeout } = userState || {};
   const token = userState.token || getAuthCache<string>(TOKEN_KEY);
   const { removeAllHttpPending } = projectSetting;
   // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
-  const isGetCurrentRoute = !!appRoute?.path.includes(path);
+  const isGetCurrentRoute = !!matched?.some((rou) => rou.path === path);
   const isWhite = whitePathList.includes(path as PageEnum) || !!meta.ignoreAuth; // 是否是白名单
   const { isDynamicAddedRoute } = useStoreState('permission'); // 是否获取了动态路由
   // 登录后，找不到route路由地址
@@ -84,46 +84,25 @@ export function useGuard(props) {
     }
     return false;
   }, [path, token, sessionTimeout]);
-  // 子路由是否找不到
-  // const isNotFoundChildren = useMemo(() => {
-  //   if (path.includes(':path(.*)')) {
-  //     return false;
-  //   }
-  //   const childrenRouter = pathname.split(path)[1];
-  //   if (childrenRouter) {
-  //     if (childrenRouter === '/') {
-  //       return true;
-  //     }
-  //     if (!children) {
-  //       return true;
-  //     }
-  //     const nextRouterName = childrenRouter.match(/^\/\w*/)?.[0];
-  //     const isNotFound = !children.some((rou) => {
-  //       const nextFullRouter = `${path}${nextRouterName}`;
-  //       return rou.path === nextFullRouter || rou.path.includes(':path(.*)');
-  //     });
-  //     return isNotFound;
-  //   }
-  //   return false;
-  // }, [children, path, pathname]);
   const isAuthorize = (isWhite || isDynamicAddedRoute) && !isLoginPageAndAuth; // 是否已经授权（授权才显示组件）
   const isShowComponent = isAuthorize && isGetCurrentRoute && !isLoginToFount;
   const isLastRoute = !children; // 页面地址是否为最终路由地址
 
-  console.log(
-    'isShowComponent',
-    isShowComponent,
-    {
-      isAuthorize,
-      isGetCurrentRoute,
-      isWhite,
-      isDynamicAddedRoute,
-      isLoginPageAndAuth,
-      isLoginToFount,
-      isLastRoute,
-    },
-    props,
-  );
+  // console.log(
+  //   'isShowComponent',
+  //   isShowComponent,
+  //   {
+  //     isAuthorize,
+  //     isGetCurrentRoute,
+  //     isLoginToFount,
+  //     isWhite,
+  //     isDynamicAddedRoute,
+  //     isLoginPageAndAuth,
+  //     isLastRoute,
+  //   },
+  //   props,
+  // );
+
   const beforeMount = () => {
     if (!isFirst.current) {
       return;
@@ -154,17 +133,6 @@ export function useGuard(props) {
       await history.replace(userInfo.homePath || PageEnum.BASE_HOME);
       return;
     }
-
-    // 当子路由找不到时，重定向到当前路由
-    // if (isNotFoundChildren) {
-    //   if (redirect) {
-    //     await history.replace(redirect);
-    //     return;
-    //   }
-    //   // 由于组件不会卸载，当做最终路由处理
-    //   await history.replace(path);
-    // }
-    console.log('路由挂载啦！！！！！！', isLastRoute, isGetCurrentRoute);
     if (isLastRoute) {
       if (!isAuthorize) {
         await getPermissionGuard();
@@ -172,7 +140,6 @@ export function useGuard(props) {
       }
       if (token && !sessionTimeout) {
         if (path === LOGIN_PATH) {
-          debugger;
           await history.replace(
             (queryString.parse(search)?.redirect as string) ||
               userInfo?.homePath ||
@@ -181,7 +148,6 @@ export function useGuard(props) {
           return;
         }
         if (pathname === PageEnum.BASE_ROOT) {
-          debugger;
           await history.replace(userInfo?.homePath || PageEnum.BASE_HOME);
           return;
         }
@@ -190,13 +156,14 @@ export function useGuard(props) {
         // 保存当前props (会导致组件重新渲染)
         saveApp(cloneDeep(props));
       }
-      if (isGetCurrentRoute) {
-        nProgress.done();
-      }
     }
   });
+  useEffect(() => {
+    if (isGetCurrentRoute && nProgress.status) {
+      nProgress.done();
+    }
+  }, [isGetCurrentRoute]);
   useUnmount(() => {
-    console.log('last路由卸载啦！！！！', path);
     if (isLastRoute) {
       // console.log('last路由卸载啦！！！！', path);
     }
