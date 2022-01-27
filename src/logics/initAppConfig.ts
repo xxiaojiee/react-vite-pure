@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { PROJ_CFG_KEY } from '/@/enums/cacheEnum';
 import projectSetting from '/@/settings/projectSetting';
 
-import { useUpdateHeaderBgColor, useUpdateSidebarBgColor } from '/@/logics/theme/updateBackground';
+import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updateBackground';
 import { updateColorWeak } from '/@/logics/theme/updateColorWeak';
 import { updateGrayMode } from '/@/logics/theme/updateGrayMode';
 import { updateDarkTheme } from '/@/logics/theme/dark';
@@ -25,8 +25,6 @@ const localeActions = actions.locale;
 export function useInitAppConfigStore() {
   const appState = useStoreState('app');
   const dispatch = useDispatch();
-  const updateHeaderBgColor = useUpdateHeaderBgColor();
-  const updateSidebarBgColor = useUpdateSidebarBgColor();
   return function initAppConfig(){
     let projCfg: ProjectConfig = Persistent.getLocal(PROJ_CFG_KEY) as ProjectConfig;
     projCfg = deepMerge(projectSetting, projCfg || {});

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { useRootSetting } from '/@/hooks/setting/useRootSetting';
-import { useUpdateHeaderBgColor, useUpdateSidebarBgColor } from '/@/logics/theme/updateBackground';
+import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updateBackground';
 import { updateDarkTheme } from '/@/logics/theme/dark';
 import { ThemeEnum } from '/@/enums/appEnum';
 import moon from '/@/assets/icon/moon.svg';
@@ -12,8 +12,6 @@ import './index.less';
 
 const AppLocalePicker: React.FC = () => {
   const { prefixCls } = useDesign('dark-switch');
-  const updateHeaderBgColor = useUpdateHeaderBgColor();
-  const updateSidebarBgColor = useUpdateSidebarBgColor();
   const { getDarkMode, setDarkMode, getShowDarkModeToggle } = useRootSetting();
   const isDark = getDarkMode() === ThemeEnum.DARK;
   const getClass = classNames(prefixCls, 'absolute top-3 right-13 enter-x', {
