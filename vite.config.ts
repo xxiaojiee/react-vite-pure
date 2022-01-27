@@ -130,6 +130,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     optimizeDeps: {
       // 强制预构建不在dependencies中，其他的包。
       include: [
+        '@iconify/iconify',
         'antd/es/locale/zh_CN',
         'antd/es/locale/en_US',
       ],

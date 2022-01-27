@@ -1,7 +1,17 @@
-import React from "react";
+import React from 'react';
+import Icon from '/@/components/Icon';
 
-const Setting = () => {
-  return <div>Setting</div>
+interface SettingProp {
+  className: string;
 }
 
-export default Setting
+const Setting: React.FC<SettingProp> = (props) => {
+  const { className } = props;
+  return (
+    <div className={className}>
+      <Icon icon="ion:settings-outline" />
+    </div>
+  );
+};
+
+export default Setting;

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { localeList, LOCALE } from '/@/settings/localeSetting';
 import { useDesign } from '/@/hooks/web/useDesign';
-import language from '/@/assets/images/language.png';
+import { Icon } from '/@/components/Icon';
 import './index.less';
 
 interface AppLocalePickerProp {
@@ -29,7 +29,7 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
   const localeClass = classNames('cursor-pointer flex items-center', prefixCls);
   return (
     <span className={localeClass}>
-      <img src={language} alt="" />
+      <Icon icon="ion:language" />
       {showText ? <span className="ml-1">{getLocaleText()}</span> : null}
     </span>
   );
