@@ -1,5 +1,6 @@
 import type { LockInfo, UserInfo } from '/#/store';
 import type { ProjectConfig } from '/#/config';
+import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { createLocalStorage, createSessionStorage } from '/@/utils/cache';
 import { Memory } from './memory';
@@ -12,7 +13,7 @@ import {
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
   SESSION_TIMEOUT_KEY,
-  // MULTIPLE_TABS_KEY,
+  MULTIPLE_TABS_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 
@@ -23,6 +24,7 @@ interface BasicStore {
   [LOCK_INFO_KEY]: LockInfo;
   [PROJ_CFG_KEY]: ProjectConfig;
   [SESSION_TIMEOUT_KEY]: boolean;
+  [MULTIPLE_TABS_KEY]: AppRouteRecordRaw[];
 }
 
 type LocalStore = BasicStore;
