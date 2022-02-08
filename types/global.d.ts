@@ -45,3 +45,5 @@ declare interface ViteEnv {
 declare function parseInt(s: string | number, radix?: number): number;
 
 declare function parseFloat(string: string | number): number;
+
+declare type EventType = React.KeyboardEvent<HTMLDivElement> | React.MouseEvent<HTMLDivElement | HTMLButtonElement>;

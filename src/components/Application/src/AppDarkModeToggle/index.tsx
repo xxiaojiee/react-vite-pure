@@ -10,11 +10,16 @@ import sun from '/@/assets/icon/sun.svg';
 
 import './index.less';
 
-const AppLocalePicker: React.FC = () => {
+interface AppLocalePickerProp {
+  className?: string;
+}
+
+const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
+  const { className } = props;
   const { prefixCls } = useDesign('dark-switch');
   const { getDarkMode, setDarkMode, getShowDarkModeToggle } = useRootSetting();
   const isDark = getDarkMode() === ThemeEnum.DARK;
-  const getClass = classNames(prefixCls, 'absolute top-3 right-13 enter-x', {
+  const getClass = classNames(prefixCls, className, 'absolute top-3 right-13 enter-x', {
     [`${prefixCls}--dark`]: isDark,
   });
 

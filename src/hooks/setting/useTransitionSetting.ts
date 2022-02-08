@@ -1,24 +1,24 @@
 import type { TransitionSetting } from '/#/config';
+import { useStoreState, actions } from '/@/store';
+import { useDispatch } from 'react-redux';
 
-import { computed } from 'vue';
+const appActions = actions.app
 
-import { useAppStore } from '/@/store/modules/app';
+export function useTransitionSetting() {
+  const appState = useStoreState('app');
+  const dispatch = useDispatch();
+  const getEnableTransition = () => appState.transitionSetting?.enable;
 
-export function getTransitionSetting() {
-  const appStore = useAppStore();
+  const getOpenNProgress = () => appState.transitionSetting?.openNProgress;
 
-  const getEnableTransition = computed(() => appStore.getTransitionSetting?.enable);
+  const getOpenPageLoading = (): boolean => {
+    return !!appState.transitionSetting?.openPageLoading;
+  };
 
-  const getOpenNProgress = computed(() => appStore.getTransitionSetting?.openNProgress);
-
-  const getOpenPageLoading = computed((): boolean => {
-    return !!appStore.getTransitionSetting?.openPageLoading;
-  });
-
-  const getBasicTransition = computed(() => appStore.getTransitionSetting?.basicTransition);
+  const getBasicTransition = () => appState.transitionSetting?.basicTransition;
 
   function setTransitionSetting(transitionSetting: Partial<TransitionSetting>) {
-    appStore.setProjectConfig({ transitionSetting });
+    dispatch(appActions.setProjectConfig({ transitionSetting }))
   }
   return {
     setTransitionSetting,

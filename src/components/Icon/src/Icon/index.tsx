@@ -15,10 +15,11 @@ interface IconProp {
   size?: string | number;
   spin?: boolean;
   prefix?: string;
+  style?:React.CSSProperties;
 }
 
 const Icon: React.FC<IconProp> = (props) => {
-  const { size = 16, spin = false, prefix = '', icon, color, className } = props;
+  const { size = 16, spin = false, prefix = '', icon, color, className, style } = props;
   const elRef = useRef<ElRef>(null);
 
   const isSvgIcon = icon?.endsWith(SVG_END_WITH_FLAG);
@@ -55,6 +56,7 @@ const Icon: React.FC<IconProp> = (props) => {
       fontSize: `${fs}px`,
       color,
       display: 'inline-flex',
+      ...style,
     };
   };
   useEffect(() => {
