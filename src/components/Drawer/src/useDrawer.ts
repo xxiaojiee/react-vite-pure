@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type {
   UseDrawerReturnType,
   DrawerInstance,
@@ -5,59 +6,42 @@ import type {
   DrawerProps,
   UseDrawerInnerReturnType,
 } from './typing';
-import {
-  ref,
-  getCurrentInstance,
-  unref,
-  reactive,
-  watchEffect,
-  nextTick,
-  toRaw,
-  computed,
-} from 'vue';
 import { isProdMode } from '/@/utils/env';
 import { isFunction } from '/@/utils/is';
-import { tryOnUnmounted } from '@vueuse/core';
 import { isEqual } from 'lodash-es';
 import { error } from '/@/utils/log';
-
-const dataTransferRef = reactive<any>({});
-
-const visibleData = reactive<{ [key: number]: boolean }>({});
+import { useUnmount } from 'ahooks';
 
 /**
  * @description: Applicable to separate drawer and call outside
  */
 export function useDrawer(): UseDrawerReturnType {
-  if (!getCurrentInstance()) {
-    throw new Error('useDrawer() can only be used inside setup() or functional components!');
-  }
-  const drawer = ref<DrawerInstance | null>(null);
-  const loaded = ref<Nullable<boolean>>(false);
-  const uid = ref<string>('');
-
-  function register(drawerInstance: DrawerInstance, uuid: string) {
-    isProdMode() &&
-      tryOnUnmounted(() => {
-        drawer.value = null;
-        loaded.value = null;
-        dataTransferRef[unref(uid)] = null;
-      });
-
-    if (unref(loaded) && isProdMode() && drawerInstance === unref(drawer)) {
+  const drawer = useRef<DrawerInstance | null>(null);
+  const loaded = useRef<Nullable<boolean>>(false);
+  const visible = useRef<boolean>(false);
+  const dataTransferRef = useRef<any>(null);
+  useUnmount(() => {
+    if (isProdMode()) {
+      drawer.current = null;
+      loaded.current = false;
+      dataTransferRef.current = null;
+    }
+  })
+  function register(drawerInstance: DrawerInstance) {
+    if (loaded.current && isProdMode() && drawerInstance === drawer.current) {
       return;
     }
-    uid.value = uuid;
-    drawer.value = drawerInstance;
-    loaded.value = true;
+    drawer.current = drawerInstance;
+    loaded.current = true;
 
-    drawerInstance.emitVisible = (visible: boolean, uid: number) => {
-      visibleData[uid] = visible;
+    console.log('我注册啦')
+    drawerInstance.emitVisible = (isShow: boolean) => {
+      visible.current = isShow
     };
   }
 
   const getInstance = () => {
-    const instance = unref(drawer);
+    const instance = drawer.current;
     if (!instance) {
       error('useDrawer instance is undefined!');
     }
@@ -69,24 +53,23 @@ export function useDrawer(): UseDrawerReturnType {
       getInstance()?.setDrawerProps(props);
     },
 
-    getVisible: computed((): boolean => {
-      return visibleData[~~unref(uid)];
-    }),
+    getVisible: (): boolean => {
+      return visible.current;
+    },
 
-    openDrawer: <T = any>(visible = true, data?: T, openOnSet = true): void => {
+    openDrawer: <T = any>(isShow = true, data?: T, openOnSet = true): void => {
       getInstance()?.setDrawerProps({
-        visible: visible,
+        visible: isShow,
       });
       if (!data) return;
 
       if (openOnSet) {
-        dataTransferRef[unref(uid)] = null;
-        dataTransferRef[unref(uid)] = toRaw(data);
+        dataTransferRef.current = data;
         return;
       }
-      const equal = isEqual(toRaw(dataTransferRef[unref(uid)]), toRaw(data));
+      const equal = isEqual(dataTransferRef.current, data);
       if (!equal) {
-        dataTransferRef[unref(uid)] = toRaw(data);
+        dataTransferRef.current = data;
       }
     },
     closeDrawer: () => {
@@ -98,16 +81,18 @@ export function useDrawer(): UseDrawerReturnType {
 }
 
 export const useDrawerInner = (callbackFn?: Fn): UseDrawerInnerReturnType => {
-  const drawerInstanceRef = ref<Nullable<DrawerInstance>>(null);
-  const currentInstance = getCurrentInstance();
-  const uidRef = ref<string>('');
+  const drawerInstanceRef = useRef<Nullable<DrawerInstance>>(null);
+  const visible = useRef<boolean>(false);
+  const dataTransferRef = useRef<any>(null);
+  useUnmount(() => {
+    if (isProdMode()) {
+      drawerInstanceRef.current = null;
+    }
+  })
 
-  if (!getCurrentInstance()) {
-    throw new Error('useDrawerInner() can only be used inside setup() or functional components!');
-  }
 
   const getInstance = () => {
-    const instance = unref(drawerInstanceRef);
+    const instance = drawerInstanceRef.current;
     if (!instance) {
       error('useDrawerInner instance is undefined!');
       return;
@@ -115,47 +100,40 @@ export const useDrawerInner = (callbackFn?: Fn): UseDrawerInnerReturnType => {
     return instance;
   };
 
-  const register = (modalInstance: DrawerInstance, uuid: string) => {
-    isProdMode() &&
-      tryOnUnmounted(() => {
-        drawerInstanceRef.value = null;
-      });
-
-    uidRef.value = uuid;
-    drawerInstanceRef.value = modalInstance;
-    currentInstance?.emit('register', modalInstance, uuid);
+  const register = (modalInstance: DrawerInstance) => {
+    drawerInstanceRef.current = modalInstance;
   };
 
-  watchEffect(() => {
-    const data = dataTransferRef[unref(uidRef)];
+  useEffect(() => {
+    const data = dataTransferRef.current;
     if (!data) return;
     if (!callbackFn || !isFunction(callbackFn)) return;
-    nextTick(() => {
-      callbackFn(data);
-    });
-  });
+    callbackFn(data);
+  }, [callbackFn]);
+
+  const methods = {
+    changeLoading: (loading = true) => {
+      getInstance()?.setDrawerProps({ loading });
+    },
+
+    changeOkLoading: (loading = true) => {
+      getInstance()?.setDrawerProps({ confirmLoading: loading });
+    },
+    getVisible: (): boolean => {
+      return visible.current
+    },
+
+    closeDrawer: () => {
+      getInstance()?.setDrawerProps({ visible: false });
+    },
+
+    setDrawerProps: (props: Partial<DrawerProps>) => {
+      getInstance()?.setDrawerProps(props);
+    },
+  }
 
   return [
     register,
-    {
-      changeLoading: (loading = true) => {
-        getInstance()?.setDrawerProps({ loading });
-      },
-
-      changeOkLoading: (loading = true) => {
-        getInstance()?.setDrawerProps({ confirmLoading: loading });
-      },
-      getVisible: computed((): boolean => {
-        return visibleData[~~unref(uidRef)];
-      }),
-
-      closeDrawer: () => {
-        getInstance()?.setDrawerProps({ visible: false });
-      },
-
-      setDrawerProps: (props: Partial<DrawerProps>) => {
-        getInstance()?.setDrawerProps(props);
-      },
-    },
+    methods,
   ];
 };

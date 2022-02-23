@@ -1,28 +1,24 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { store } from '/@/store';
-
 import { Persistent } from '/@/utils/cache/persistent';
 
-import { PageEnum } from '/@/enums/pageEnum';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 import { MULTIPLE_TABS_KEY } from '/@/enums/cacheEnum';
 
 import projectSetting from '/@/settings/projectSetting';
 
 export interface RouteLocationNormalized extends AppRouteRecordRaw {
-    /**
-     * Object representation of the `search` property of the current location.
-     */
-     query: Record<string, null | string | string[]>;
-     /**
-      * Hash of the current location. If present, starts with a `#`.
-      */
-     hash: string;
-     /**
-      * Object of decoded params extracted from the `path`.
-      */
-     params: Record<string, string | string[]>;
+  /**
+   * Object representation of the `search` property of the current location.
+   */
+  query: Record<string, null | string | string[]>;
+  /**
+   * Hash of the current location. If present, starts with a `#`.
+   */
+  hash: string;
+  /**
+   * Object of decoded params extracted from the `path`.
+   */
+  params: Record<string, string | string[]>;
 }
 
 
@@ -62,13 +58,17 @@ export default {
     lastDragEndIndex: 0,
   },
   reducers: {
-
-    setCacheTabList(this: any, list: RouteLocationNormalized[]): void {
+    clearCacheTabs(this: any): void {
       this.setCurrentState({
-        tabList: list
+        cacheTabList: new Set(),
       })
     },
-
+    resetState(this: any): void {
+      this.setCurrentState({
+        tabList: [],
+        cacheTabList: new Set(),
+      })
+    },
   },
   // methods: {
   //   dealData() {

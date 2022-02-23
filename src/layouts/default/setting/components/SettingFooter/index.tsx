@@ -3,7 +3,6 @@ import { CopyOutlined, RedoOutlined } from '@ant-design/icons';
 
 import { useStoreState, actions } from '/@/store';
 import { useDispatch } from 'react-redux'
-import { useMultipleTabStore } from '/@/store/modules/multipleTab';
 
 import { useDesign } from '/@/hooks/web/useDesign';
 import { getMessage } from '/@/hooks/web/getMessage';
@@ -16,6 +15,7 @@ import defaultSetting from '/@/settings/projectSetting';
 const permissionActions = actions.permission
 const appActions = actions.app
 const userActions = actions.user
+const multipleTabActions = actions.multipleTab
 
 const SettingFooter = () => {
   const dispatch = useDispatch();
@@ -23,7 +23,6 @@ const SettingFooter = () => {
   const copyToClipboard = useCopyToClipboard()
   const { prefixCls } = useDesign('setting-footer');
   const { createSuccessModal, createMessage } = getMessage();
-  const tabStore = useMultipleTabStore();
 
   function handleCopy() {
     const { isSuccessRef } = copyToClipboard(
@@ -52,7 +51,7 @@ const SettingFooter = () => {
     localStorage.clear();
     dispatch(appActions.resetAllState())
     dispatch(permissionActions.resetState())
-    tabStore.resetState();
+    dispatch(multipleTabActions.resetState())
     dispatch(userActions.resetState())
     location.reload();
   }

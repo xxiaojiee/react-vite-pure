@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { BasicDrawer } from '/@/components/Drawer/index';
 import { Divider } from 'antd';
 import {
@@ -32,13 +32,19 @@ import {
   mixSidebarTriggerOptions,
 } from './enum';
 
+import type { DrawerInstance } from '/@/components/Drawer/src/typing';
+
 import {
   HEADER_PRESET_BG_COLOR_LIST,
   SIDE_BAR_BG_COLOR_LIST,
   APP_PRESET_COLOR_LIST,
 } from '/@/settings/designSetting';
 
-const SettingDrawer = (props) => {
+interface SettingDrawerProp {
+  handleRegister: (drawerInstance: DrawerInstance) => void;
+}
+
+const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
   const {
     getContentMode,
     getShowFooter,
@@ -358,23 +364,23 @@ const SettingDrawer = (props) => {
     );
   }
 
-  return () => (
-    <BasicDrawer {...props} title="项目配置" width={330} class="setting-drawer">
-      {getShowDarkModeToggle() && <Divider>{() => '主题'}</Divider>}
+  return (
+    <BasicDrawer {...props} title="项目配置" width={330} className="setting-drawer">
+      {getShowDarkModeToggle() && <Divider>主题</Divider>}
       {getShowDarkModeToggle() && <AppDarkModeToggle className="mx-auto" />}
-      <Divider>{() => '导航栏模式'}</Divider>
+      <Divider>导航栏模式</Divider>
       {renderSidebar()}
-      <Divider>{() => '系统主题'}</Divider>
+      <Divider>系统主题</Divider>
       {renderMainTheme()}
-      <Divider>{() => '顶栏主题'}</Divider>
+      <Divider>顶栏主题</Divider>
       {renderHeaderTheme()}
-      <Divider>{() => '菜单主题'}</Divider>
+      <Divider>菜单主题</Divider>
       {renderSiderTheme()}
-      <Divider>{() => '界面功能'}</Divider>
+      <Divider>界面功能</Divider>
       {renderFeatures()}
-      <Divider>{() => '界面显示'}</Divider>
+      <Divider>界面显示</Divider>
       {renderContent()}
-      <Divider>{() => '动画'}</Divider>
+      <Divider>动画</Divider>
       {renderTransition()}
       <Divider />
       <SettingFooter />

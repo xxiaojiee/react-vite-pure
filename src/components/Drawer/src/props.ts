@@ -10,7 +10,7 @@ export interface footerProps {
   /**
    * @description: Show confirmation button
    */
-  showOkBtn: boolean;
+  showOkBtn?: boolean;
   okButtonProps: Recordable;
   okText: string;
   okType: string;
@@ -27,6 +27,6 @@ export interface basicProps extends footerProps {
   loading: boolean;
   maskClosable: boolean;
   getContainer: unknown,
-  closeFunc: unknown,
+  closeFunc: () => Promise<any>,
   destroyOnClose: boolean,
 };

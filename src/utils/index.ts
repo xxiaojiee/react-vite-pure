@@ -23,7 +23,9 @@ export function getPopupContainer(node?: HTMLElement): HTMLElement {
 export function setObjToUrlParams(baseUrl: string, obj: any): string {
   let parameters = '';
   for (const key in obj) {
-    parameters += `${key}=${encodeURIComponent(obj[key])}&`;
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      parameters += `${key}=${encodeURIComponent(obj[key])}&`;
+  }
   }
   parameters = parameters.replace(/&$/, '');
   return /\?$/.test(baseUrl) ? baseUrl + parameters : baseUrl.replace(/\/?$/, '?') + parameters;
@@ -32,7 +34,9 @@ export function setObjToUrlParams(baseUrl: string, obj: any): string {
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
   let key: string;
   for (key in target) {
-    src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
+    if (Object.prototype.hasOwnProperty.call(src, key)) {
+      src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
+    }
   }
   return src;
 }

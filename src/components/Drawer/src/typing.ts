@@ -1,5 +1,5 @@
 import type { ButtonProps, ButtonType } from 'antd/lib/button';
-import type { CSSProperties, ReactNode, RefAttributes } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import React from 'react';
 import type { ScrollContainerOptions } from '/@/components/Container/index';
 
@@ -14,7 +14,7 @@ export interface DrawerInstance {
 export interface ReturnMethods extends DrawerInstance {
   openDrawer: <T = any>(visible?: boolean, data?: T, openOnSet?: boolean) => void;
   closeDrawer: () => void;
-  getVisible?: RefAttributes<boolean>;
+  getVisible?: () => boolean;
 }
 
 export type RegisterFn = (drawerInstance: DrawerInstance, uuid?: string) => void;
@@ -23,7 +23,7 @@ export interface ReturnInnerMethods extends DrawerInstance {
   closeDrawer: () => void;
   changeLoading: (loading: boolean) => void;
   changeOkLoading: (loading: boolean) => void;
-  getVisible?: RefAttributes<boolean>;
+  getVisible?: () => boolean;
 }
 
 export type UseDrawerReturnType = [RegisterFn, ReturnMethods];
@@ -62,18 +62,18 @@ export interface BasicProps extends FooterProps {
   loading: boolean;
   maskClosable: boolean;
   getContainer?: string | HTMLElement | getContainerFunc | false;
-  closeFunc: unknown,
+  closeFunc: () => Promise<any>,
   destroyOnClose: boolean,
   onClose?: (e?: EventType ) => void;
   onOk?: (e?: EventType ) => void;
-  onRegister?: (e: any ) => void;
+  handleRegister?: (e: any ) => void;
   onVisibleChange?: (e: boolean ) => void;
 };
 
 
 
 export interface DrawerFooterProps {
-  showOkBtn: boolean;
+  showOkBtn?: boolean;
   showCancelBtn: boolean;
   /**
    * Text of the Cancel button
@@ -120,6 +120,7 @@ export interface DrawerProps extends DrawerFooterProps {
   loading?: boolean;
   showDetailBack?: boolean;
   visible?: boolean;
+  className?: string;
   /**
    * Built-in ScrollContainer component configuration
    * @type ScrollContainerOptions
