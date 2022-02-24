@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, isValidElement } from 'react';
 import type { DrawerInstance, DrawerProps, BasicProps } from '../typing';
 import type { CSSProperties } from 'react';
 import { useMount } from 'ahooks';
 import { Drawer } from 'antd';
+import classNames from 'classnames';
 import { isFunction, isNumber } from '/@/utils/is';
 import DrawerFooter from '../components/DrawerFooter';
 import DrawerHeader from '../components/DrawerHeader';
@@ -12,7 +13,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import './index.less';
 
 const BasicDrawer: React.FC<BasicProps> = (props) => {
-  const { handleRegister, visible, onVisibleChange, ...otherProps } = props;
+  const { handleRegister, visible, className, onVisibleChange, ...otherProps } = props;
   const [isShow, setIsShow] = useState<boolean>(false);
   const propsRef = useRef<Partial<Nullable<DrawerProps>>>(null);
 
@@ -112,13 +113,24 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
     props.onOk?.();
   };
   return (
-    <Drawer {...getProps} className={prefixCls} onClose={onClose}>
-      <DrawerHeader
-        title={getMergeProps.title}
-        isDetail={props.isDetail}
-        showDetailBack={props.showDetailBack}
-        onClose={onClose}
-      />
+    <Drawer
+      {...getProps}
+      title={
+        isValidElement(getMergeProps.title) ? (
+          getMergeProps.title
+        ) : (
+          <DrawerHeader
+            title={getMergeProps.title}
+            isDetail={props.isDetail}
+            showDetailBack={props.showDetailBack}
+            titleToolbar={props.titleToolbar}
+            onClose={onClose}
+          />
+        )
+      }
+      className={classNames(prefixCls, className)}
+      onClose={onClose}
+    >
       {props.children}
       {/* <ScrollContainer
             style={getScrollContentStyle()}

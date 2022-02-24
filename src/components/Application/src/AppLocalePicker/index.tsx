@@ -13,11 +13,12 @@ interface AppLocalePickerProp {
   /**
    * Whether to refresh the interface when changing
    */
-  reload?: boolean;
+  // reload?: boolean;
+  className?: string;
 }
 
 const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
-  const { showText = true, reload } = props;
+  const { showText = true, className } = props;
   const { prefixCls } = useDesign('app-locale');
   const getLocaleText = () => {
     const key = LOCALE.ZH_CN;
@@ -26,7 +27,7 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
     }
     return localeList.find((item) => item.event === key)?.text;
   };
-  const localeClass = classNames('cursor-pointer flex items-center', prefixCls);
+  const localeClass = classNames('cursor-pointer flex items-center', prefixCls, className);
   return (
     <span className={localeClass}>
       <Icon icon="ion:language" />

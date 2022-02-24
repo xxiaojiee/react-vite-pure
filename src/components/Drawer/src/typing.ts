@@ -65,6 +65,7 @@ export interface BasicProps extends FooterProps {
   getContainer?: string | HTMLElement | getContainerFunc | false;
   closeFunc: () => Promise<any>,
   destroyOnClose: boolean,
+  titleToolbar?: React.ReactNode,
   onClose?: (e?: EventType ) => void;
   onOk?: (e?: EventType ) => void;
   handleRegister?: (e: any ) => void;

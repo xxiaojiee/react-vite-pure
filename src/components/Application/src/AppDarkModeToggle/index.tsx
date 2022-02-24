@@ -4,6 +4,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updateBackground';
 import { updateDarkTheme } from '/@/logics/theme/dark';
+import { SvgIcon } from '/@/components/Icon';
 import { ThemeEnum } from '/@/enums/appEnum';
 import moon from '/@/assets/icon/moon.svg';
 import sun from '/@/assets/icon/sun.svg';
@@ -37,8 +38,8 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
   return (
     <div className={getClass} onClick={toggleDarkMode}>
       <div className={`${prefixCls}-inner`} />
-      <img src={sun} alt="sun" />
-      <img src={moon} alt="moon" />
+      <SvgIcon size={14} name="sun" />
+      <SvgIcon size={14} name="moon" />
     </div>
   );
 };

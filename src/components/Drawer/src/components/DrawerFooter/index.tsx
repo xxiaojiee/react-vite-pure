@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { isValidElement } from 'react';
 import { Button } from 'antd';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { FooterProps } from '../../typing';
@@ -45,7 +45,9 @@ const DrawerFooter: React.FC<DrawerFooterProp> = (props) => {
   }
   return (
     <div className={prefixCls} style={getStyle()}>
-      {props.footer || (
+      {isValidElement(props.footer) ? (
+        props.footer
+      ) : (
         <>
           {props.insertFooter}
           {showCancelBtn ? (

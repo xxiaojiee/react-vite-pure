@@ -7,8 +7,8 @@
 
 import 'virtual:windi-base.css';
 import 'virtual:windi-components.css';
-import '/@/design/index.less';
 import 'virtual:windi-utilities.css';
+import '/@/design/index.less';
 // 注册 icon 精灵图
 import 'virtual:svg-icons-register';
 
