@@ -13,6 +13,7 @@ const appActions = actions.app;
 export function useRootSetting() {
   const appState = useStoreState('app');
   const disPatch = useDispatch();
+
   const getPageLoading = () => appState.pageLoading;
 
   const getOpenKeepAlive = () => appState.projectConfig?.openKeepAlive;

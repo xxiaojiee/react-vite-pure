@@ -50,7 +50,7 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
     const opt = {
       placement: 'right',
       ...getMergeProps,
-      visible:isShow,
+      visible: isShow,
     };
     opt.title = undefined;
     const { isDetail, width, wrapClassName, getContainer } = opt;

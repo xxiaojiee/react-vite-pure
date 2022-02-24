@@ -3,6 +3,7 @@ import type { Plugin } from 'vite';
 import reactRefresh from '@vitejs/plugin-react-refresh'
 import legacy from '@vitejs/plugin-legacy';
 import windiCSS from 'vite-plugin-windicss';
+import purgeIcons from 'vite-plugin-purge-icons';
 
 import { configHtmlPlugin } from './html';
 import { configMockPlugin } from './mock';
@@ -10,7 +11,7 @@ import { configStyleImportPlugin } from './styleImport';
 import { configSvgIconsPlugin } from './svgSprite';
 import { configThemePlugin } from './theme';
 // import { configPwaConfig } from './pwa';
-// import { configVisualizerConfig } from './visualizer';
+import { configVisualizerConfig } from './visualizer';
 // import { configCompressPlugin } from './compress';
 // import { configImageminPlugin } from './imagemin';
 
@@ -56,6 +57,8 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   // vite-plugin-mock
   VITE_USE_MOCK && vitePlugins.push(configMockPlugin(isBuild));
 
+  // vite-plugin-purge-icons
+  vitePlugins.push(purgeIcons());
 
   /**
    * vite-plugin-style-import
@@ -65,7 +68,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   vitePlugins.push(configStyleImportPlugin());
 
   // rollup-plugin-visualizer
-  // vitePlugins.push(configVisualizerConfig());
+  vitePlugins.push(configVisualizerConfig());
 
 
   // vite-plugin-theme

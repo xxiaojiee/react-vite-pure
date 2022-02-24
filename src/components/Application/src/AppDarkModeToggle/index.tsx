@@ -19,7 +19,7 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
   const { prefixCls } = useDesign('dark-switch');
   const { getDarkMode, setDarkMode, getShowDarkModeToggle } = useRootSetting();
   const isDark = getDarkMode() === ThemeEnum.DARK;
-  const getClass = classNames(prefixCls, className, 'absolute top-3 right-13 enter-x', {
+  const getClass = classNames(prefixCls, className, {
     [`${prefixCls}--dark`]: isDark,
   });
 
@@ -33,6 +33,7 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
   if (!getShowDarkModeToggle()) {
     return null;
   }
+
   return (
     <div className={getClass} onClick={toggleDarkMode}>
       <div className={`${prefixCls}-inner`} />

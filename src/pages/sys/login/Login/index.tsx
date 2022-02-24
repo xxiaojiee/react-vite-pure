@@ -29,7 +29,7 @@ const Login: React.FC<LoginProps> = (props) => {
           <AppLocalePicker showText={false} />
         </span>
       ) : null}
-      {!sessionTimeout ? <AppDarkModeToggle /> : null}
+      {!sessionTimeout ? <AppDarkModeToggle className="absolute top-3 right-7 enter-x" /> : null}
       <span className="-enter-x xl:hidden">
         <AppLogo alwaysShowTitle />
       </span>

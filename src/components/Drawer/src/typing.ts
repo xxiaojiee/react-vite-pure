@@ -61,6 +61,7 @@ export interface BasicProps extends FooterProps {
   visible: boolean;
   loading: boolean;
   maskClosable: boolean;
+  className?: string;
   getContainer?: string | HTMLElement | getContainerFunc | false;
   closeFunc: () => Promise<any>,
   destroyOnClose: boolean,

@@ -52,7 +52,7 @@ export function useMenuSetting() {
 
   const getIsTopMenu = () => getMenuType() === MenuTypeEnum.TOP_MENU;
 
-  const getCollapsedShowTitle = () => appState.projectConfig?.menuSetting.collapsedShowTitle;
+  const getCollapsedShowTitle = () => appState.projectConfig?.menuSetting?.collapsedShowTitle;
 
   const getShowTopMenu = () => getMenuMode() === MenuModeEnum.HORIZONTAL || getSplit();
 
