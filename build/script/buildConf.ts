@@ -43,5 +43,5 @@ export function runBuildConfig() {
   const config = getEnvConfig();
   // 获取配置文件变量名
   const configFileName = getConfigFileName(config);
-  createConfig({ config, configName: configFileName });
+  createConfig({ config, configName: configFileName, configFileName: GLOB_CONFIG_FILE_NAME });
 }

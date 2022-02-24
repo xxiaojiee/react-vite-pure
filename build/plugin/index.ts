@@ -10,20 +10,11 @@ import { configMockPlugin } from './mock';
 import { configStyleImportPlugin } from './styleImport';
 import { configSvgIconsPlugin } from './svgSprite';
 import { configThemePlugin } from './theme';
-// import { configPwaConfig } from './pwa';
+import { configPwaConfig } from './pwa';
 import { configVisualizerConfig } from './visualizer';
 // import { configCompressPlugin } from './compress';
 // import { configImageminPlugin } from './imagemin';
 
-interface ViteEnv {
-  VITE_GLOB_APP_TITLE: string,
-  VITE_PUBLIC_PATH: string,
-  VITE_USE_IMAGEMIN?: boolean,
-  VITE_USE_MOCK: boolean,
-  VITE_LEGACY?: boolean,
-  VITE_BUILD_COMPRESS?: 'gzip' | 'brotli' | 'none',
-  VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE: boolean,
-}
 
 export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const {
@@ -50,9 +41,6 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
 
   // vite-plugin-svg-icons
   vitePlugins.push(configSvgIconsPlugin(isBuild));
-
-  // vite-plugin-windicss
-  // vitePlugins.push(configWindiCssPlugin());
 
   // vite-plugin-mock
   VITE_USE_MOCK && vitePlugins.push(configMockPlugin(isBuild));
@@ -85,7 +73,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     // );
 
     // vite-plugin-pwa
-    // vitePlugins.push(configPwaConfig(viteEnv));
+    vitePlugins.push(configPwaConfig(viteEnv));
   }
 
   return vitePlugins;

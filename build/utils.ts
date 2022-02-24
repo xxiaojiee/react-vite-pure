@@ -50,7 +50,7 @@ export function getEnvConfig(match = 'VITE_GLOB_', confFiles = ['.env', '.env.pr
   let envConfig = {};
   confFiles.forEach((item) => {
     try {
-      const env = dotenv.parse(fs.readFileSync(path.resolve(process.cwd(), item)));
+      const env = dotenv.parse(fs.readFileSync(path.resolve(process.cwd(), './env', item)));
       envConfig = { ...envConfig, ...env };
     } catch (error) { }
   });
