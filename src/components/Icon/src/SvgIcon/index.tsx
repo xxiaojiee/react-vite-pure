@@ -26,7 +26,7 @@ const SvgIcon: React.FC<SvgIconProp> = (props) => {
   };
   return (
     <svg
-      className={classNames(prefixCls, className, spin && 'svg-icon-spin')}
+      className={classNames(prefixCls, className, { 'svg-icon-spin': spin })}
       style={getStyle()}
       aria-hidden="true"
     >

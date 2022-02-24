@@ -6,8 +6,8 @@ import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updat
 import { updateDarkTheme } from '/@/logics/theme/dark';
 import { SvgIcon } from '/@/components/Icon';
 import { ThemeEnum } from '/@/enums/appEnum';
-import moon from '/@/assets/icon/moon.svg';
-import sun from '/@/assets/icon/sun.svg';
+import moon from '/@/assets/icons/moon.svg';
+import sun from '/@/assets/icons/sun.svg';
 
 import './index.less';
 

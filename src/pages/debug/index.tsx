@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Input } from 'antd';
-import testMsg from '/@/assets/icon/test.svg';
+import testMsg from '/@/assets/icons/test.svg';
 
 const { TextArea } = Input;
 
