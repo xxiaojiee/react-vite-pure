@@ -1,16 +1,16 @@
 .scroll-y-transition {
   .transition-default();
 
-  &-enter-from,
-  &-leave-to {
+  &-enter {
     opacity: 0;
-  }
-
-  &-enter-from {
     transform: translateY(-15px);
   }
-
-  &-leave-to {
+  &-enter-active, &-exit{
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  &-exit-active{
+    opacity: 0;
     transform: translateY(15px);
   }
 }
@@ -18,16 +18,17 @@
 .scroll-y-reverse-transition {
   .transition-default();
 
-  &-enter-from,
-  &-leave-to {
+  &-enter {
     opacity: 0;
-  }
-
-  &-enter-from {
     transform: translateY(15px);
   }
+  &-enter-active,&-exit{
+    opacity: 1;
+    transform: translateY(0px);
+  }
 
-  &-leave-to {
+  &-exit-active{
+    opacity: 0;
     transform: translateY(-15px);
   }
 }
@@ -35,16 +36,17 @@
 .scroll-x-transition {
   .transition-default();
 
-  &-enter-from,
-  &-leave-to {
+  &-enter {
     opacity: 0;
-  }
-
-  &-enter-from {
     transform: translateX(-15px);
   }
+  &-enter-active,&-exit{
+    opacity: 1;
+    transform: translateX(0px);
+  }
 
-  &-leave-to {
+  &-exit-active{
+    opacity: 0;
     transform: translateX(15px);
   }
 }
@@ -52,16 +54,16 @@
 .scroll-x-reverse-transition {
   .transition-default();
 
-  &-enter-from,
-  &-leave-to {
+  &-enter {
     opacity: 0;
-  }
-
-  &-enter-from {
     transform: translateX(15px);
   }
-
-  &-leave-to {
+  &-enter-active,&-exit{
+    opacity: 1;
+    transform: translateX(0px);
+  }
+  &-exit-active{
+    opacity: 0;
     transform: translateX(-15px);
   }
 }

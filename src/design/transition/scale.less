@@ -1,21 +1,27 @@
 .scale-transition {
   .transition-default();
-
-  &-enter-from,
-  &-leave,
-  &-leave-to {
+  &-enter,
+  &-exit-active {
     opacity: 0;
     transform: scale(0);
+  }
+  &-enter-active,
+  &-exit {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 .scale-rotate-transition {
   .transition-default();
-
-  &-enter-from,
-  &-leave,
-  &-leave-to {
+  &-enter,
+  &-exit-active {
     opacity: 0;
     transform: scale(0) rotate(-45deg);
+  }
+  &-enter-active,
+  &-exit {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
 }
