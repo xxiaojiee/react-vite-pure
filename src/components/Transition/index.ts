@@ -1,8 +1,12 @@
-import { createSimpleTransition, createJavascriptTransition } from './src/CreateTransition';
 
 import ExpandTransitionGenerator from './src/ExpandTransition';
 
+import { createSimpleTransition, createJavascriptTransition } from './src/CreateTransition';
+
+export {  Transition } from './src/CreateTransition';
+
 export { default as CollapseTransition } from './src/CollapseTransition';
+
 
 export const FadeTransition = createSimpleTransition('fade-transition');
 export const ScaleTransition = createSimpleTransition('scale-transition');

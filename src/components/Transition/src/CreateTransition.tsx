@@ -1,84 +1,91 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import {
   CSSTransition,
   TransitionGroup,
   SwitchTransition,
-  Transition,
+  Transition as TransitionCom,
 } from 'react-transition-group';
 
 type Mode = 'in-out' | 'out-in';
 
 interface TransitionProp {
   show?: boolean; // 是否进入
+  name: string; // 是否进入
   group?: boolean; // 是否使用TransitionGroup
   switched?: boolean; // 是否使用SwitchTransition
   mode?: Mode;
-  origin: string;
+  origin?: string;
   className?: string;
   timeout?: number;
-  children: React.ReactChild;
+  tag?: string;
+  children: React.ReactNode;
 }
+
+export const Transition = forwardRef((props: TransitionProp, ref) => {
+  const {
+    group = false,
+    switched = false,
+    show = false,
+    timeout = 300,
+    mode,
+    origin,
+    className,
+    children,
+    name,
+    tag = 'div',
+  } = props;
+  const onBeforeEnter = (el: HTMLElement) => {
+    if (origin) {
+      el.style.transformOrigin = origin;
+    }
+  };
+  if (group) {
+    return (
+      <TransitionGroup className={className}>
+        {React.Children.map(children, (cheild) => (
+          <CSSTransition timeout={timeout} classNames={name} unmountOnExit onEnter={onBeforeEnter}>
+            {cheild}
+          </CSSTransition>
+        ))}
+      </TransitionGroup>
+    );
+  }
+  if (switched) {
+    return (
+      <SwitchTransition mode={mode}>
+        <CSSTransition
+          className={className}
+          addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
+          classNames={name}
+          unmountOnExit
+          onEnter={onBeforeEnter}
+        >
+          {tag ? React.createElement(tag, { ref }, children) : children}
+        </CSSTransition>
+      </SwitchTransition>
+    );
+  }
+  return (
+    <CSSTransition
+      in={show}
+      classNames={name}
+      className={className}
+      timeout={timeout}
+      unmountOnExit
+      onEnter={onBeforeEnter}
+    >
+      {tag ? React.createElement(tag, { ref }, children) : children}
+    </CSSTransition>
+  );
+});
 
 export function createSimpleTransition(
   name: string,
-  transitionOrigin = 'top center 0',
-  transitionMode: Mode = 'out-in',
+  origin = 'top center 0',
+  mode: Mode = 'out-in',
 ) {
-  return function (props: TransitionProp) {
-    const {
-      group = false,
-      switched = false,
-      show = false,
-      timeout = 300,
-      mode = transitionMode,
-      origin = transitionOrigin,
-      className,
-      children,
-    } = props;
-    const onBeforeEnter = (el: HTMLElement) => {
-      el.style.transformOrigin = origin;
-    };
-    if (group) {
-      return (
-        <TransitionGroup className={className}>
-          {React.Children.map(children, (cheild) => (
-            <CSSTransition
-              timeout={timeout}
-              classNames={name}
-              unmountOnExit
-              onEnter={onBeforeEnter}
-            >
-              {cheild}
-            </CSSTransition>
-          ))}
-        </TransitionGroup>
-      );
-    }
-    if (switched) {
-      return (
-        <SwitchTransition mode={mode}>
-          <CSSTransition
-            addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
-            classNames={name}
-            unmountOnExit
-            onEnter={onBeforeEnter}
-          >
-            {children}
-          </CSSTransition>
-        </SwitchTransition>
-      );
-    }
-    return (
-      <CSSTransition
-        in={show}
-        classNames={name}
-        timeout={timeout}
-        unmountOnExit
-        onEnter={onBeforeEnter}
-      >
-        {children}
-      </CSSTransition>
-    );
+  return function (props) {
+    return <Transition name={name} origin={origin} mode={mode} {...props} />;
   };
 }
 
@@ -88,10 +95,10 @@ export function createJavascriptTransition(
   transitionMode: Mode = 'in-out',
 ) {
   return function (props: TransitionProp) {
-    const { mode = transitionMode, children, ...otherProps } = props;
+    const { name: names, mode = transitionMode, children, ...otherProps } = props;
     return (
-      <Transition
-        name={name}
+      <TransitionCom
+        name={names || name}
         mode={mode}
         {...otherProps}
         onEnter={functions.beforeEnter}
@@ -104,7 +111,7 @@ export function createJavascriptTransition(
         }}
       >
         {children}
-      </Transition>
+      </TransitionCom>
     );
   };
 }

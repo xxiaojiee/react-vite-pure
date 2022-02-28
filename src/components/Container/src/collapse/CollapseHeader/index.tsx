@@ -10,7 +10,7 @@ interface CollapseHeaderProp {
   show: boolean;
   canExpan: boolean;
   expand: () => void;
-  action: React.ReactNode;
+  action?: React.ReactNode;
 }
 
 const CollapseHeader: React.FC<CollapseHeaderProp> = (props) => {

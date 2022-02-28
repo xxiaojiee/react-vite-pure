@@ -2,18 +2,18 @@ import React, { useEffect, useMemo, useRef, useState, isValidElement } from 'rea
 import type { DrawerInstance, DrawerProps, BasicProps } from '../typing';
 import type { CSSProperties } from 'react';
 import { useMount } from 'ahooks';
-import { Drawer } from 'antd';
+import { Drawer, Spin } from 'antd';
 import classNames from 'classnames';
 import { isFunction, isNumber } from '/@/utils/is';
 import DrawerFooter from '../components/DrawerFooter';
 import DrawerHeader from '../components/DrawerHeader';
-// import { ScrollContainer } from '/@/components/Container';
+import { ScrollContainer } from '/@/components/Container';
 import { useDesign } from '/@/hooks/web/useDesign';
 
 import './index.less';
 
 const BasicDrawer: React.FC<BasicProps> = (props) => {
-  const { handleRegister, visible, className, onVisibleChange, ...otherProps } = props;
+  const { handleRegister, visible, loadingText, className, onVisibleChange, ...otherProps } = props;
   const [isShow, setIsShow] = useState<boolean>(false);
   const propsRef = useRef<Partial<Nullable<DrawerProps>>>(null);
 
@@ -87,10 +87,6 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
     };
   };
 
-  const getLoading = () => {
-    return !!getProps?.loading;
-  };
-
   useEffect(() => {
     setIsShow(visible);
     onVisibleChange?.(visible);
@@ -131,15 +127,12 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
       className={classNames(prefixCls, className)}
       onClose={onClose}
     >
-      {props.children}
-      {/* <ScrollContainer
-            style={getScrollContentStyle()}
-            v-loading="getLoading"
-            loading-tip={loadingText || '加载中...'}
-            >
-            <slot></slot>
-            </ScrollContainer>
-      */}
+      <ScrollContainer style={getScrollContentStyle()}>
+        <Spin spinning={!!getProps?.loading} tip={loadingText || '加载中...'}>
+          {props.children}
+        </Spin>
+      </ScrollContainer>
+
       <DrawerFooter {...getProps} onClose={onClose} onOk={handleOk} height={getFooterHeight()} />
     </Drawer>
   );

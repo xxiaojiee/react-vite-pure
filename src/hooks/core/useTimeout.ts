@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useMount, useUnmount } from 'ahooks';
+import { useUnmount } from 'ahooks';
 import { isFunction } from '/@/utils/is';
 
 export function useTimeoutRef(wait: number) {
@@ -12,28 +12,25 @@ export function useTimeoutRef(wait: number) {
       timer.current = null;
     }
   }, [])
-  const start = useCallback(() => {
+  const start = useCallback((native = false) => {
     stop();
+    if(native){
+      setReady(true);
+    }
     timer.current = setTimeout(() => {
       setReady(true);
     }, wait);
   }, [stop, wait])
-  useMount(start)
   useUnmount(stop);
   return { ready, stop, start };
 }
 
-export function useTimeoutFn(handle: Fn<any>, wait: number, native = false) {
+export function useTimeoutFn(handle: Fn<any>, wait: number) {
   if (!isFunction(handle)) {
     throw new Error('handle is not Function!');
   }
 
   const { ready, stop, start } = useTimeoutRef(wait);
-  useMount(() => {
-    if (native) {
-      handle();
-    }
-  })
   useEffect(() => {
     if (ready) {
       handle()
