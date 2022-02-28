@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState, isValidElement } from 'react';
+import React, { useEffect, useMemo, useRef, useState, isValidElement, useCallback } from 'react';
 import type { DrawerInstance, DrawerProps, BasicProps } from '../typing';
 import type { CSSProperties } from 'react';
 import { useMount } from 'ahooks';
@@ -46,7 +46,6 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
     }),
     [otherProps],
   );
-
   const getProps = useMemo((): DrawerProps => {
     const opt = {
       placement: 'right',
@@ -94,7 +93,8 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
   }, [onVisibleChange, visible]);
 
   // Cancel event
-  const onClose = async () => {
+  const onClose = useCallback(async (e) => {
+    e.stopPropagation();
     const { closeFunc } = getProps;
     props.onClose?.();
     if (closeFunc && isFunction(closeFunc)) {
@@ -103,7 +103,7 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
       return;
     }
     setIsShow(false);
-  };
+  },[getProps, props]);
 
   const handleOk = () => {
     props.onOk?.();
@@ -132,7 +132,6 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
           {props.children}
         </Spin>
       </ScrollContainer>
-
       <DrawerFooter {...getProps} onClose={onClose} onOk={handleOk} height={getFooterHeight()} />
     </Drawer>
   );

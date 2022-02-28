@@ -38,11 +38,9 @@ const Scrollbar: React.FC<ScrollbarProp> = (props, ref) => {
   const [moveY, setMoveY] = useState(0);
   const wrap = useRef<ElRef>(null);
   const resize = useRef();
-  useImperativeHandle(() => {
-    return {
-      wrap: wrap.current,
-    };
-  }, ref);
+  useImperativeHandle(ref, () => ({
+    wrap: wrap.current,
+  }));
   const handleScroll = useCallback(() => {
     if (!native) {
       setMoveY(

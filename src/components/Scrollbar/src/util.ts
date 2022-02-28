@@ -31,7 +31,7 @@ export function renderThumbStyle({ move, size, bar }) {
   style[bar.size] = size;
   style.transform = translate;
   style.msTransform = translate;
-  style.webkitTransform = translate;
+  style.WebkitTransform = translate;
 
   return style;
 }

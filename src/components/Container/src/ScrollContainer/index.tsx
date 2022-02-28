@@ -50,13 +50,11 @@ const ScrollContainer: React.FC = (props, ref) => {
       to: scrollHeight,
     });
   }
-  useImperativeHandle(() => {
-    return {
-      getScrollWrap,
-      scrollBottom,
-      scrollTo,
-    };
-  }, ref);
+  useImperativeHandle(ref, () => ({
+    getScrollWrap,
+    scrollBottom,
+    scrollTo,
+  }));
   return (
     <Scrollbar ref={scrollbarRef} className="scroll-container" {...otherProp}>
       {children}

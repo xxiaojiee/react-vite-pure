@@ -12,7 +12,6 @@ function RouterRender(props: RouterRenderProp) {
   const Comp = component!;
   // 是否显示组件 （在useGuard里进行鉴权）
   const isShowComponent = useGuard(props);
-  // console.log('route:', !!children, !!Comp, isShowComponent, route.path);
   if (children && Comp) {
     if (!isShowComponent) {
       return <DynamicRoute routes={children} matched={matched} />;

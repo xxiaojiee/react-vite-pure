@@ -73,12 +73,12 @@ const BarIndex: React.FC<ScrollbarProp> = (props) => {
     {
       ref: divRef,
       className: classNames('scrollbar__bar', `is-${bar.key}`),
-      onMousedown: clickTrackHandler,
+      onMouseDown: clickTrackHandler,
     },
     React.createElement('div', {
       ref: thumb,
       className: 'scrollbar__thumb',
-      onMousedown: clickThumbHandler,
+      onMouseDown: clickThumbHandler,
       style: renderThumbStyle({
         size,
         move,

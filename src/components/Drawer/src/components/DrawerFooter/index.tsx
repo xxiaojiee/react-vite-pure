@@ -7,7 +7,7 @@ import './index.less';
 
 interface DrawerFooterProp extends FooterProps {
   onOk?: () => Promise<void> | void;
-  onClose?: () => Promise<void> | void;
+  onClose?: (e: any) => Promise<void> | void;
   height?: string | number;
 }
 
@@ -37,10 +37,7 @@ const DrawerFooter: React.FC<DrawerFooterProp> = (props) => {
     props.onOk?.();
   };
 
-  const handleClose = () => {
-    props.onClose?.();
-  };
-  if (showFooter) {
+  if (!showFooter) {
     return null;
   }
   return (
@@ -51,7 +48,7 @@ const DrawerFooter: React.FC<DrawerFooterProp> = (props) => {
         <>
           {props.insertFooter}
           {showCancelBtn ? (
-            <Button v-bind="cancelButtonProps" onClick={handleClose} className="mr-2">
+            <Button v-bind="cancelButtonProps" onClick={props.onClose} className="mr-2">
               {cancelText}
             </Button>
           ) : null}

@@ -88,21 +88,6 @@ export function useGuard(props) {
   const isShowComponent = isAuthorize && isGetCurrentRoute && !isLoginToFount;
   const isLastRoute = !children; // 页面地址是否为最终路由地址
 
-  // console.log(
-  //   'isShowComponent',
-  //   isShowComponent,
-  //   {
-  //     isAuthorize,
-  //     isGetCurrentRoute,
-  //     isLoginToFount,
-  //     isWhite,
-  //     isDynamicAddedRoute,
-  //     isLoginPageAndAuth,
-  //     isLastRoute,
-  //   },
-  //   props,
-  // );
-
   const beforeMount = () => {
     if (!isFirst.current) {
       return;
@@ -163,10 +148,5 @@ export function useGuard(props) {
       nProgress.done();
     }
   }, [isGetCurrentRoute]);
-  useUnmount(() => {
-    if (isLastRoute) {
-      // console.log('last路由卸载啦！！！！', path);
-    }
-  });
   return isShowComponent;
 }

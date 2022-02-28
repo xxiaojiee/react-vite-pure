@@ -7,12 +7,11 @@ import { ProjectConfig } from '/#/config';
 import { changeTheme } from '/@/logics/theme';
 import { updateDarkTheme } from '/@/logics/theme/dark';
 
-const userActions = actions.user;
 const appActions = actions.app;
 
 export function baseHandler(event: HandlerEnum, value: any) {
   const config = handler(event, value);
-  store.dispatch(userActions.setProjectConfig(config))
+  store.dispatch(appActions.setProjectConfig(config))
   if (event === HandlerEnum.CHANGE_THEME) {
     updateHeaderBgColor();
     updateSidebarBgColor();

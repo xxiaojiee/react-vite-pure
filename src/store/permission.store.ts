@@ -88,7 +88,6 @@ export default {
   },
   // methods: {
   //   dealData() {
-  //     console.log('this:', this)
   //   }
   // }
 }

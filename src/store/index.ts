@@ -79,12 +79,6 @@ function rootReducer(state = initialState, action) {
         methods[id][keys].call(tool, ...agument);
       }
     })
-    // console.log(444, reducers[id]);
-    // Object.keys(reducers[id]).forEach((keys) => {
-    //   tool[keys] = function (...agument: any) {
-    //     reducers[id][keys].call(tool, ...agument);
-    //   }
-    // })
     const allState = reducers[id][reducer].call(tool, action.payload, state);
     if (!newState && !allState) {
       throw Error(`${action.type}:方法内没有返回值，也没有调用“setState”和“setCurrentState” 方法`);
