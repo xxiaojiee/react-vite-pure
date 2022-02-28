@@ -21,14 +21,17 @@ export interface AppState {
 
 // let timeId: TimeoutHandle;
 
+const defaultState = {
+  darkMode: undefined,
+  pageLoading: false,
+  projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
+  beforeMiniInfo: {},
+}
+
+
 export default {
   id: 'app',
-  state: {
-    darkMode: undefined,
-    pageLoading: false,
-    projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
-    beforeMiniInfo: {},
-  },
+  state: defaultState,
   reducers: {
     setPageLoading(this: any, loading: boolean): void {
       this.setCurrentState({
@@ -56,7 +59,10 @@ export default {
       })
       Persistent.setLocal(PROJ_CFG_KEY, newConfig);
     },
-
+    resetAllState(this: any) {
+      Persistent.clearAll();
+      this.setCurrentState(defaultState);
+    },
   },
   // methods: {
   //   dealData() {

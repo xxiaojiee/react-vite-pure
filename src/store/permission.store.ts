@@ -17,21 +17,23 @@ interface PermissionState {
 }
 
 
+const defaultState = {
+  permCodeList: [],
+  // 路由是否已经动态添加
+  isDynamicAddedRoute: false,
+  // 触发菜单更新
+  lastBuildMenuTime: 0,
+  // 路由列表
+  routes: basicRoutes,
+  // 后台菜单列表
+  backMenuList: [],
+  // menu List
+  frontMenuList: [],
+}
+
 export default {
   id: 'permission',
-  state: {
-    permCodeList: [],
-    // 路由是否已经动态添加
-    isDynamicAddedRoute: false,
-    // 触发菜单更新
-    lastBuildMenuTime: 0,
-    // 路由列表
-    routes: basicRoutes,
-    // 后台菜单列表
-    backMenuList: [],
-    // menu List
-    frontMenuList: [],
-  },
+  state: defaultState,
   reducers: {
     setPermCodeList(this: any, codeList: string[]) {
       this.permCodeList = codeList;
@@ -77,13 +79,7 @@ export default {
     },
 
     resetState(this: any): void {
-      this.setCurrentState({
-        isDynamicAddedRoute: false,
-        permCodeList: [],
-        backMenuList: [],
-        lastBuildMenuTime: 0,
-      })
-
+      this.setCurrentState(defaultState)
     },
   },
   // methods: {

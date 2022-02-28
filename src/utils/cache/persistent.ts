@@ -88,7 +88,7 @@ export class Persistent {
   }
 }
 
-window.addEventListener('beforeunload', function () {
+window.addEventListener('beforeunload',  () => {
   ls.set(APP_LOCAL_CACHE_KEY, localMemory.getCache);
   ss.set(APP_SESSION_CACHE_KEY, sessionMemory.getCache);
 });

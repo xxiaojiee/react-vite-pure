@@ -4,4 +4,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  &-warning:not(.ant-btn-link, .is-disabled) {
+    color: #fff;
+    background-color: @warning-color;
+    border-color: @warning-color;
+  }
+  &-error:not(.ant-btn-link, .is-disabled) {
+    color: #fff;
+    background-color: @error-color;
+    border-color: @error-color;
+  }
 }

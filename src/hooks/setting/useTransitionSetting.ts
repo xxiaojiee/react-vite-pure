@@ -7,15 +7,14 @@ const appActions = actions.app
 export function useTransitionSetting() {
   const appState = useStoreState('app');
   const dispatch = useDispatch();
-  const getEnableTransition = () => appState.transitionSetting?.enable;
+  const getEnableTransition = () => appState.projectConfig.transitionSetting?.enable;
 
-  const getOpenNProgress = () => appState.transitionSetting?.openNProgress;
+  const getOpenNProgress = () => appState.projectConfig.transitionSetting?.openNProgress;
 
   const getOpenPageLoading = (): boolean => {
-    return !!appState.transitionSetting?.openPageLoading;
+    return !!appState.projectConfig.transitionSetting?.openPageLoading;
   };
-
-  const getBasicTransition = () => appState.transitionSetting?.basicTransition;
+  const getBasicTransition = () => appState.projectConfig.transitionSetting?.basicTransition;
 
   function setTransitionSetting(transitionSetting: Partial<TransitionSetting>) {
     dispatch(appActions.setProjectConfig({ transitionSetting }))

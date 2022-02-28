@@ -97,7 +97,7 @@ const LayoutHeader: React.FC<HeaderProp> = (props) => {
   const getMenuMode = () => {
     return getSplit() ? MenuModeEnum.HORIZONTAL : null;
   };
-  console.log('是否显示：', getShowSetting() );
+  console.log('是否显示：', getShowTopMenu() && !getIsMobile());
   return (
     <Header className={getHeaderClass()}>
       {/* left start */}

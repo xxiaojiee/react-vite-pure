@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Button } from 'antd';
 import { CopyOutlined, RedoOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 
 import { useStoreState, actions } from '/@/store';
 import { useDispatch } from 'react-redux';
@@ -63,12 +64,17 @@ const SettingFooter = () => {
         拷贝
       </Button>
 
-      <Button color="warning" block onClick={handleResetSetting} className="my-3">
+      <Button
+        color="warning"
+        block
+        onClick={handleResetSetting}
+        className={classNames('my-3', `${prefixCls}-warning`)}
+      >
         <RedoOutlined className="mr-2" />
         重置
       </Button>
 
-      <Button color="error" block onClick={handleClearAndRedo}>
+      <Button block onClick={handleClearAndRedo} className={`${prefixCls}-error`}>
         <RedoOutlined className="mr-2" />
         清空缓存并返回登录页
       </Button>
