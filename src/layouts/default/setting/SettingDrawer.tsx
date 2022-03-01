@@ -41,7 +41,7 @@ import {
 } from '/@/settings/designSetting';
 
 interface SettingDrawerProp {
-  handleRegister: (drawerInstance: DrawerInstance) => void;
+  onRegister: (drawerInstance: DrawerInstance) => void;
 }
 
 const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {

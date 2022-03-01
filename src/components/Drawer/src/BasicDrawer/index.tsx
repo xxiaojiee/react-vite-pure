@@ -13,7 +13,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import './index.less';
 
 const BasicDrawer: React.FC<BasicProps> = (props) => {
-  const { handleRegister, visible, loadingText, className, onVisibleChange, ...otherProps } = props;
+  const { onRegister, visible, loadingText, className, onVisibleChange, ...otherProps } = props;
   const [isShow, setIsShow] = useState<boolean>(false);
   const propsRef = useRef<Partial<Nullable<DrawerProps>>>(null);
 
@@ -35,9 +35,7 @@ const BasicDrawer: React.FC<BasicProps> = (props) => {
     emitVisible: undefined,
   });
 
-  useMount(() => {
-    handleRegister?.(drawerInstance.current);
-  });
+  onRegister?.(drawerInstance.current);
 
   const getMergeProps = useMemo(
     (): Partial<DrawerProps> => ({

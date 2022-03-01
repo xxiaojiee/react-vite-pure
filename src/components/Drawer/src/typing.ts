@@ -68,7 +68,7 @@ export interface BasicProps extends FooterProps {
   titleToolbar?: React.ReactNode,
   onClose?: (e?: EventType ) => void;
   onOk?: (e?: EventType ) => void;
-  handleRegister?: (e: any ) => void;
+  onRegister?: (e: any ) => void;
   onVisibleChange?: (e: boolean ) => void;
 };
 

@@ -84,6 +84,14 @@ export type BasicProps = ModalProps & {
 
   onOk?: (e?: any) => any;
 
+  onRegister?: (e?: any) => void;
+
+  onVisibleVhange?: (e?: boolean) => void;
+
+  onUpdateVisible?: (e?: boolean) => void;
+
+  onHeightChange?: (e: string) => void;
+
   insertFooter?: ReactNode;
   centerFooter?: ReactNode;
   appendFooter?: ReactNode;

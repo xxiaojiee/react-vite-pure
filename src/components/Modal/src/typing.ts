@@ -5,7 +5,7 @@ import { CSSProperties, ReactNode } from 'react';
  */
 export interface ModalMethods {
   setModalProps: (props: Partial<ModalProps>) => void;
-  emitVisible?: (visible: boolean, uid: number) => void;
+  emitVisible?: (visible: boolean) => void;
   redoModalHeight?: () => void;
 }
 

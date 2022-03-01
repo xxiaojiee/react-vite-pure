@@ -25,7 +25,6 @@ const SelectItem: React.FC<SelectItemProp> = (props) => {
   const handleChange = (e: any) => {
     event && baseHandler(event, e);
   };
-  console.log(title, def, options, getBindValue)
   return (
     <div className={prefixCls}>
       <span> {title}</span>

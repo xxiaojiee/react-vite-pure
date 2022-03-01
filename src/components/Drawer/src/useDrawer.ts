@@ -6,7 +6,6 @@ import type {
   DrawerProps,
   UseDrawerInnerReturnType,
 } from './typing';
-import { isProdMode } from '/@/utils/env';
 import { isFunction } from '/@/utils/is';
 import { isEqual } from 'lodash-es';
 import { error } from '/@/utils/log';
@@ -21,20 +20,16 @@ export function useDrawer(): UseDrawerReturnType {
   const visible = useRef<boolean>(false);
   const dataTransferRef = useRef<any>(null);
   useUnmount(() => {
-    if (isProdMode()) {
-      drawer.current = null;
-      loaded.current = false;
-      dataTransferRef.current = null;
-    }
+    drawer.current = null;
+    loaded.current = false;
+    dataTransferRef.current = null;
   })
   function register(drawerInstance: DrawerInstance) {
-    if (loaded.current && isProdMode() && drawerInstance === drawer.current) {
+    if (loaded.current && drawer.current === drawerInstance) {
       return;
     }
     drawer.current = drawerInstance;
     loaded.current = true;
-
-    console.log('我注册啦')
     drawerInstance.emitVisible = (isShow: boolean) => {
       visible.current = isShow
     };
@@ -85,9 +80,7 @@ export const useDrawerInner = (callbackFn?: Fn): UseDrawerInnerReturnType => {
   const visible = useRef<boolean>(false);
   const dataTransferRef = useRef<any>(null);
   useUnmount(() => {
-    if (isProdMode()) {
-      drawerInstanceRef.current = null;
-    }
+    drawerInstanceRef.current = null;
   })
 
 

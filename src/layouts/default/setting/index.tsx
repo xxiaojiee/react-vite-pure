@@ -13,7 +13,7 @@ const Setting: React.FC<SettingProp> = (props) => {
   return (
     <div className={className} onClick={() => openDrawer()}>
       <Icon icon="ion:settings-outline" />
-      <SettingDrawer handleRegister={register} />
+      <SettingDrawer onRegister={register} />
     </div>
   );
 };
