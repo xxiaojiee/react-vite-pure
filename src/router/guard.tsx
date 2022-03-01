@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import nProgress from 'nprogress';
 import { useStoreState } from '/@/store';
 import { getAuthCache } from '/@/utils/auth';
-import { useAppContainer } from '/@/components/Application';
+import { useAppContainer } from '/@/hooks/core/useAppContext';
 import { useAfterLoginAction } from '/@/pages/sys/login/useLogin';
 import projectSetting from '/@/settings/projectSetting';
 import { AxiosCanceler } from '/@/utils/http/axios/axiosCancel';

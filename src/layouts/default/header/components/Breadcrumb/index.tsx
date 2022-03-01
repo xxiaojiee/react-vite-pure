@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useMount } from 'ahooks';
 import { Breadcrumb } from 'antd';
-import { useAppContainer } from '/@/components/Application';
+import { useAppContainer } from '/@/hooks/core/useAppContext';
 import { useDesign } from '/@/hooks/web/useDesign';
 // import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { isString } from '/@/utils/is';

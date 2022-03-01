@@ -1,4 +1,4 @@
-import { useAppContainer } from '/@/components/Application';
+import { useAppContainer } from '/@/hooks/core/useAppContext';
 
 export function useDesign(scope: string) {
   const { prefixCls } = useAppContainer();

@@ -7,7 +7,7 @@ interface Params {
   excludeDefaultKeys?: boolean;
 }
 
-const DEFAULT_EXCLUDE_KEYS = ['class', 'style'];
+const DEFAULT_EXCLUDE_KEYS = ['className', 'style'];
 const LISTENER_PREFIX = /^on[A-Z]/;
 
 export function entries<T>(obj: Recordable<T>): Array<[string, T]> {

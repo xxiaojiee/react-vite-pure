@@ -10,6 +10,8 @@ export interface initAppContainerProp {
   prefixCls: string;
   isMobile: boolean;
   loading: LoadProps;
+  redoModalHeight: () => void;
+  [index: string]: any;
 }
 export type AppContainerProp = RouterRenderProp & initAppContainerProp;
 
