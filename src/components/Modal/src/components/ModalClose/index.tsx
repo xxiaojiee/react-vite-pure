@@ -5,16 +5,18 @@ import { FullscreenExitOutlined, FullscreenOutlined, CloseOutlined } from '@ant-
 
 import { useDesign } from '/@/hooks/web/useDesign';
 
+import type { M} from '../../props';
+
 import './index.less';
 
-interface ModalFooterProp {
+interface ModalCloseProp {
   canFullscreen?: boolean;
   fullScreen: boolean;
   onCancel?: (e?: MouseEvent) => any;
   onFullscreen?: (e?: MouseEvent) => any;
 }
 
-const ModalFooter: React.FC<ModalFooterProp> = (props) => {
+const ModalClose: React.FC<ModalCloseProp> = (props) => {
   const { canFullscreen = true, onCancel, onFullscreen, fullScreen } = props;
   const { prefixCls } = useDesign('basic-modal-close');
 
@@ -58,4 +60,4 @@ const ModalFooter: React.FC<ModalFooterProp> = (props) => {
   );
 };
 
-export default ModalFooter;
+export default ModalClose;

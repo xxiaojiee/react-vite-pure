@@ -1,4 +1,4 @@
-import type { ButtonProps } from 'antd/lib/button';
+import type { ButtonProps, ButtonType } from 'antd/lib/button';
 import { CSSProperties, ReactNode } from 'react';
 /**
  * @description: 弹窗对外暴露的方法
@@ -155,7 +155,7 @@ export interface ModalProps {
    * @default 'primary'
    * @type string
    */
-  okType?: 'primary' | 'danger' | 'dashed' | 'ghost' | 'default';
+   okType?: ButtonType;
 
   /**
    * The ok button props, follow jsx rules

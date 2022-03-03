@@ -33,18 +33,16 @@ const ModalMain: React.FC<BasicProps> = (props) => {
     keyboard = true,
     okType = 'primary',
     children,
-    onCancel,
     ...otherProps
   } = props;
+
   useModalDragMove({
     visible,
     destroyOnClose,
     draggable,
   });
 
-  const onModalCancel = () => {
-    onCancel && onCancel();
-  };
+
 
   const propsData = {
     draggable,
@@ -56,7 +54,6 @@ const ModalMain: React.FC<BasicProps> = (props) => {
     keyboard,
     okType,
     ...otherProps,
-    onCancel: onModalCancel,
   };
   return (
     <Modal {...propsData} className={className}>

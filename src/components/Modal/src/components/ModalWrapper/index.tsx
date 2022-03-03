@@ -7,18 +7,18 @@ import { ScrollContainer } from '/@/components/Container';
 import { useAppContainer } from '/@/hooks/core/useAppContext';
 
 interface ModalWrapperProp {
-  loading: boolean;
+  loading?: boolean;
   useWrapper?: boolean;
   modalHeaderHeight?: number;
   modalFooterHeight?: number;
   minHeight?: number;
-  height: number;
+  height?: number;
   footerOffset?: number;
   visible: boolean;
   fullScreen: boolean;
-  loadingTip: string;
+  loadingTip?: string;
   onExtHeight?: (e: number) => any;
-  onHeighChange?: (e: number) => any;
+  onHeightChange?: (e: number) => any;
 }
 
 const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
@@ -26,7 +26,7 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
     height,
     fullScreen,
     onExtHeight,
-    onHeighChange,
+    onHeightChange,
     children,
     loading,
     loadingTip,
@@ -86,7 +86,7 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
       } else {
         setRealHeight(height || realHeights > maxHeight ? maxHeight : realHeights);
       }
-      onHeighChange && onHeighChange(realHeight);
+      onHeightChange && onHeightChange(realHeight);
     } catch (error) {
       console.log(error);
     }

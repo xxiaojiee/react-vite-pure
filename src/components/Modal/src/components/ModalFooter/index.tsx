@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from 'antd';
-import { BasicProps } from '../../props';
+import { ModalFooterProp } from '../../props';
 
-const ModalClose: React.FC<BasicProps> = (props) => {
+const ModalFooter: React.FC<ModalFooterProp> = (props) => {
   const {
-    onOk,
-    onCancel,
+    onOk = () => {},
+    onCancel = () => {},
     okText = '确认',
     cancelText = '取消',
     okType = 'primary',
@@ -18,25 +18,18 @@ const ModalClose: React.FC<BasicProps> = (props) => {
     centerFooter,
     appendFooter,
   } = props;
-  const handleOk = (e: any) => {
-    onOk && onOk(e);
-  };
-
-  const handleCancel = (e: any) => {
-    onCancel && onCancel(e);
-  };
   return (
     <div>
       {insertFooter}
       {showCancelBtn ? (
-        <Button {...cancelButtonProps} onClick={handleCancel}>
+        <Button {...cancelButtonProps} onClick={onCancel}>
           {cancelText}
         </Button>
       ) : null}
 
       {centerFooter}
       {showOkBtn ? (
-        <Button {...okButtonProps} type={okType} loading={confirmLoading} onClick={handleOk}>
+        <Button {...okButtonProps} type={okType} loading={confirmLoading} onClick={onOk}>
           {okText}
         </Button>
       ) : null}
@@ -46,4 +39,4 @@ const ModalClose: React.FC<BasicProps> = (props) => {
   );
 };
 
-export default ModalClose;
+export default ModalFooter;

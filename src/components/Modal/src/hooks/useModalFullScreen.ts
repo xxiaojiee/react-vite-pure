@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 export interface UseFullScreenContext {
   wrapClassName: string | undefined;
   modalWrapperRef?: ComponentRef;
-  extHeightRef?: number;
+  extHeight?: number;
 }
 
 export function useFullScreen(context: UseFullScreenContext) {
@@ -33,7 +33,7 @@ export function useFullScreen(context: UseFullScreenContext) {
     // }
 
     // if (unref(fullScreen)) {
-    //   modalWrapSpinEl.style.height = `${window.innerHeight - unref(context.extHeightRef)}px`;
+    //   modalWrapSpinEl.style.height = `${window.innerHeight - unref(context.extHeight)}px`;
     // } else {
     //   modalWrapSpinEl.style.height = `${unref(formerHeightRef)}px`;
     // }

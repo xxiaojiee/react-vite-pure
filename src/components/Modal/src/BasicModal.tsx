@@ -1,42 +1,36 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import type { MouseEvent } from 'react';
+import { Spin } from 'antd';
 import Modal from './components/Modal';
-import ModalWrapper from './components/ModalWrapper.vue';
-import ModalClose from './components/ModalClose.vue';
-import ModalFooter from './components/ModalFooter.vue';
-import ModalHeader from './components/ModalHeader.vue';
+import ModalWrapper from './components/ModalWrapper';
+import ModalClose from './components/ModalClose';
+import ModalFooter from './components/ModalFooter';
+import ModalHeader from './components/ModalHeader';
 import { isFunction } from '/@/utils/is';
-import { deepMerge } from '/@/utils';
 import { BasicProps } from './props';
 import { useFullScreen } from './hooks/useModalFullScreen';
 import { omit } from 'lodash-es';
 import { useDesign } from '/@/hooks/web/useDesign';
 import type { ModalProps, ModalMethods } from './typing';
+import { title } from 'process';
 
 const BasicModal: React.FC<BasicProps> = (props) => {
   const {
+    children,
     visible,
+    closeIcon,
+    footer,
     defaultFullscreen,
-    scrollTop = true,
-    draggable = true,
-    cancelText = '取消',
-    okText = '确认',
-    canFullscreen = true,
-    wrapperFooterOffset = 0,
-    useWrapper = true,
-    showCancelBtn = true,
-    showOkBtn = true,
-    closable = true,
-    mask = true,
-    maskClosable = true,
-    keyboard = true,
-    okType = 'primary',
     onVisibleVhange,
     onUpdateVisible,
-    onRegister = () => {},
     closeFunc,
     onCancel,
     onOk,
     onHeightChange,
+    wrapClassName,
+    scrollTop = true,
+    wrapperFooterOffset = 0,
+    onRegister = () => {},
   } = props;
   const [isShow, setIsShow] = useState(false);
   // modal   Bottom and top height
@@ -45,17 +39,19 @@ const BasicModal: React.FC<BasicProps> = (props) => {
   const modalWrapperRef = useRef<any>(null);
   const { prefixCls } = useDesign('basic-modal');
 
+  const { handleFullScreen, getWrapClassName, fullScreen, setFullScreen } = useFullScreen({
+    extHeight,
+    wrapClassName,
+  });
+
   // Custom title component: get title
-  const getMergeProps = useMemo((): Recordable => {
+  const getProps = useMemo((): BasicProps => {
     return {
       ...props,
       ...propsRef,
+      wrapClassName: getWrapClassName,
     };
-  }, [props, propsRef]);
-
-  const { handleFullScreen, getWrapClassName, fullScreen, setFullScreen } = useFullScreen({
-    wrapClassName: getMergeProps.wrapClassName,
-  });
+  }, [props, propsRef, getWrapClassName]);
 
   /**
    * @description: 设置modal参数
@@ -87,38 +83,6 @@ const BasicModal: React.FC<BasicProps> = (props) => {
 
   onRegister(modalMethods);
 
-  // modal component does not need title and origin buttons
-  const getProps = useMemo((): Recordable => {
-    const opt = {
-      ...getMergeProps,
-      visible: isShow,
-      okButtonProps: undefined,
-      cancelButtonProps: undefined,
-      title: undefined,
-    };
-    return {
-      ...opt,
-      wrapClassName: getWrapClassName,
-    };
-  }, [getMergeProps, getWrapClassName, isShow]);
-
-  const getBindValue = useMemo((): Recordable => {
-    const attr = {
-      ...getMergeProps,
-      visible: isShow,
-      wrapClassName: getWrapClassName,
-    };
-    if (fullScreen) {
-      return omit(attr, ['height', 'title']);
-    }
-    return omit(attr, 'title');
-  }, [fullScreen, getMergeProps, getWrapClassName, isShow]);
-
-  const getWrapperHeight = useMemo(() => {
-    if (fullScreen) return undefined;
-    return getProps.height;
-  }, [fullScreen, getProps.height]);
-
   useEffect(() => {
     setIsShow(!!visible);
   }, [visible]);
@@ -141,7 +105,7 @@ const BasicModal: React.FC<BasicProps> = (props) => {
 
   // 取消事件
   const handleCancel = useCallback(
-    async (e: Event) => {
+    async (e: MouseEvent) => {
       e?.stopPropagation();
       // 过滤自定义关闭按钮的空白区域
       if ((e.target as HTMLElement)?.classList?.contains(`${prefixCls}-close--custom`)) return;
@@ -163,26 +127,54 @@ const BasicModal: React.FC<BasicProps> = (props) => {
     [onOk],
   );
 
-  const handleHeightChange = useCallback(
-    (height: string) => {
-      onHeightChange && onHeightChange(height);
-    },
-    [onHeightChange],
-  );
-
   const handleExtHeight = (height: number) => {
     setExtHeight(height);
   };
 
-  const handleTitleDbClick = useCallback(
-    (e) => {
-      if (!canFullscreen) return;
-      e.stopPropagation();
-      handleFullScreen(e);
-    },
-    [canFullscreen, handleFullScreen],
+  return (
+    <Modal
+      {...getProps}
+      onCancel={handleCancel}
+      closeIcon={
+        closeIcon || (
+          <ModalClose
+            canFullscreen={getProps.canFullscreen}
+            fullScreen={fullScreen}
+            onCancel={handleCancel}
+            onFullscreen={handleFullScreen}
+          />
+        )
+      }
+      title={title || <ModalHeader helpMessage={getProps.helpMessage} title={getProps.title} />}
+      footer={
+        footer || (
+          <ModalFooter
+            {...omit(getProps, ['style', 'className'])}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          />
+        )
+      }
+    >
+      <ModalWrapper
+        {...getProps.wrapperProps}
+        useWrapper={getProps.useWrapper}
+        footerOffset={wrapperFooterOffset}
+        fullScreen={fullScreen}
+        ref={modalWrapperRef}
+        minHeight={getProps.minHeight}
+        height={fullScreen ? undefined : getProps.height}
+        visible={visible}
+        modalFooterHeight={footer !== undefined && !footer ? 0 : undefined}
+        onExtHeight={handleExtHeight}
+        onHeightChange={onHeightChange}
+      >
+        <Spin spinning={getProps.loading} tip={getProps.loadingTip}>
+          {children}
+        </Spin>
+      </ModalWrapper>
+    </Modal>
   );
-  return <div>BasicModal</div>;
 };
 
 export default BasicModal;

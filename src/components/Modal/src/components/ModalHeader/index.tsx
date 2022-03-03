@@ -1,10 +1,6 @@
 import React from 'react';
 import { BasicTitle } from '/@/components/Basic';
-
-interface ModalHeaderProp {
-  helpMessage: string | string[];
-  title: string;
-}
+import type { ModalHeaderProp } from '../../props'
 
 const ModalHeader: React.FC<ModalHeaderProp> = (props) => {
   const { helpMessage, title } = props;
