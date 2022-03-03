@@ -120,13 +120,6 @@ const BasicModal: React.FC<BasicProps> = (props) => {
     [closeFunc, onCancel, prefixCls],
   );
 
-  const handleOk = useCallback(
-    (e: Event) => {
-      onOk && onOk(e);
-    },
-    [onOk],
-  );
-
   const handleExtHeight = (height: number) => {
     setExtHeight(height);
   };
@@ -150,7 +143,7 @@ const BasicModal: React.FC<BasicProps> = (props) => {
         footer || (
           <ModalFooter
             {...omit(getProps, ['style', 'className'])}
-            onOk={handleOk}
+            onOk={onOk}
             onCancel={handleCancel}
           />
         )
