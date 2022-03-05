@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode, MouseEvent } from 'react';
 import type { ModalWrapperProps } from './typing';
 import type { ButtonProps, ButtonType } from 'antd/lib/button';
 
+declare type getContainerFunc = () => HTMLElement;
 export interface ModalProps {
   visible: boolean;
   scrollTop?: boolean;
@@ -78,7 +79,7 @@ export type BasicProps = {
   closeIcon: ReactNode;
   destroyOnClose?: boolean;
   footer: ReactNode;
-  getContainer?: (instance: any) => any;
+  getContainer?: string | HTMLElement | getContainerFunc | false ;
   mask?: boolean;
   maskClosable?: boolean;
   keyboard?: boolean;

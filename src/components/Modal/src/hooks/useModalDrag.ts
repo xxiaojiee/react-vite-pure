@@ -1,10 +1,11 @@
-import { Ref, unref, watchEffect } from 'vue';
+
+import { useEffect } from 'react';
 import { useTimeoutFn } from '/@/hooks/core/useTimeout';
 
 export interface UseModalDragMoveContext {
-  draggable: Ref<boolean>;
-  destroyOnClose: Ref<boolean | undefined> | undefined;
-  visible: Ref<boolean>;
+  draggable: boolean;
+  destroyOnClose?: boolean;
+  visible: boolean;
 }
 
 export function useModalDragMove(context: UseModalDragMoveContext) {
@@ -13,11 +14,11 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
   };
   const drag = (wrap: any) => {
     if (!wrap) return;
-    wrap.setAttribute('data-drag', unref(context.draggable));
+    wrap.setAttribute('data-drag', context.draggable);
     const dialogHeaderEl = wrap.querySelector('.ant-modal-header');
     const dragDom = wrap.querySelector('.ant-modal');
 
-    if (!dialogHeaderEl || !dragDom || !unref(context.draggable)) return;
+    if (!dialogHeaderEl || !dragDom || !context.draggable) return;
 
     dialogHeaderEl.style.cursor = 'move';
 
@@ -89,19 +90,21 @@ export function useModalDragMove(context: UseModalDragMoveContext) {
       const draggable = wrap.getAttribute('data-drag');
       if (display !== 'none') {
         // 拖拽位置
-        if (draggable === null || unref(context.destroyOnClose)) {
+        if (draggable === null || context.destroyOnClose) {
           drag(wrap);
         }
       }
     }
   };
 
-  watchEffect(() => {
-    if (!unref(context.visible) || !unref(context.draggable)) {
+  const { start } = useTimeoutFn(() => {
+    handleDrag();
+  }, 30);
+
+  useEffect(() => {
+    if (!context.visible || !context.draggable) {
       return;
     }
-    useTimeoutFn(() => {
-      handleDrag();
-    }, 30);
-  });
+    start();
+  }, [context.draggable, context.visible, start]);
 }
