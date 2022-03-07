@@ -1,4 +1,4 @@
-import React, { useRef, useImperativeHandle } from 'react';
+import React, { useRef, useImperativeHandle, useCallback } from 'react';
 import { Scrollbar, ScrollbarType } from '/@/components/Scrollbar';
 import { useScrollTo } from '/@/hooks/event/useScrollTo';
 
@@ -9,33 +9,37 @@ const ScrollContainer: React.FC = (props, ref) => {
   /**
    * Scroll to the specified position
    */
-  function scrollTo(to: number, duration = 500) {
-    const scrollbar = scrollbarRef.current;
-    if (!scrollbar) {
-      return;
-    }
-    const wrap = scrollbar;
-    if (!wrap) {
-      return;
-    }
-    start({
-      el: wrap,
-      to,
-      duration,
-    });
-  }
-  function getScrollWrap() {
+  const scrollTo = useCallback(
+    (to: number, duration = 500) => {
+      const scrollbar = scrollbarRef.current;
+      if (!scrollbar) {
+        return;
+      }
+      const wrap = scrollbar;
+      if (!wrap) {
+        return;
+      }
+      start({
+        el: wrap,
+        to,
+        duration,
+      });
+    },
+    [start],
+  );
+
+  const getScrollWrap = () => {
     const scrollbar = scrollbarRef.current;
     if (!scrollbar) {
       return null;
     }
     return scrollbar.wrap;
-  }
+  };
 
   /**
    * Scroll to the bottom
    */
-  function scrollBottom() {
+  const scrollBottom = () => {
     const scrollbar = scrollbarRef.current;
     if (!scrollbar) {
       return;

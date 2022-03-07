@@ -29,6 +29,7 @@ export interface ReturnInnerMethods extends ModalMethods {
 
 export type UseModalInnerReturnType = [RegisterFn, ReturnInnerMethods];
 
+declare type getContainerFunc = () => HTMLElement;
 export interface ModalProps {
   minHeight?: number;
   height?: number;
@@ -120,7 +121,7 @@ export interface ModalProps {
    * @default () => document.body
    * @type Function
    */
-  getContainer?: (instance: any) => HTMLElement;
+   getContainer?: string | HTMLElement | getContainerFunc | false ;
 
   /**
    * Whether show mask or not.

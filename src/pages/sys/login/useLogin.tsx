@@ -1,9 +1,10 @@
-
+import React from 'react';
 import { LoginStateEnum } from '/@/enums/pageEnum';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { getToken } from '/@/utils/auth';
 import { getUserInfo, loginApi, doLogout } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
+import { getMessage } from '/@/hooks/web/getMessage';
 import { LoginParams } from '/@/api/sys/types/user';
 import { twoLevelAddNotFoundPageAddAxact } from '/@/router/helper/routeHelper';
 import { actions, useStoreState, store } from '/@/store';
@@ -117,6 +118,21 @@ export async function logout() {
   store.dispatch(userActions.setToken(undefined));
   store.dispatch(userActions.setSessionTimeout(false));
   store.dispatch(userActions.setUserInfo(null));
+}
+
+/**
+ * @description: Confirm before logging out
+ */
+export function confirmLoginOut() {
+  const { createConfirm } = getMessage();
+  createConfirm({
+    iconType: 'warning',
+    title: <span>温馨提醒</span>,
+    content: <span>是否确认退出系统?</span>,
+    onOk: async () => {
+      await logout();
+    },
+  });
 }
 
 

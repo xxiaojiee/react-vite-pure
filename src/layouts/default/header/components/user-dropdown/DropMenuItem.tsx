@@ -7,13 +7,13 @@ const MenuItem = Menu.Item;
 interface DropMenuItemProp {
   text: string;
   icon: string;
-  key: string;
+  eventKey: string;
 }
 
 const DropMenuItem: React.FC<DropMenuItemProp> = (props) => {
-  const { text, icon, key } = props;
+  const { text, icon, eventKey } = props;
   return (
-    <MenuItem key={key}>
+    <MenuItem eventKey={eventKey}>
       <span className="flex items-center">
         <Icon icon={icon} className="mr-1" />
         <span>{text}</span>

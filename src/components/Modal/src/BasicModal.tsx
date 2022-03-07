@@ -81,7 +81,7 @@ const BasicModal: React.FC<BasicProps> = (props) => {
     },
   });
 
-  onRegister(modalMethods);
+  onRegister(modalMethods.current);
 
   useEffect(() => {
     setIsShow(!!visible);
@@ -123,7 +123,7 @@ const BasicModal: React.FC<BasicProps> = (props) => {
   const handleExtHeight = (height: number) => {
     setExtHeight(height);
   };
-
+  console.log(6666666, {...getProps})
   return (
     <Modal
       {...getProps}

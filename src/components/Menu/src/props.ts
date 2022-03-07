@@ -1,47 +1,32 @@
 import type { Menu } from '/@/router/types';
 
-import { MenuModeEnum, MenuTypeEnum } from '/@/enums/menuEnum';
-import { ThemeEnum } from '/@/enums/appEnum';
+import { MenuTypeEnum } from '/@/enums/menuEnum';
 import type { MenuTheme } from 'antd';
-import type { MenuMode } from 'antd/lib/menu';
 
-// export const basicProps = {
-//   items: {
-//     type: Array as PropType<Menu[]>,
-//     default: () => [],
-//   },
-//   collapsedShowTitle: propTypes.bool,
-//   // 最好是4 倍数
-//   inlineIndent: propTypes.number.def(20),
-//   // 菜单组件的mode属性
-//   mode: {
-//     type: String as PropType<MenuMode>,
-//     default: MenuModeEnum.INLINE,
-//   },
+export interface BasicProps {
+  items: Menu[];
+  collapsedShowTitle: boolean;
+  // 最好是4 倍数
+  inlineIndent?: number;
+  // 菜单组件的mode属性
+  mode: 'horizontal' | 'vertical' | 'inline';
 
-//   type: {
-//     type: String as PropType<MenuTypeEnum>,
-//     default: MenuTypeEnum.MIX,
-//   },
-//   theme: {
-//     type: String as PropType<MenuTheme>,
-//     default: ThemeEnum.DARK,
-//   },
-//   inlineCollapsed: propTypes.bool,
-//   mixSider: propTypes.bool,
+  type?: MenuTypeEnum;
+  theme?: MenuTheme;
+  inlineCollapsed: boolean;
+  mixSider: boolean;
 
-//   isHorizontal: propTypes.bool,
-//   accordion: propTypes.bool.def(true),
-//   beforeClickFn: {
-//     type: Function as PropType<(key: string) => Promise<boolean>>,
-//   },
-// };
+  isHorizontal: boolean;
+  accordion?: boolean;
+  beforeClickFn: (key: string) => Promise<boolean>;
+  menuClick: (key: string) => any;
+};
 
 export interface ItemProps {
   item: Menu;
-  level: number;
+  level?: number;
   theme: 'dark' | 'light';
-  showTitle: boolean;
+  showTitle?: boolean;
   isHorizontal: boolean;
 };
 

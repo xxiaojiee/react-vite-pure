@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState, useImperativeHandle } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useImperativeHandle,
+  useCallback,
+} from 'react';
 import type { CSSProperties } from 'react';
 import { Spin } from 'antd';
 import { useMount, useUnmount, useMemoizedFn } from 'ahooks';
@@ -37,7 +44,7 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
     footerOffset = 0,
   } = props;
   const { saveApp } = useAppContainer();
-  const wrapperRef = useRef<ComponentRef>(null);
+  const wrapperRef = useRef<any>(null);
   const spinRef = useRef<ElRef>(null);
   const [realHeight, setRealHeight] = useState(0);
   const [minRealHeight, setMinRealHeight] = useState(0);
@@ -92,21 +99,17 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
     }
   });
 
-  const scrollTop = async () => {
+  const scrollTop = useCallback(async () => {
     const wrapperRefDom = wrapperRef.current;
     if (!wrapperRefDom) return;
     (wrapperRefDom as any)?.scrollTo?.(0);
-  };
+  }, []);
 
   useImperativeHandle(ref, () => ({
     scrollTop,
   }));
 
   useWindowSizeFn(setModalHeight.bind(null, false));
-
-  saveApp({
-    redoModalHeight: setModalHeight,
-  });
 
   // useMutationObserver(
   //   spinRef,
@@ -140,6 +143,9 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
   }, [fullScreen, minHeight, realHeight]);
 
   useMount(() => {
+    saveApp({
+      redoModalHeight: setModalHeight,
+    });
     onExtHeight && onExtHeight(modalHeaderHeight + modalFooterHeight);
   });
 

@@ -42,9 +42,8 @@ const ModalMain: React.FC<BasicProps> = (props) => {
     draggable,
   });
 
-
-
   const propsData = {
+    visible,
     draggable,
     cancelText,
     okText,
@@ -53,6 +52,7 @@ const ModalMain: React.FC<BasicProps> = (props) => {
     maskClosable,
     keyboard,
     okType,
+    destroyOnClose,
     ...otherProps,
   };
   return (

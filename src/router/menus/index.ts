@@ -72,10 +72,12 @@ export const useMenus = (): Menu[] => {
   return menus;
 };
 
-export async function useCurrentParentPath(currentPath: string) {
+export function useCurrentParentPath() {
   const menus = useAsyncMenus();
-  const allParentPath = await getAllParentPath(menus, currentPath);
-  return allParentPath?.[0];
+  return async function getCurrentParentPath(currentPath: string) {
+    const allParentPath = await getAllParentPath(menus, currentPath);
+    return allParentPath?.[0];
+  }
 }
 
 // Get the level 1 menu, delete children

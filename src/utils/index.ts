@@ -1,5 +1,6 @@
 
 import { isObject } from '/@/utils/is';
+import type { AppRouteRecordRaw } from '/@/router/types';
 
 export const noop = () => { };
 
@@ -48,4 +49,20 @@ export function openWindow(
   noreferrer && feature.push('noreferrer=yes');
 
   window.open(url, target, feature.join(','));
+}
+
+
+export function getRawRoute(route: AppRouteRecordRaw): AppRouteRecordRaw {
+  if (!route) return route;
+  const { matched, ...opt } = route;
+  return {
+    ...opt,
+    matched: (matched
+      ? matched.map((item) => ({
+          meta: item.meta,
+          name: item.name,
+          path: item.path,
+        }))
+      : undefined) as AppRouteRecordRaw[],
+  };
 }

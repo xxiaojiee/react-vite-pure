@@ -9,6 +9,7 @@ module.exports = {
     'react/no-danger': 0, // 关闭对 dangerouslySetInnerHTML 参数使用的报错
     'no-param-reassign': ['error', { props: false }],
     'no-bitwise': 0,
-    'guard-for-in': 0
+    'guard-for-in': 0,
+    '@typescript-eslint/method-signature-style': 0,
   },
 };
