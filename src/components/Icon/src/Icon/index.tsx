@@ -15,11 +15,21 @@ interface IconProp {
   size?: string | number;
   spin?: boolean;
   prefix?: string;
-  style?:React.CSSProperties;
+  style?: React.CSSProperties;
+  onClick?: Fn;
 }
 
 const Icon: React.FC<IconProp> = (props) => {
-  const { size = 16, spin = false, prefix = '', icon, color, className, style } = props;
+  const {
+    size = 16,
+    spin = false,
+    prefix = '',
+    icon,
+    color,
+    className,
+    style,
+    onClick = () => {},
+  } = props;
   const elRef = useRef<ElRef>(null);
 
   const isSvgIcon = icon?.endsWith(SVG_END_WITH_FLAG);
@@ -70,10 +80,12 @@ const Icon: React.FC<IconProp> = (props) => {
       name={getSvgIcon}
       className={classNames(className, 'anticon')}
       spin={spin}
+      onClick = {onClick}
     />
   ) : (
     <span
       ref={elRef}
+      onClick = {onClick}
       className={classNames(className, 'app-iconify anticon', spin && 'app-iconify-spin')}
       style={getWrapStyle()}
     />

@@ -8,10 +8,11 @@ interface SvgIconProp {
   size?: number | string;
   spin?: boolean;
   className?: string;
+  onClick?: Fn;
 }
 
 const SvgIcon: React.FC<SvgIconProp> = (props) => {
-  const { prefix = 'icon', spin = false, name, className = '' } = props;
+  const { prefix = 'icon', spin = false, name, className = '', onClick = () => {} } = props;
   const { prefixCls } = useDesign('svg-icon');
   const symbolId = `#${prefix}-${name}`;
 
@@ -29,6 +30,7 @@ const SvgIcon: React.FC<SvgIconProp> = (props) => {
       className={classNames(prefixCls, className, { 'svg-icon-spin': spin })}
       style={getStyle()}
       aria-hidden="true"
+      onClick={onClick}
     >
       <use xlinkHref={symbolId} />
     </svg>

@@ -1,6 +1,11 @@
 import React from 'react';
 
-const AppSearch = () => {
+interface AppSearchProp{
+
+}
+
+const AppSearch:React.FC<AppSearchProp> = (props) => {
+  const { } = props;
   return <div>AppSearch</div>;
 };
 

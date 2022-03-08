@@ -163,7 +163,7 @@ const setting: ProjectConfig = {
   showBreadCrumbIcon: false,
 
   // 是否使用全局错误捕获
-  useErrorHandle: false,
+  useErrorHandle: true,
 
   // 是否开启回到顶部
   useOpenBackTop: true,
