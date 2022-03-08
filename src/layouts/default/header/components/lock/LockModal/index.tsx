@@ -64,6 +64,9 @@ const LockModal = (props) => {
             name="password"
             label="锁屏密码"
             placeholder="请输入"
+            fieldProps={{
+              autoComplete: 'off',
+            }}
           />
         </ProForm>
 

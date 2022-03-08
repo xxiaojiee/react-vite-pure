@@ -10,9 +10,9 @@ import './index.less';
 const InputPassword = Input.Password;
 
 interface StrengthMeterProp extends PasswordProps {
-  value: string;
-  showInput: boolean;
-  disabled: boolean;
+  value?: string;
+  showInput?: boolean;
+  disabled?: boolean;
 }
 
 const StrengthMeter: React.FC<StrengthMeterProp> = (props) => {

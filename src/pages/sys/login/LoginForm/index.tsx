@@ -68,7 +68,11 @@ const LoginForm: React.FC = () => {
         name="login-form"
         className="p-4 enter-x"
         initialValues={formData}
-        onKeyPress={handleLogin}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            handleLogin();
+          }
+        }}
         autoComplete="off"
         ref={formRef}
       >
@@ -94,7 +98,7 @@ const LoginForm: React.FC = () => {
             },
           ]}
         >
-          <Input.Password size="large" placeholder="密码" />
+          <Input.Password size="large" placeholder="密码" autoComplete="off" />
         </Form.Item>
 
         <Row className="enter-x">

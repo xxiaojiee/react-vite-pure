@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import { message } from 'antd';
 import { localeList, LOCALE } from '/@/settings/localeSetting';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { Icon } from '/@/components/Icon';
@@ -13,12 +14,12 @@ interface AppLocalePickerProp {
   /**
    * Whether to refresh the interface when changing
    */
-  // reload?: boolean;
+  reload?: boolean;
   className?: string;
 }
 
 const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
-  const { showText = true, className } = props;
+  const { showText = true, className, reload } = props;
   const { prefixCls } = useDesign('app-locale');
   const getLocaleText = () => {
     const key = LOCALE.ZH_CN;
@@ -28,8 +29,11 @@ const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
     return localeList.find((item) => item.event === key)?.text;
   };
   const localeClass = classNames('cursor-pointer flex items-center', prefixCls, className);
+  const handleClick = () => {
+    message.info('功能暂未开发')
+  }
   return (
-    <span className={localeClass}>
+    <span className={localeClass} onClick={handleClick}>
       <Icon icon="ion:language" />
       {showText ? <span className="ml-1">{getLocaleText()}</span> : null}
     </span>
