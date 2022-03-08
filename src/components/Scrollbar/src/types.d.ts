@@ -14,5 +14,6 @@ export interface BarMap {
 }
 
 export interface ScrollbarType {
-  wrap: ElRef;
+  wrap: any;
+  scrollbar: any;
 }

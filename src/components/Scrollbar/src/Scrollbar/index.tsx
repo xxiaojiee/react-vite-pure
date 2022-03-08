@@ -37,8 +37,10 @@ const Scrollbar: React.FC<ScrollbarProp> = (props, ref) => {
   const [moveX, setMoveX] = useState(0);
   const [moveY, setMoveY] = useState(0);
   const wrap = useRef<ElRef>(null);
+  const scrollbarRef = useRef<ElRef>(null);
   const resize = useRef();
   useImperativeHandle(ref, () => ({
+    scrollbar:scrollbarRef.current,
     wrap: wrap.current,
   }));
   const handleScroll = useCallback(() => {
@@ -79,7 +81,7 @@ const Scrollbar: React.FC<ScrollbarProp> = (props, ref) => {
     }
   });
   return (
-    <div className={classNames('scrollbar', className)}>
+    <div className={classNames('scrollbar', className)} ref={scrollbarRef}>
       <div
         ref={wrap}
         className={classNames(

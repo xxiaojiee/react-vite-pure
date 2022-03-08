@@ -21,7 +21,6 @@ const SessionTimeoutLogin = () => {
   useMount(() => {
     // 记录当前的UserId
     userId.current = userState.uerInfo?.userId;
-    console.log('Mounted', userState.uerInfo);
   });
 
   useUnmount(() => {

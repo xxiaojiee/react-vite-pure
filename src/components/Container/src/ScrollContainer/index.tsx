@@ -2,21 +2,17 @@ import React, { useRef, useImperativeHandle, useCallback } from 'react';
 import { Scrollbar, ScrollbarType } from '/@/components/Scrollbar';
 import { useScrollTo } from '/@/hooks/event/useScrollTo';
 
-const ScrollContainer: React.FC = (props, ref) => {
+const ScrollContainer: React.FC<Record<string, any>> = (props, ref) => {
   const { children, ...otherProp } = props;
-  const scrollbarRef = useRef<Nullable<ScrollbarType>>(null);
+  const scrollbarRef = useRef<ScrollbarType>(null);
   const { start } = useScrollTo();
   /**
    * Scroll to the specified position
    */
   const scrollTo = useCallback(
     (to: number, duration = 500) => {
-      const scrollbar = scrollbarRef.current;
-      if (!scrollbar) {
-        return;
-      }
-      const wrap = scrollbar;
-      if (!wrap) {
+      const { scrollbar, wrap } = scrollbarRef.current || {};
+      if (!wrap || scrollbar) {
         return;
       }
       start({
@@ -29,23 +25,15 @@ const ScrollContainer: React.FC = (props, ref) => {
   );
 
   const getScrollWrap = () => {
-    const scrollbar = scrollbarRef.current;
-    if (!scrollbar) {
-      return null;
-    }
-    return scrollbar.wrap;
+    return scrollbarRef.current?.wrap;
   };
 
   /**
    * Scroll to the bottom
    */
-  const scrollBottom = () => {
-    const scrollbar = scrollbarRef.current;
-    if (!scrollbar) {
-      return;
-    }
-    const { wrap } = scrollbar;
-    if (!wrap) {
+  const scrollBottom = useCallback(() => {
+    const { scrollbar, wrap } = scrollbarRef.current || {};
+    if (!wrap || !scrollbar) {
       return;
     }
     const scrollHeight = wrap.scrollHeight as number;
@@ -53,14 +41,19 @@ const ScrollContainer: React.FC = (props, ref) => {
       el: wrap,
       to: scrollHeight,
     });
-  }
-  useImperativeHandle(ref, () => ({
-    getScrollWrap,
-    scrollBottom,
-    scrollTo,
-  }));
+  }, [start]);
+  useImperativeHandle(
+    ref,
+    () => ({
+      ...scrollbarRef.current,
+      getScrollWrap,
+      scrollBottom,
+      scrollTo,
+    }),
+    [scrollBottom, scrollTo],
+  );
   return (
-    <Scrollbar ref={scrollbarRef} className="scroll-container" {...otherProp}>
+    <Scrollbar {...otherProp} ref={scrollbarRef} className="scroll-container">
       {children}
     </Scrollbar>
   );

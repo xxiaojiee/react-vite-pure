@@ -3,6 +3,7 @@ import { Input, Button } from 'antd';
 import classNames from 'classnames';
 import { useNow, useUnLock } from '../useLock';
 import { actions, useStoreState } from '/@/store';
+import { useDispatch } from 'react-redux';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { logout } from '/@/pages/sys/login/useLogin';
 import { LockOutlined } from '@ant-design/icons';
@@ -21,14 +22,13 @@ const LockPage = () => {
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState(false);
   const [showDate, setShowDate] = useState(true);
-
+  const dispatch = useDispatch();
   const { prefixCls } = useDesign('lock-page');
   const unLocks = useUnLock();
 
   const { hour, month, minute, meridiem, year, day, week } = useNow(true);
 
   const userinfo = userState.userInfo || {};
-
 
   /**
    * @description: unLock
@@ -48,7 +48,7 @@ const LockPage = () => {
 
   const goLogin = () => {
     logout();
-    lockSctions.resetLockInfo();
+    dispatch(lockSctions.resetLockInfo());
   };
 
   const handleShowForm = (show = false) => {
@@ -111,6 +111,12 @@ const LockPage = () => {
               className="enter-x"
               onChange={onPasswordChange}
               value={password}
+              onKeyDown={(e) => {
+                // 回车解锁
+                if (e.key === 'Enter') {
+                  unLock();
+                }
+              }}
             />
             {errMsg ? (
               <span className={`${prefixCls}-entry__err-msg enter-x`}>锁屏密码错误</span>
@@ -137,7 +143,13 @@ const LockPage = () => {
               >
                 返回登录
               </Button>
-              <Button className="mt-2" type="link" size="small" onClick={unLock} disabled={loading}>
+              <Button
+                className="mt-2"
+                type="link"
+                size="small"
+                onClick={unLock}
+                disabled={loading}
+              >
                 进入系统
               </Button>
             </div>

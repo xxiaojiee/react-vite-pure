@@ -31,17 +31,15 @@ const UserDropdown: React.FC<UserDropdownProp> = (props) => {
   const { prefixCls } = useDesign('header-user-dropdown');
 
   const { getShowDoc, getUseLockPage } = useHeaderSetting();
-
   const getUserInfo = useMemo(() => {
-    const { realName = '', avatar, desc } = userState.getUserInfo || {};
+    const { realName = '', avatar, desc } = userState.userInfo || {};
     return { realName, avatar: avatar || headerImg, desc };
-  }, [userState.getUserInfo]);
+  }, [userState.userInfo]);
 
   const [register, { openModal }] = useModal();
 
   const handleMenuClick = useCallback(
     (e: any) => {
-      console.log('323e:', e);
       switch (e.key) {
         case 'logout':
           confirmLoginOut();
@@ -58,7 +56,6 @@ const UserDropdown: React.FC<UserDropdownProp> = (props) => {
     },
     [openModal],
   );
-
   return (
     <>
       <Dropdown
@@ -77,7 +74,7 @@ const UserDropdown: React.FC<UserDropdownProp> = (props) => {
           </Menu>
         }
       >
-        <span className={classNames(prefixCls, `${prefixCls}--${theme}`)}>
+        <span className={classNames(prefixCls, `${prefixCls}--${theme} flex`)}>
           <img className={`${prefixCls}__header`} src={getUserInfo.avatar} />
           <span className={`${prefixCls}__info hidden md:block`}>
             <span className={`${prefixCls}__name  truncate`}>{getUserInfo.realName}</span>

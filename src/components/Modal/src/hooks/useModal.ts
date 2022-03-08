@@ -58,7 +58,6 @@ export function useModal(): UseModalReturnType {
     },
 
     openModal: <T = any>(vis = true, data?: T, openOnSet = true): void => {
-      console.log(888888888, vis, getInstance())
       getInstance()?.setModalProps({
         visible: vis,
       });
@@ -82,7 +81,7 @@ export function useModal(): UseModalReturnType {
 }
 
 export const useModalInner = (props, callbackFn?: Fn): UseModalInnerReturnType => {
-  console.log('props:', props);
+
   // const dataTransfer = useRef<any>(null);
 
   // const [visible] = useState(false);

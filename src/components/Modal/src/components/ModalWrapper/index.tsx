@@ -1,14 +1,7 @@
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useImperativeHandle,
-  useCallback,
-} from 'react';
+import React, { useMemo, useRef, useState, useImperativeHandle, useCallback } from 'react';
 import type { CSSProperties } from 'react';
 import { Spin } from 'antd';
-import { useMount, useUnmount, useMemoizedFn } from 'ahooks';
+import { useMount, useUnmount, useUpdateEffect, useTimeout } from 'ahooks';
 import { useWindowSizeFn } from '/@/hooks/event/useWindowSizeFn';
 import { ScrollContainer } from '/@/components/Container';
 import { useAppContainer } from '/@/hooks/core/useAppContext';
@@ -30,6 +23,7 @@ interface ModalWrapperProp {
 
 const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
   const {
+    visible,
     height,
     fullScreen,
     onExtHeight,
@@ -47,25 +41,27 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
   const wrapperRef = useRef<any>(null);
   const spinRef = useRef<ElRef>(null);
   const [realHeight, setRealHeight] = useState(0);
-  const [minRealHeight, setMinRealHeight] = useState(0);
+  // const [minRealHeight, setMinRealHeight] = useState(0);
 
   const stopElResizeFn: Fn = () => {};
 
-  const setModalHeight = useMemoizedFn(async () => {
+  const setModalHeight = useCallback(async () => {
     // 解决在弹窗关闭的时候监听还存在,导致再次打开弹窗没有高度
     // 加上这个,就必须在使用的时候传递父级的visible
-    if (!props.visible) return;
+    if (!visible) return;
 
     let realHeights = 0;
-    const wrapperRefDom = wrapperRef.current;
-    if (!wrapperRefDom) return;
+    const { scrollbar } = wrapperRef.current;
 
-    const bodyDom = wrapperRefDom.$el.parentElement;
+    if (!scrollbar) return;
+
+    const bodyDom = scrollbar.parentElement;
+
     if (!bodyDom) return;
     bodyDom.style.padding = '0';
 
     try {
-      const modalDom = bodyDom.parentElement && bodyDom.parentElement.parentElement;
+      const modalDom = bodyDom.parentElement?.parentElement;
       if (!modalDom) return;
 
       const modalRect = getComputedStyle(modalDom as Element).top;
@@ -87,7 +83,6 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
       // if (!realHeights) {
       realHeights = spinEl.scrollHeight;
       // }
-
       if (fullScreen) {
         setRealHeight(window.innerHeight - modalFooterHeight - modalHeaderHeight - 28);
       } else {
@@ -97,7 +92,16 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
     } catch (error) {
       console.log(error);
     }
-  });
+  }, [
+    footerOffset,
+    fullScreen,
+    height,
+    modalFooterHeight,
+    modalHeaderHeight,
+    onHeightChange,
+    visible,
+    realHeight,
+  ]);
 
   const scrollTop = useCallback(async () => {
     const wrapperRefDom = wrapperRef.current;
@@ -105,33 +109,26 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
     (wrapperRefDom as any)?.scrollTo?.(0);
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    scrollTop,
-  }));
+  useImperativeHandle(
+    ref,
+    () => ({
+      scrollTop,
+    }),
+    [scrollTop],
+  );
 
   useWindowSizeFn(setModalHeight.bind(null, false));
 
-  // useMutationObserver(
-  //   spinRef,
-  //   () => {
-  //     setModalHeight();
-  //   },
-  //   {
-  //     attributes: true,
-  //     subtree: true,
-  //   },
-  // );
+  // useEffect(() => {
+  //   setModalHeight();
+  //   if (!fullScreen) {
+  //     setRealHeight(minRealHeight);
+  //   } else {
+  //     setMinRealHeight(realHeight);
+  //   }
+  // }, [fullScreen, minRealHeight, realHeight, setMinRealHeight, setModalHeight, setRealHeight]);
 
-  useEffect(() => {
-    setModalHeight();
-    if (!fullScreen) {
-      setRealHeight(minRealHeight);
-    } else {
-      setMinRealHeight(realHeight);
-    }
-  }, [fullScreen, minRealHeight, realHeight, setMinRealHeight, setModalHeight, setRealHeight]);
-
-  useEffect(() => {
+  useUpdateEffect(() => {
     useWrapper && setModalHeight();
   }, [setModalHeight, useWrapper]);
 
@@ -144,19 +141,23 @@ const ModalWrapper: React.FC<ModalWrapperProp> = (props, ref) => {
 
   useMount(() => {
     saveApp({
-      redoModalHeight: setModalHeight,
+      redoModalHeight: () => {
+        setModalHeight();
+      },
     });
+
     onExtHeight && onExtHeight(modalHeaderHeight + modalFooterHeight);
   });
-
+  useTimeout(() => {
+    setModalHeight();
+  }, 300);
   useUnmount(() => {
     stopElResizeFn && stopElResizeFn();
   });
-
   return (
     <ScrollContainer ref={wrapperRef}>
       <div ref={spinRef} style={spinStyle}>
-        <Spin spinning={loading} tip={loadingTip}>
+        <Spin spinning={!!loading} tip={loadingTip}>
           {children}
         </Spin>
       </div>

@@ -31,17 +31,21 @@ const Loading = forwardRef<PortalRef, LoadingProps>((props, ref) => {
   useUpdateEffect(() => {
     setTips(tip);
   }, [tip]);
-  useImperativeHandle(ref, () => ({
-    setTips: (val) => {
-      setTips(val);
-    },
-    setLoading: (val) => {
-      setLoad(val);
-    },
-    getLoading: () => {
-      return load;
-    },
-  }));
+  useImperativeHandle(
+    ref,
+    () => ({
+      setTips: (val) => {
+        setTips(val);
+      },
+      setLoading: (val) => {
+        setLoad(val);
+      },
+      getLoading: () => {
+        return load;
+      },
+    }),
+    [load],
+  );
   if (!load) {
     return null;
   }

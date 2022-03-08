@@ -7,17 +7,16 @@ export const REDIRECT_NAME = 'Redirect';
 export const PARENT_LAYOUT_NAME = 'ParentLayout';
 export const PAGE_NOT_FOUND_NAME = 'PageNotFound';
 
-
 export const load = <T extends ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
   options?: Record<string, any>,
 ) => {
   const Comp = lazy(factory);
-  return (props: any) => (
+  return React.forwardRef((props: any, ref) => (
     <Suspense fallback={options?.loading ? <Loading loading /> : null}>
-      <Comp {...props} />
+      <Comp {...props} ref={ref} />
     </Suspense>
-  );
+  ));
 };
 
 export const EXCEPTION_COMPONENT = load(() => import('/@/pages/sys/exception'));

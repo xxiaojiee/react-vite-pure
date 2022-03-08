@@ -5,8 +5,6 @@ import { FullscreenExitOutlined, FullscreenOutlined, CloseOutlined } from '@ant-
 
 import { useDesign } from '/@/hooks/web/useDesign';
 
-import type { M} from '../../props';
-
 import './index.less';
 
 interface ModalCloseProp {
@@ -23,10 +21,6 @@ const ModalClose: React.FC<ModalCloseProp> = (props) => {
   const getClass = classNames(prefixCls, `${prefixCls}--custom`, {
     [`${prefixCls}--can-full`]: canFullscreen,
   });
-
-  const handleCancel = (e: MouseEvent) => {
-    onCancel && onCancel(e);
-  };
 
   const handleFullScreen = useCallback(
     (e) => {
@@ -54,7 +48,7 @@ const ModalClose: React.FC<ModalCloseProp> = (props) => {
     <div className={getClass}>
       {getFullIcon()}
       <Tooltip title="关闭" placement="bottom">
-        <CloseOutlined onClick={handleCancel} />
+        <CloseOutlined onClick={onCancel} />
       </Tooltip>
     </div>
   );

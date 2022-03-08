@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
-import { Button } from 'antd';
+import React from 'react';
+import { Button, Form } from 'antd';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { actions, useStoreState } from '/@/store';
+import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { useDispatch } from 'react-redux';
 import { BasicModal, useModalInner } from '/@/components/Modal/index';
 // import { BasicForm, useForm } from '/@/components/Form/index';
@@ -15,38 +16,23 @@ const lockActions = actions.lock;
 const LockModal = (props) => {
   const { prefixCls } = useDesign('header-lock-modal');
   const userState = useStoreState('user');
+  const formInstance = Form.useForm()[0];
   const dispatch = useDispatch();
+  const { avatar = headerImg, realName } = userState.userInfo || {};
 
-  const getRealName = userState.getUserInfo?.realName;
   const [register, { closeModal }] = useModalInner(props);
 
-  // const [registerForm, { validateFields, resetFields }] = useForm({
-  //   showActionButtonGroup: false,
-  //   schemas: [
-  //     {
-  //       field: 'password',
-  //       label: '锁屏密码',
-  //       component: 'InputPassword',
-  //       required: true,
-  //     },
-  //   ],
-  // });
-
   const handleLock = async () => {
-    // const values = (await validateFields()) as any;
-    // const { password } = values;
-    // closeModal();
-    // dispatch(
-    //   lockActions.setLockInfo({
-    //     isLock: true,
-    //     pwd: password,
-    //   }),
-    // );
-    // await resetFields();
+    const values = await formInstance.validateFields();
+    const { password } = values;
+    closeModal();
+    dispatch(
+      lockActions.setLockInfo({
+        isLock: true,
+        pwd: password,
+      }),
+    );
   };
-
-  const avatar = userState.getUserInfo?.avatar || headerImg;
-
   return (
     <BasicModal
       {...props}
@@ -58,10 +44,28 @@ const LockModal = (props) => {
       <div className={`${prefixCls}__entry`}>
         <div className={`${prefixCls}__header`}>
           <img src={avatar} className={`${prefixCls}__header-img`} />
-          <p className={`${prefixCls}__header-name`}>{getRealName}</p>
+          <p className={`${prefixCls}__header-name`}>{realName}</p>
         </div>
 
-        <div>表单</div>
+        <ProForm<{
+          password: string;
+        }>
+          form={formInstance}
+          submitter={false}
+          onKeyDown={(e) => {
+            // 回车锁屏
+            if (e.key === 'Enter') {
+              handleLock();
+            }
+          }}
+        >
+          <ProFormText.Password
+            rules={[{ required: true, message: '请输入锁屏密码' }]}
+            name="password"
+            label="锁屏密码"
+            placeholder="请输入"
+          />
+        </ProForm>
 
         <div className={`${prefixCls}__footer`}>
           <Button type="primary" block className="mt-2" onClick={handleLock}>

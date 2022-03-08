@@ -75,7 +75,6 @@ export function useAfterLoginAction() {
       const actionroutes = await buildRoutesAction();
       const routes = [...actionroutes, ...basicRoutes];
       twoLevelAddNotFoundPageAddAxact(routes);
-      console.log('routes333333:', routes);
       // 设置routes, 页面会重新卸载，重新加载页面
       disPatch(permissionActions.setRoutes(routes))
     }
@@ -115,9 +114,8 @@ export async function logout() {
       console.log('注销Token失败');
     }
   }
-  store.dispatch(userActions.setToken(undefined));
-  store.dispatch(userActions.setSessionTimeout(false));
-  store.dispatch(userActions.setUserInfo(null));
+  store.dispatch(userActions.resetState());
+  store.dispatch(permissionActions.resetState());
 }
 
 /**

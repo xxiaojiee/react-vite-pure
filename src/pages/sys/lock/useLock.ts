@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMount, useUnmount } from 'ahooks';
 import { actions, useStoreState } from '/@/store';
+import { useDispatch } from 'react-redux';
 import { useLogin } from '/@/pages/sys/login/useLogin';
 import { dateUtil } from '/@/utils/dateUtil';
 
 const lockActions = actions.lock;
 
 export function useNow(immediate = true) {
-  let timer: IntervalHandle;
+  let timer = useRef<IntervalHandle | null>(null);
   const [state, setState] = useState({
     year: 0,
     month: 0,
@@ -39,14 +40,16 @@ export function useNow(immediate = true) {
 
   function start() {
     update();
-    clearInterval(timer);
-    timer = setInterval(() => update(), 1000);
+    stop();
+    timer.current = setInterval(() => update(), 1000);
   }
 
   function stop() {
-    clearInterval(timer);
+    if (timer.current) {
+      clearInterval(timer.current);
+      timer.current = null
+    }
   }
-
   useMount(() => {
     immediate && start();
   });
@@ -65,10 +68,11 @@ export function useNow(immediate = true) {
 export function useUnLock() {
   const userState = useStoreState('user');
   const lockState = useStoreState('lock');
+  const dispatch = useDispatch();
   const login = useLogin();
   return async function unLock(password?: string) {
     if (lockState.lockInfo?.pwd === password) {
-      lockActions.resetLockInfo();
+      dispatch(lockActions.resetLockInfo())
       return true;
     }
     const tryLogin = async () => {
@@ -77,11 +81,10 @@ export function useUnLock() {
         const res = await login({
           username,
           password: password!,
-          goHome: false,
           mode: 'none',
         });
         if (res) {
-          lockActions.resetLockInfo();
+          dispatch(lockActions.resetLockInfo())
         }
         return res;
       } catch (error) {

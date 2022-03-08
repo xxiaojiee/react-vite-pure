@@ -32,6 +32,9 @@ type LocalStore = BasicStore;
 type SessionStore = BasicStore;
 
 export type BasicKeys = keyof BasicStore;
+
+export type LocalValue = LocalStore[LocalKeys] & SessionStore[SessionKeys]
+
 type LocalKeys = keyof LocalStore;
 type SessionKeys = keyof SessionStore;
 
@@ -47,6 +50,9 @@ function initPersistentMemory() {
   localCache && localMemory.resetCache(localCache);
   sessionCache && sessionMemory.resetCache(sessionCache);
 }
+
+
+
 
 export class Persistent {
   static getLocal<T>(key: LocalKeys) {
@@ -88,7 +94,7 @@ export class Persistent {
   }
 }
 
-window.addEventListener('beforeunload',  () => {
+window.addEventListener('beforeunload', () => {
   ls.set(APP_LOCAL_CACHE_KEY, localMemory.getCache);
   ss.set(APP_SESSION_CACHE_KEY, sessionMemory.getCache);
 });

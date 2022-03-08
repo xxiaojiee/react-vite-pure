@@ -109,7 +109,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     resolve: {
       alias: [
-        // { find: /^~/, replacement: '' },
+        // ant pro 使用了大量的“~antd” 语法，需转换，不然无法引入相关less 文件
+        { find: /^~/, replacement: '' },
         // { find: /^loadash/, replacement: 'lodash-es' },
         {
           find: /\/@\//,

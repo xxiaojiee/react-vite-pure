@@ -13,21 +13,23 @@ export interface UserState {
   lastUpdateTime: number;
 }
 
+const defaultState = {
+  loginState: LoginStateEnum.LOGIN,
+  // user info
+  userInfo: null,
+  // token
+  token: undefined,
+  // roleList
+  roleList: [],
+  // 登录是否过期
+  sessionTimeout: false,
+  // Last fetch time
+  lastUpdateTime: 0,
+}
+
 export default {
   id: 'user',
-  state: {
-    loginState: LoginStateEnum.LOGIN,
-    // user info
-    userInfo: null,
-    // token
-    token: undefined,
-    // roleList
-    roleList: [],
-    // 登录是否过期
-    sessionTimeout: false,
-    // Last fetch time
-    lastUpdateTime: 0,
-  },
+  state: defaultState,
   reducers: {
     setToken(this: any, info: string | undefined) {
       setAuthCache(TOKEN_KEY, info);
@@ -61,12 +63,11 @@ export default {
       })
     },
     resetState(this: any,) {
-      this.setCurrentState({
-        userInfo: null,
-        token: '',
-        roleList: [],
-        sessionTimeout: false,
-      })
+      setAuthCache(TOKEN_KEY, null);
+      setAuthCache(ROLES_KEY, null);
+      setAuthCache(USER_INFO_KEY, null);
+      setAuthCache(SESSION_TIMEOUT_KEY, null);
+      this.setCurrentState(defaultState)
     },
   },
   // methods: {

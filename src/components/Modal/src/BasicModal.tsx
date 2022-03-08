@@ -1,18 +1,16 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import type { MouseEvent } from 'react';
-import { Spin } from 'antd';
 import Modal from './components/Modal';
 import ModalWrapper from './components/ModalWrapper';
 import ModalClose from './components/ModalClose';
 import ModalFooter from './components/ModalFooter';
 import ModalHeader from './components/ModalHeader';
-import { isFunction } from '/@/utils/is';
+import { isFunction, isDef } from '/@/utils/is';
 import { BasicProps } from './props';
 import { useFullScreen } from './hooks/useModalFullScreen';
 import { omit } from 'lodash-es';
 import { useDesign } from '/@/hooks/web/useDesign';
 import type { ModalProps, ModalMethods } from './typing';
-import { title } from 'process';
 
 const BasicModal: React.FC<BasicProps> = (props) => {
   const {
@@ -49,9 +47,10 @@ const BasicModal: React.FC<BasicProps> = (props) => {
     return {
       ...props,
       ...propsRef,
+      visible: isShow,
       wrapClassName: getWrapClassName,
     };
-  }, [props, propsRef, getWrapClassName]);
+  }, [props, propsRef, isShow, getWrapClassName]);
 
   /**
    * @description: 设置modal参数
@@ -123,31 +122,29 @@ const BasicModal: React.FC<BasicProps> = (props) => {
   const handleExtHeight = (height: number) => {
     setExtHeight(height);
   };
-  console.log(6666666, {...getProps})
+
+  const getCloseIcon = isDef(closeIcon) ? (
+    closeIcon
+  ) : (
+    <ModalClose
+      canFullscreen={getProps.canFullscreen}
+      fullScreen={fullScreen}
+      onCancel={handleCancel}
+      onFullscreen={handleFullScreen}
+    />
+  );
+  const getFooter = isDef(footer) ? (
+    footer
+  ) : (
+    <ModalFooter {...omit(getProps, ['style', 'className'])} onOk={onOk} onCancel={handleCancel} />
+  );
   return (
     <Modal
       {...getProps}
       onCancel={handleCancel}
-      closeIcon={
-        closeIcon || (
-          <ModalClose
-            canFullscreen={getProps.canFullscreen}
-            fullScreen={fullScreen}
-            onCancel={handleCancel}
-            onFullscreen={handleFullScreen}
-          />
-        )
-      }
-      title={title || <ModalHeader helpMessage={getProps.helpMessage} title={getProps.title} />}
-      footer={
-        footer || (
-          <ModalFooter
-            {...omit(getProps, ['style', 'className'])}
-            onOk={onOk}
-            onCancel={handleCancel}
-          />
-        )
-      }
+      closeIcon={getCloseIcon}
+      title={<ModalHeader helpMessage={getProps.helpMessage} title={getProps.title} />}
+      footer={getFooter}
     >
       <ModalWrapper
         {...getProps.wrapperProps}
@@ -157,14 +154,12 @@ const BasicModal: React.FC<BasicProps> = (props) => {
         ref={modalWrapperRef}
         minHeight={getProps.minHeight}
         height={fullScreen ? undefined : getProps.height}
-        visible={visible}
+        visible={isShow}
         modalFooterHeight={footer !== undefined && !footer ? 0 : undefined}
         onExtHeight={handleExtHeight}
         onHeightChange={onHeightChange}
       >
-        <Spin spinning={getProps.loading} tip={getProps.loadingTip}>
-          {children}
-        </Spin>
+        {children}
       </ModalWrapper>
     </Modal>
   );
