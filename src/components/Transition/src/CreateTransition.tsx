@@ -60,7 +60,7 @@ export const Transition = forwardRef((props: TransitionProp, ref) => {
           unmountOnExit
           onEnter={onBeforeEnter}
         >
-          {tag ? React.createElement(tag, { ref }, children) : children}
+          {React.createElement(tag, { ref }, children) }
         </CSSTransition>
       </SwitchTransition>
     );
@@ -74,7 +74,7 @@ export const Transition = forwardRef((props: TransitionProp, ref) => {
       unmountOnExit
       onEnter={onBeforeEnter}
     >
-      {tag ? React.createElement(tag, { ref }, children) : children}
+      {React.createElement(tag, { ref }, children)}
     </CSSTransition>
   );
 });

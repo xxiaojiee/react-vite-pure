@@ -1,4 +1,4 @@
-import { useCallback, useState, Ref, MutableRefObject } from 'react';
+import { useCallback, useState, Ref, RefObject } from 'react';
 import type { Menu } from '/@/router/types';
 import { useMenus } from '/@/router/menus';
 import { useHistory } from 'react-router-dom';
@@ -45,7 +45,7 @@ function handlerSearchResult(filterMenu: Menu[], reg: RegExp, parent?: Menu) {
 
 
 
-export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefObject<HTMLElement | undefined>, props: Record<string, any>) {
+export function useMenuSearch(refs: Record<string, RefObject<HTMLLIElement>>, scrollWrap: RefObject<HTMLUListElement>, props: Record<string, any>) {
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [keyword, setKeyword] = useState('');
   const { start } = useScrollTo();
@@ -55,7 +55,7 @@ export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefOb
 
   const { push } = useHistory();
 
-  const search = useCallback((e: ChangeEvent) => {
+  const search = useCallback((e: any) => {
     e?.stopPropagation();
     const key = e.target.value;
     setKeyword(key.trim())
@@ -71,7 +71,7 @@ export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefOb
     setActiveIndex(0)
   }, [keyword, menuList])
 
-  const handleSearch = useDebounceFn(search, {
+  const { run } = useDebounceFn(search, {
     wait: 200,
   });
 
@@ -86,7 +86,7 @@ export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefOb
   // the scroll bar needs to scroll automatically
   const handleScroll = useCallback(() => {
     const refList = refs;
-    if (!refList || !Array.isArray(refList) || refList.length === 0 || !scrollWrap.current) {
+    if (!refList || !Array.isArray(refList) || refList.length === 0 || !scrollWrap?.current) {
       return;
     }
 
@@ -95,7 +95,7 @@ export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefOb
     if (!currentRef) {
       return;
     }
-    const wrapEl = scrollWrap.current;
+    const wrapEl = scrollWrap?.current;
     if (!wrapEl) {
       return;
     }
@@ -167,7 +167,7 @@ export function useMenuSearch(refs: Ref<HTMLElement[]>, scrollWrap: MutableRefOb
   });
 
   return {
-    handleSearch,
+    handleSearch: run,
     searchResult,
     setSearchResult,
     keyword,
