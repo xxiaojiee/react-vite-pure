@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import {
   CSSTransition,
   TransitionGroup,
@@ -17,11 +17,10 @@ interface TransitionProp {
   origin?: string;
   className?: string;
   timeout?: number;
-  tag?: string;
-  children: React.ReactNode;
+  children: any;
 }
 
-export const Transition = forwardRef((props: TransitionProp, ref) => {
+export const Transition = (props: TransitionProp, ) => {
   const {
     group = false,
     switched = false,
@@ -32,7 +31,6 @@ export const Transition = forwardRef((props: TransitionProp, ref) => {
     className,
     children,
     name,
-    tag = 'div',
   } = props;
   const onBeforeEnter = (el: HTMLElement) => {
     if (origin) {
@@ -60,7 +58,7 @@ export const Transition = forwardRef((props: TransitionProp, ref) => {
           unmountOnExit
           onEnter={onBeforeEnter}
         >
-          {React.createElement(tag, { ref }, children) }
+          {() => React.cloneElement(children)}
         </CSSTransition>
       </SwitchTransition>
     );
@@ -74,10 +72,10 @@ export const Transition = forwardRef((props: TransitionProp, ref) => {
       unmountOnExit
       onEnter={onBeforeEnter}
     >
-      {React.createElement(tag, { ref }, children)}
+      {() => React.cloneElement(children)}
     </CSSTransition>
   );
-});
+};
 
 export function createSimpleTransition(
   name: string,

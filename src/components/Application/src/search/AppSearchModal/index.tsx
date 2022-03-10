@@ -63,8 +63,6 @@ const AppSearchModal: React.FC<AppSearchModalProp> = (props) => {
     <Transition
       name="zoom-fade"
       show={visible}
-      // timeout={30000}
-      className="absolute inset-0 .z-1000"
     >
       <div className={getClass}>
         <div className={`${prefixCls}-content`} ref={outsideRef}>
