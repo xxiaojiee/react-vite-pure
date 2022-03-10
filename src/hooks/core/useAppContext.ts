@@ -1,5 +1,6 @@
-import { useImmer } from 'use-immer';
+// import { useImmer } from 'use-immer';
 import { createContainer } from 'unstated-next';
+import { useState } from 'react';
 import type { RouterRenderProp } from '/@/router/types';
 import { prefixCls } from '/@/settings/designSetting';
 import { createLoading } from '/@/components/Loading/src/createLoading';
@@ -17,7 +18,7 @@ export type AppContainerProp = RouterRenderProp & initAppContainerProp;
 
 
 export const useApp = () => {
-  const [app, updateApp] = useImmer<AppContainerProp>({
+  const [app, setApp] = useState<AppContainerProp>({
     prefixCls,
     isMobile: false,
     loading: createLoading({
@@ -25,8 +26,7 @@ export const useApp = () => {
     }),
   } as any);
   const saveApp = (apps: Partial<AppContainerProp>) => {
-    console.log('设置了Container：', apps);
-    updateApp((state) => {
+    setApp((state) => {
       return {
         ...state,
         ...apps,

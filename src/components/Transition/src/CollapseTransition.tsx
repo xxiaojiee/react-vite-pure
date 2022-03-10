@@ -4,7 +4,7 @@ import { addClass, removeClass } from '/@/utils/domUtils';
 
 const CollapseTransition: React.FC = (props) => {
   const method = {
-    beforeEnter(el) {
+    onEnter(el) {
       addClass(el, 'collapse-transition');
       if (!el.dataset) el.dataset = {};
 
@@ -16,7 +16,7 @@ const CollapseTransition: React.FC = (props) => {
       el.style.paddingBottom = 0;
     },
 
-    enter(el) {
+    onEntering(el) {
       el.dataset.oldOverflow = el.style.overflow;
       if (el.scrollHeight !== 0) {
         el.style.height = `${el.scrollHeight}px`;
@@ -31,13 +31,13 @@ const CollapseTransition: React.FC = (props) => {
       el.style.overflow = 'hidden';
     },
 
-    afterEnter(el) {
+    onEntered(el) {
       removeClass(el, 'collapse-transition');
       el.style.height = '';
       el.style.overflow = el.dataset.oldOverflow;
     },
 
-    beforeLeave(el) {
+    onExit(el) {
       if (!el.dataset) el.dataset = {};
       el.dataset.oldPaddingTop = el.style.paddingTop;
       el.dataset.oldPaddingBottom = el.style.paddingBottom;
@@ -47,7 +47,7 @@ const CollapseTransition: React.FC = (props) => {
       el.style.overflow = 'hidden';
     },
 
-    leave(el) {
+    onExiting(el) {
       if (el.scrollHeight !== 0) {
         addClass(el, 'collapse-transition');
         el.style.height = 0;
@@ -56,7 +56,7 @@ const CollapseTransition: React.FC = (props) => {
       }
     },
 
-    afterLeave(el) {
+    onExited(el) {
       removeClass(el, 'collapse-transition');
       el.style.height = '';
       el.style.overflow = el.dataset.oldOverflow;
