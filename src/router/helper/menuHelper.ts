@@ -9,16 +9,20 @@ export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
   return (menuList || []).map((item) => item.path);
 }
 
-function joinParentPath(menus: Menu[], parentPath = '') {
+function joinParentPath(menus: Menu[], parentPath = '', parentPathList: string[] = []) {
   for (let index = 0; index < menus.length; index++) {
     const menu = menus[index];
     const path = menu.path as string;
+    let nextParentPathList: string[] = [];
     if (!(path.startsWith('/') || isUrl(path))) {
       // path doesn't start with /, nor is it a url, join parent path
-      menu.path = `${parentPath}/${path}`;
+      const fullPath = `${parentPath}/${path}`
+      menu.path = fullPath;
+      menu.parentPathList = parentPathList;
+      nextParentPathList = [...parentPathList, fullPath]
     }
     if (menu?.children?.length) {
-      joinParentPath(menu.children, menu.meta?.hidePathForChildren ? parentPath : menu.path);
+      joinParentPath(menu.children, menu.meta?.hidePathForChildren ? parentPath : menu.path, nextParentPathList);
     }
   }
 }
@@ -48,8 +52,8 @@ export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMa
       routeList.push(item);
     }
   });
-  const list = treeMap(routeList, {
-    conversion: (node: AppRouteRecordRaw) => {
+  const list = treeMap<Menu>(routeList, {
+    conversion: (node: AppRouteRecordRaw, levelIndex: { level: number; index: number; }) => {
       const { meta: { title, hideMenu = false } = {} } = node;
       return {
         ...(node.meta || {}),
@@ -57,6 +61,7 @@ export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMa
         name: title,
         hideMenu,
         path: node.path,
+        level: levelIndex.level,
         ...(node.redirect ? { redirect: node.redirect } : {}),
       };
     },

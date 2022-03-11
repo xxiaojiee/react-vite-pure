@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { Menu } from '/@/router/types';
 import { useMount } from 'ahooks';
 import classNames from 'classnames';
-import type { SubMenuProvider } from '../types';
+// import type { SubMenuProvider } from '../types';
 
 import { useDesign } from '/@/hooks/web/useDesign';
 import { MenuProvider, useMenuContextContainer } from '../useSimpleMenuContext';
@@ -9,7 +10,6 @@ import { MenuProvider, useMenuContextContainer } from '../useSimpleMenuContext';
 interface MenuProp {
   className?: string;
   theme: 'light' | 'dark';
-  activeName: string | number;
   openNames?: string[];
   accordion?: boolean;
   width?: string | number;
@@ -20,10 +20,9 @@ interface MenuProp {
   onSelect?: Fn;
 }
 
-const Menu: React.FC<MenuProp> = (props) => {
+const MenuMain: React.FC<MenuProp> = (props) => {
   const {
     className,
-    activeName,
     theme = 'light',
     openNames = [],
     accordion = true,
@@ -35,9 +34,7 @@ const Menu: React.FC<MenuProp> = (props) => {
     onSelect = () => {},
     children,
   } = props;
-  const { saveMenuContext, onUpdateOpened } = useMenuContextContainer();
-  const currentActiveName = useRef<string | number>('');
-  const openedNames = useRef<string[]>([]);
+  const { openedNames, saveMenuContext } = useMenuContextContainer();
 
   const { prefixCls } = useDesign('menu');
 
@@ -54,74 +51,85 @@ const Menu: React.FC<MenuProp> = (props) => {
   );
 
   useEffect(() => {
-    openedNames.current = openNames;
-  }, [openNames]);
+    saveMenuContext({
+      openedNames: openNames,
+    });
+  }, [openNames, saveMenuContext]);
 
-  useEffect(() => {
-    currentActiveName.current = activeName;
-  }, [activeName]);
+  const addSubMenu = useCallback(
+    (name: string) => {
+      if (openedNames.includes(name)) return;
+      saveMenuContext({
+        openedNames: [...openedNames, name],
+      });
+    },
+    [openedNames, saveMenuContext],
+  );
 
-  const updateOpened = useCallback(() => {
-    onUpdateOpened(openedNames.current);
-  }, [onUpdateOpened]);
-
-  useEffect(() => {
-    updateOpened();
-  }, [openNames, updateOpened]);
-
-  const addSubMenu = (name: string) => {
-    if (openedNames.current.includes(name)) return;
-    openedNames.current.push(name);
-    updateOpened();
-  };
-
-  const removeSubMenu = (name: string) => {
-    openedNames.current = openedNames.current.filter((item) => item !== name);
-    updateOpened();
-  };
+  const removeSubMenu = useCallback(
+    (name: string) => {
+      const newOpenedNames = openedNames.filter((item) => item !== name);
+      saveMenuContext({
+        openedNames: newOpenedNames,
+      });
+    },
+    [openedNames, saveMenuContext],
+  );
 
   const removeAll = () => {
-    openedNames.current = [];
-    updateOpened();
+    saveMenuContext({
+      openedNames: [],
+    });
   };
 
-  const sliceIndex = (index: number) => {
-    if (index === -1) return;
-    openedNames.current = openedNames.current.slice(0, index + 1);
-    updateOpened();
-  };
+  const sliceIndex = useCallback(
+    (index: number) => {
+      if (index === -1) return;
+      const newOpenedNames = openedNames.slice(0, index + 1);
+      saveMenuContext({
+        openedNames: newOpenedNames,
+      });
+    },
+    [openedNames, saveMenuContext],
+  );
 
-  useMount(() => {});
+  const openNameChange = useCallback(
+    ({ name, opened }) => {
+      if (opened && !openedNames.includes(name)) {
+        saveMenuContext({
+          openedNames: [...openedNames, name],
+        });
+      } else if (!opened) {
+        const index = openedNames.findIndex((item) => item === name);
+        if (index !== -1) {
+          const newOpenedNames = openedNames.splice(index, 1);
+          saveMenuContext({
+            openedNames: newOpenedNames,
+          });
+        }
+      }
+    },
+    [openedNames, saveMenuContext],
+  );
 
   useMount(() => {
-    openedNames.current = !collapse ? [...openNames] : [];
-    updateOpened();
     saveMenuContext({
-      activeName: currentActiveName,
+      openedNames: !collapse ? [...openNames] : [],
+      openNameChange,
       addSubMenu,
       removeSubMenu,
-      getOpenNames: () => openedNames.current,
       removeAll,
       isRemoveAllPopup,
       sliceIndex,
-      level: 0,
-      onMenuItemSelect: (name: string) => {
-        currentActiveName.current = name;
+      onMenuItemSelect: (menuItem: Menu) => {
+        saveMenuContext({
+          currentMenu: menuItem,
+        });
         collapse && removeAll();
-        onSelect(name);
+        onSelect(menuItem);
       },
-      openNameChange: ({ name, opened }) => {
-        if (opened && !openedNames.current.includes(name)) {
-          openedNames.current.push(name);
-        } else if (!opened) {
-          const index = openedNames.current.findIndex((item) => item === name);
-          index !== -1 && openedNames.current.splice(index, 1);
-        }
-      },
-      props: {
-        activeName,
+      memuProps: {
         theme,
-        openNames,
         accordion,
         width,
         collapsedWidth,
@@ -139,4 +147,4 @@ const Menu: React.FC<MenuProp> = (props) => {
   );
 };
 
-export default Menu;
+export default MenuMain;

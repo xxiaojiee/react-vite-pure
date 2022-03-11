@@ -138,6 +138,7 @@ export function useGuard(props) {
         }
       }
       if (!isGetCurrentRoute) {
+        console.log('当前router:', props);
         // 保存当前props (会导致组件重新渲染)
         saveApp(cloneDeep(props));
       }

@@ -99,12 +99,12 @@ export function findPath<T = any>(
 }
 
 export function findPathAll(tree: any, func: Fn, config: Partial<TreeHelperConfig> = {}) {
-  const newConfig  = getConfig(config);
+  const newConfig = getConfig(config);
   const path: any[] = [];
   const list = [...tree];
   const result: any[] = [];
   const visitedSet = new Set();
-  const  { children } = newConfig;
+  const { children } = newConfig;
   while (list.length) {
     const node = list[0];
     if (visitedSet.has(node)) {
@@ -158,8 +158,11 @@ export function forEach<T = any>(
 /**
  * @description: Extract tree specified structure
  */
-export function treeMap<T = any>(treeData: T[], opt: { children?: string; conversion: Fn }): T[] {
-  return treeData.map((item) => treeMapEach(item, opt));
+export function treeMap<T = any>(treeData: any[], opt: { children?: string; conversion: Fn }): T[] {
+  return treeData.map((item, index) => treeMapEach(item, opt, {
+    level: 1,
+    index
+  }));
 }
 
 /**
@@ -168,16 +171,20 @@ export function treeMap<T = any>(treeData: T[], opt: { children?: string; conver
 export function treeMapEach(
   data: any,
   { children = 'children', conversion }: { children?: string; conversion: Fn },
+  levelIndex: { level: number; index: number; },
 ) {
   const haveChildren = Array.isArray(data[children]) && data[children].length > 0;
-  const conversionData = conversion(data) || {};
+  const conversionData = conversion(data, levelIndex) || {};
   if (haveChildren) {
     return {
       ...conversionData,
-      [children]: data[children].map((i: number) =>
+      [children]: data[children].map((i: number, index) =>
         treeMapEach(i, {
           children,
           conversion,
+        }, {
+          level: levelIndex.level + 1,
+          index
         }),
       ),
     };

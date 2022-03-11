@@ -1,18 +1,22 @@
 // import { useImmer } from 'use-immer';
-import { createContainer, } from 'unstated-next';
+import { createContainer } from 'unstated-next';
 import { useState } from 'react';
-import type { RefObject } from 'react';
+import type { Menu } from '/@/router/types';
 
 export interface MenuContextProp {
-  activeName: RefObject<string | number>;
+  currentMenu: Menu | null;
+  openedNames: string[];
   onUpdateOpened: (data: boolean | Array<string | number> | Recordable) => void;
+  onMenuItemSelect: (menuItem: Menu) => void;
+  onUpdateActiveName: (data: string[]) => void;
   [index: string]: any;
 }
 
 
 export const useMenuContext = () => {
   const [menuContext, setMenuContext] = useState<MenuContextProp>({
-    activeName: '',
+    currentMenu: null,
+    openedNames: null,
   } as any);
   const saveMenuContext = (newContent: Partial<MenuContextProp>) => {
     setMenuContext((preState) => {
@@ -22,11 +26,14 @@ export const useMenuContext = () => {
       }
     });
   };
-  return { ...menuContext, saveMenuContext };
+  return {
+    ...menuContext,
+    saveMenuContext,
+  };
 };
 
-const Menu = createContainer(useMenuContext);
+const MenuContext = createContainer(useMenuContext);
 
-export const MenuProvider = Menu.Provider;
+export const MenuProvider = MenuContext.Provider;
 
-export const useMenuContextContainer = () => Menu.useContainer();
+export const useMenuContextContainer = () => MenuContext.useContainer();

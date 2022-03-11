@@ -38,6 +38,10 @@ export interface Menu {
 
   path: string;
 
+  parentPathList: string[];
+
+  level: number;
+
   // path contains param, auto assignment.
   paramPath?: string;
 

@@ -141,7 +141,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
       )}
     </>
   );
-
+  console.log('routeList:', routeList);
   return (
     <div className={classNames(prefixCls, `${prefixCls}--${theme}`)}>
       <Breadcrumb routes={routeList} itemRender={itemRender} />
