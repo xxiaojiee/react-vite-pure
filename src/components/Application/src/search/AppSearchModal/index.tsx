@@ -29,7 +29,7 @@ const AppSearchModal: React.FC<AppSearchModalProp> = (props) => {
 
   const { prefixCls } = useDesign('app-search-modal');
   const refs = useRef({});
-  const { getIsMobile } = useAppInject();
+  const { isMobile } = useAppInject();
   const {
     handleSearch,
     searchResult,
@@ -43,7 +43,7 @@ const AppSearchModal: React.FC<AppSearchModalProp> = (props) => {
   const getIsNotData = !keyword || searchResult.length === 0;
 
   const getClass = classNames(prefixCls, className, {
-    [`${prefixCls}--mobile`]: getIsMobile(),
+    [`${prefixCls}--mobile`]: isMobile,
   });
 
   useEffect(() => {

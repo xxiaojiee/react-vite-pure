@@ -1,13 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import type { Menu } from '/@/router/types';
 import { useMount } from 'ahooks';
 import classNames from 'classnames';
+import mitt from '/@/utils/mitt';
 // import type { SubMenuProvider } from '../types';
 
 import { useDesign } from '/@/hooks/web/useDesign';
 import { MenuProvider, useMenuContextContainer } from '../useSimpleMenuContext';
 
-interface MenuProp {
+export interface MenuProp {
   className?: string;
   theme: 'light' | 'dark';
   openNames?: string[];
@@ -34,6 +35,8 @@ const MenuMain: React.FC<MenuProp> = (props) => {
     onSelect = () => {},
     children,
   } = props;
+  const rootMenuEmitter = mitt();
+
   const { openedNames, saveMenuContext } = useMenuContextContainer();
 
   const { prefixCls } = useDesign('menu');
@@ -50,84 +53,86 @@ const MenuMain: React.FC<MenuProp> = (props) => {
     },
   );
 
+  const updateOpened = useCallback(
+    (names) => {
+      saveMenuContext({
+        openedNames: names,
+      });
+      rootMenuEmitter.emit('on-update-opened', names);
+    },
+    [rootMenuEmitter, saveMenuContext],
+  );
+
   useEffect(() => {
-    saveMenuContext({
-      openedNames: openNames,
-    });
-  }, [openNames, saveMenuContext]);
+    updateOpened(openNames);
+  }, [openNames, updateOpened]);
 
   const addSubMenu = useCallback(
     (name: string) => {
       if (openedNames.includes(name)) return;
-      saveMenuContext({
-        openedNames: [...openedNames, name],
-      });
+      updateOpened([...openedNames, name]);
     },
-    [openedNames, saveMenuContext],
+    [openedNames, updateOpened],
   );
 
   const removeSubMenu = useCallback(
     (name: string) => {
       const newOpenedNames = openedNames.filter((item) => item !== name);
-      saveMenuContext({
-        openedNames: newOpenedNames,
-      });
+      updateOpened(newOpenedNames);
     },
-    [openedNames, saveMenuContext],
+    [openedNames, updateOpened],
   );
 
-  const removeAll = () => {
-    saveMenuContext({
-      openedNames: [],
-    });
-  };
+  const removeAll = useCallback(() => {
+    updateOpened([]);
+  }, [updateOpened]);
 
   const sliceIndex = useCallback(
     (index: number) => {
       if (index === -1) return;
       const newOpenedNames = openedNames.slice(0, index + 1);
-      saveMenuContext({
-        openedNames: newOpenedNames,
-      });
+      updateOpened(newOpenedNames);
     },
-    [openedNames, saveMenuContext],
+    [openedNames, updateOpened],
   );
 
   const openNameChange = useCallback(
     ({ name, opened }) => {
       if (opened && !openedNames.includes(name)) {
-        saveMenuContext({
-          openedNames: [...openedNames, name],
-        });
+        updateOpened([...openedNames, name]);
       } else if (!opened) {
         const index = openedNames.findIndex((item) => item === name);
         if (index !== -1) {
           const newOpenedNames = openedNames.splice(index, 1);
-          saveMenuContext({
-            openedNames: newOpenedNames,
-          });
+          updateOpened(newOpenedNames);
         }
       }
     },
-    [openedNames, saveMenuContext],
+    [openedNames, updateOpened],
+  );
+
+  const onMenuItemSelect = useCallback(
+    (menuItem: Menu) => {
+      saveMenuContext({
+        currentMenu: menuItem,
+      });
+      collapse && removeAll();
+      onSelect(menuItem);
+    },
+    [collapse, onSelect, removeAll, saveMenuContext],
   );
 
   useMount(() => {
+    updateOpened(!collapse ? [...openNames] : []);
+    rootMenuEmitter.on('on-menu-item-select', onMenuItemSelect);
+    rootMenuEmitter.on('open-name-change', openNameChange);
     saveMenuContext({
-      openedNames: !collapse ? [...openNames] : [],
-      openNameChange,
+      rootMenuEmitter,
       addSubMenu,
       removeSubMenu,
       removeAll,
       isRemoveAllPopup,
       sliceIndex,
-      onMenuItemSelect: (menuItem: Menu) => {
-        saveMenuContext({
-          currentMenu: menuItem,
-        });
-        collapse && removeAll();
-        onSelect(menuItem);
-      },
       memuProps: {
         theme,
         accordion,

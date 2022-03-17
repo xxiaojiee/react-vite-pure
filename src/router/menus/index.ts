@@ -74,14 +74,14 @@ export const useMenus = (): Menu[] => {
 
 export function useCurrentParentPath() {
   const menus = useAsyncMenus();
-  return async function getCurrentParentPath(currentPath: string) {
-    const allParentPath = await getAllParentPath(menus, currentPath);
+  return function getCurrentParentPath(currentPath: string) {
+    const allParentPath = getAllParentPath(menus, currentPath);
     return allParentPath?.[0];
   }
 }
 
 // Get the level 1 menu, delete children
-export function useShallowMenus(): Promise<Menu[]> {
+export function useShallowMenus(): Menu[] {
   const menus = useAsyncMenus();
   const isRoleMode = useIsRoleMode()
   const permission = useStoreState('permission');
@@ -94,19 +94,21 @@ export function useShallowMenus(): Promise<Menu[]> {
 }
 
 // Get the children of the menu
-export function useChildrenMenus(parentPath: string) {
+export function useChildrenMenus() {
   const menus = useMenus();
   const isRoleMode = useIsRoleMode();
   const permission = useStoreState('permission');
-  const { routes } = permission;
-  const parent = menus.find((item) => item.path === parentPath);
-  if (!parent || !parent.children || !!parent?.meta?.hideChildrenInMenu) {
-    return [] as Menu[];
+  return function getChildrenMenus(parentPath: string) {
+    const { routes } = permission;
+    const parent = menus.find((item) => item.path === parentPath);
+    if (!parent || !parent.children || !!parent?.meta?.hideChildrenInMenu) {
+      return [] as Menu[];
+    }
+    if (isRoleMode) {
+      return filter(parent.children, basicFilter(routes));
+    }
+    return parent.children;
   }
-  if (isRoleMode) {
-    return filter(parent.children, basicFilter(routes));
-  }
-  return parent.children;
 }
 
 function basicFilter(routes: AppRouteRecordRaw[]) {

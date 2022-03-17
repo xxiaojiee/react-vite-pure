@@ -13,7 +13,7 @@ export function useOpenKeys(
 ) {
   const [openKeyList, setOpenKeyList] = useState<string[]>([]);
   const [collapsedOpenKeys, setCollapsedOpenKeys] = useState<string[]>([]);
-  const { getCollapsed, getIsMixSidebar } = useMenuSetting();
+  const { collapsed, isMixSidebar } = useMenuSetting();
   const { start: setOpenKeys } = useTimeoutFn(
     (path: string) => {
       if (mode === MenuModeEnum.HORIZONTAL) {
@@ -32,16 +32,16 @@ export function useOpenKeys(
     }
     ,
     16,
-    !getIsMixSidebar(),
+    !isMixSidebar,
   );
   const getOpenKeys = useMemo(() => {
-    const collapse = getIsMixSidebar() ? false : getCollapsed();
+    const collapse = isMixSidebar ? false : collapsed;
     return collapse ? collapsedOpenKeys : openKeyList;
-  }, [getCollapsed, getIsMixSidebar, collapsedOpenKeys, openKeyList]);
+  }, [collapsed, isMixSidebar, collapsedOpenKeys, openKeyList]);
 
 
   function handleOpenChange(openKeys: string[]) {
-    if (mode === MenuModeEnum.HORIZONTAL || !accordion || getIsMixSidebar()) {
+    if (mode === MenuModeEnum.HORIZONTAL || !accordion || isMixSidebar) {
       setOpenKeyList(openKeys);
     } else {
       // const menuList = toRaw(menus.value);
@@ -52,7 +52,7 @@ export function useOpenKeys(
           rootSubMenuKeys.push(path);
         }
       }
-      if (!getCollapsed()) {
+      if (!collapsed) {
         const latestOpenKey = openKeys.find((key) => openKeyList.indexOf(key) === -1);
         if (rootSubMenuKeys.indexOf(latestOpenKey as string) === -1) {
           setOpenKeyList(openKeys);

@@ -7,22 +7,22 @@ const appActions = actions.app
 export function useMultipleTabSetting() {
   const appState = useStoreState('app');
   const dispatch = useDispatch();
-  const getShowMultipleTab = () => appState.multiTabsSetting?.show;
+  const showMultipleTab = appState.multiTabsSetting?.show;
 
-  const getShowQuick = () => appState.multiTabsSetting?.showQuick;
+  const showQuick = appState.multiTabsSetting?.showQuick;
 
-  const getShowRedo = () => appState.multiTabsSetting?.showRedo;
+  const showRedo = appState.multiTabsSetting?.showRedo;
 
-  const getShowFold = () => appState.multiTabsSetting?.showFold;
+  const showFold = appState.multiTabsSetting?.showFold;
 
   function setMultipleTabSetting(multiTabsSetting: Partial<MultiTabsSetting>) {
     dispatch(appActions.setProjectConfig({ multiTabsSetting }))
   }
   return {
     setMultipleTabSetting,
-    getShowMultipleTab,
-    getShowQuick,
-    getShowRedo,
-    getShowFold,
+    showMultipleTab,
+    showQuick,
+    showRedo,
+    showFold,
   };
 }

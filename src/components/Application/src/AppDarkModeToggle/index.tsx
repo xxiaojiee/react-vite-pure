@@ -6,8 +6,6 @@ import { updateHeaderBgColor, updateSidebarBgColor } from '/@/logics/theme/updat
 import { updateDarkTheme } from '/@/logics/theme/dark';
 import { SvgIcon } from '/@/components/Icon';
 import { ThemeEnum } from '/@/enums/appEnum';
-import moon from '/@/assets/icons/moon.svg';
-import sun from '/@/assets/icons/sun.svg';
 
 import './index.less';
 
@@ -18,20 +16,20 @@ interface AppLocalePickerProp {
 const AppLocalePicker: React.FC<AppLocalePickerProp> = (props) => {
   const { className } = props;
   const { prefixCls } = useDesign('dark-switch');
-  const { getDarkMode, setDarkMode, getShowDarkModeToggle } = useRootSetting();
-  const isDark = getDarkMode() === ThemeEnum.DARK;
+  const { darkMode, setDarkMode, showDarkModeToggle } = useRootSetting();
+  const isDark = darkMode === ThemeEnum.DARK;
   const getClass = classNames(className, prefixCls, {
     [`${prefixCls}--dark`]: isDark,
   });
 
   const toggleDarkMode = () => {
-    const darkMode = getDarkMode() === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
-    setDarkMode(darkMode);
-    updateDarkTheme(darkMode);
+    const darkModes = darkMode === ThemeEnum.DARK ? ThemeEnum.LIGHT : ThemeEnum.DARK;
+    setDarkMode(darkModes);
+    updateDarkTheme(darkModes);
     updateHeaderBgColor();
     updateSidebarBgColor();
   };
-  if (!getShowDarkModeToggle()) {
+  if (!showDarkModeToggle) {
     return null;
   }
 

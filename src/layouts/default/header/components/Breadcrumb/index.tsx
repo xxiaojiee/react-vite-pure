@@ -57,7 +57,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
   const { route, matched, history } = useAppContainer();
   const menus = useMenus();
   const { prefixCls } = useDesign('layout-breadcrumb');
-  // const { getShowBreadCrumbIcon } = useRootSetting();
+  // const { showBreadCrumbIcon } = useRootSetting();
 
   useMount(() => {
     if (!route || route.name === REDIRECT_NAME) return;
@@ -133,7 +133,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
     paths: string[],
   ) => (
     <>
-      {/* {getShowBreadCrumbIcon() && getIcon(rou) ? <Icon icon={getIcon(rou)} v-if="" /> : null} */}
+      {/* {showBreadCrumbIcon && getIcon(rou) ? <Icon icon={getIcon(rou)} v-if="" /> : null} */}
       {!hasRedirect(routesMatched, rou) ? (
         <span>{rou.name || rou.meta?.title}</span>
       ) : (

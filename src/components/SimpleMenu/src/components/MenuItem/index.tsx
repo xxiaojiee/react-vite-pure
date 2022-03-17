@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import type { CSSProperties } from 'react';
 import type { Menu } from '/@/router/types';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { Tooltip } from 'antd';
@@ -7,14 +8,15 @@ import { useMenuContextContainer } from '../useSimpleMenuContext';
 
 interface MenuItemProp {
   className?: string;
-  disabled: boolean;
+  disabled?: boolean;
   collapse: boolean;
-  title?: boolean;
+  title?: React.ReactNode;
+  indentSize?: number;
   item: Menu;
 }
 
 const MenuItem: React.FC<MenuItemProp> = (props) => {
-  const { className, disabled, collapse, title, item } = props;
+  const { className, disabled = false, collapse, title, item, indentSize = 20, children } = props;
 
   const { path, parentPathList } = item;
 
@@ -22,8 +24,7 @@ const MenuItem: React.FC<MenuItemProp> = (props) => {
 
   const { prefixCls } = useDesign('menu');
 
-  const { onUpdateOpened, saveMenuContext, currentMenu, onUpdateActiveName, onMenuItemSelect } =
-    useMenuContextContainer();
+  const { currentMenu, rootMenuEmitter } = useMenuContextContainer();
 
   const getClass = classNames(`${prefixCls}-item`, className, {
     [`${prefixCls}-item-active`]: active,
@@ -31,35 +32,62 @@ const MenuItem: React.FC<MenuItemProp> = (props) => {
     [`${prefixCls}-item-disabled`]: !!disabled,
   });
 
-  const getCollapse = collapse;
-
   const showTooptip = item.level === 1 && collapse && title;
 
-  const handleClickItem = () => {
-    if (disabled) {
-      return;
-    }
-    onMenuItemSelect(item);
-    if (collapse) {
-      return;
-    }
-    saveMenuContext({
-      opend: false,
-      parentPath: parentPathList[parentPathList.length - 1],
-      parentPathList,
-    });
-  };
+  const handleClickItem = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (disabled) {
+        return;
+      }
+      rootMenuEmitter.emit('on-menu-item-select', item);
+      if (collapse) {
+        return;
+      }
+      rootMenuEmitter.emit('on-update-opened', {
+        opend: false,
+        parentPath: parentPathList[parentPathList.length - 1],
+        parentPathList,
+      });
+    },
+    [collapse, disabled, item, parentPathList, rootMenuEmitter],
+  );
 
   useEffect(() => {
     if (currentMenu?.path === path) {
       setActive(true);
-      onUpdateActiveName(parentPathList);
+      rootMenuEmitter.emit('on-update-active-name:submenu', parentPathList);
     } else {
       setActive(false);
     }
-  }, [currentMenu, parentPathList, path, onUpdateActiveName]);
+  }, [currentMenu?.path, parentPathList, path, rootMenuEmitter]);
 
-  return <div>MenuItem</div>;
+  const getItemStyle = useMemo((): CSSProperties => {
+    if (!parent) return {};
+    let padding = indentSize;
+
+    if (collapse) {
+      padding = indentSize;
+    } else {
+      padding += indentSize * (parentPathList.length - 1);
+    }
+    return { paddingLeft: padding };
+  }, [collapse, indentSize, parentPathList.length]);
+
+  return (
+    <li className={getClass} onClick={handleClickItem} style={collapse ? {} : getItemStyle}>
+      {showTooptip ? (
+        <Tooltip placement="right" title={title}>
+          <div className={`${prefixCls}-tooltip`}>{children}</div>
+        </Tooltip>
+      ) : (
+        <>
+          {children}
+          {title}
+        </>
+      )}
+    </li>
+  );
 };
 
 export default MenuItem;

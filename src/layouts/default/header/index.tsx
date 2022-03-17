@@ -34,92 +34,80 @@ interface HeaderProp {
 
 const LayoutHeader: React.FC<HeaderProp> = (props) => {
   const { prefixCls } = useDesign('layout-header');
-  const {
-    getShowTopMenu,
-    getShowHeaderTrigger,
-    getSplit,
-    getIsMixMode,
-    getMenuWidth,
-    getIsMixSidebar,
-  } = useMenuSetting();
-  const { getUseErrorHandle, getShowSettingButton, getSettingButtonPosition } = useRootSetting();
+  const { showTopMenu, showHeaderTrigger, split, isMixMode, menuWidth, isMixSidebar } =
+    useMenuSetting();
+  const { useErrorHandle, showSettingButton, settingButtonPosition } = useRootSetting();
 
   const {
-    getHeaderTheme,
-    getShowFullScreen,
-    getShowNotice,
-    getShowContent,
-    getShowBread,
-    getShowHeaderLogo,
-    getShowHeader,
-    getShowSearch,
+    headerTheme,
+    showFullScreen,
+    showNotice,
+    showContent,
+    showBread,
+    showHeaderLogo,
+    showHeader,
+    showSearch,
   } = useHeaderSetting();
 
-  const { getIsMobile } = useAppInject();
+  const { isMobile } = useAppInject();
 
   const getHeaderClass = () => {
-    const theme = getHeaderTheme();
+    const theme = headerTheme;
     return classNames(prefixCls, {
       [`${prefixCls}--fixed`]: props.fixed,
-      [`${prefixCls}--mobile`]: getIsMobile(),
+      [`${prefixCls}--mobile`]: isMobile,
       [`${prefixCls}--${theme}`]: theme,
     });
   };
 
   const getShowSetting = () => {
-    if (!getShowSettingButton()) {
+    if (!showSettingButton) {
       return false;
     }
-    const settingButtonPosition = getSettingButtonPosition();
-
     if (settingButtonPosition === SettingButtonPositionEnum.AUTO) {
-      return getShowHeader();
+      return showHeader;
     }
     return settingButtonPosition === SettingButtonPositionEnum.HEADER;
   };
 
   const getLogoWidth = () => {
-    if (!getIsMixMode() || getIsMobile()) {
+    if (!isMixMode || isMobile) {
       return {};
     }
-    const width = getMenuWidth() < 180 ? 180 : getMenuWidth();
+    const width = menuWidth < 180 ? 180 : menuWidth;
     return { width: `${width}px` };
   };
 
   const getSplitType = () => {
-    return getSplit() ? MenuSplitTyeEnum.TOP : MenuSplitTyeEnum.NONE;
+    return split ? MenuSplitTyeEnum.TOP : MenuSplitTyeEnum.NONE;
   };
 
   const getMenuMode = () => {
-    return getSplit() ? MenuModeEnum.HORIZONTAL : null;
+    return split ? MenuModeEnum.HORIZONTAL : undefined;
   };
-  console.log('是否显示：', getShowTopMenu() && !getIsMobile());
+
+  console.log('是否显示：', showTopMenu && !isMobile);
   return (
     <Header className={getHeaderClass()}>
       {/* left start */}
       <div className={`${prefixCls}-left`}>
         {/* logo */}
-        {getShowHeaderLogo() || getIsMobile() ? (
-          <AppLogo
-            className={`${prefixCls}-logo`}
-            theme={getHeaderTheme()}
-            style={getLogoWidth()}
-          />
+        {showHeaderLogo || isMobile ? (
+          <AppLogo className={`${prefixCls}-logo`} theme={headerTheme} style={getLogoWidth()} />
         ) : null}
-        {(getShowContent() && getShowHeaderTrigger() && !getSplit() && !getIsMixSidebar()) ||
-        getIsMobile() ? (
-          <LayoutTrigger theme={getHeaderTheme()} sider={false} />
+        {(showContent && showHeaderTrigger && !split && !isMixSidebar) || isMobile ? (
+          <LayoutTrigger theme={headerTheme} sider={false} />
         ) : null}
-        {getShowContent() && getShowBread() ? <LayoutBreadcrumb theme={getHeaderTheme()} /> : null}
+        {showContent && showBread ? <LayoutBreadcrumb theme={headerTheme} /> : null}
       </div>
       {/* left end */}
 
       {/* menu start */}
-      {getShowTopMenu() && !getIsMobile() ? (
+      {showTopMenu && !isMobile ? (
         <div className={`${prefixCls}-menu`}>
           <LayoutMenu
             isHorizontal
-            theme={getHeaderTheme()}
+            theme={headerTheme}
             splitType={getSplitType()}
             menuMode={getMenuMode()}
           />
@@ -130,16 +118,16 @@ const LayoutHeader: React.FC<HeaderProp> = (props) => {
 
       {/* action */}
       <div className={`${prefixCls}-action`}>
-        {getShowSearch() ? <AppSearch className={`${prefixCls}-action__item `} /> : null}
-        {getUseErrorHandle() ? (
+        {showSearch ? <AppSearch className={`${prefixCls}-action__item `} /> : null}
+        {useErrorHandle ? (
           <ErrorAction className={`${prefixCls}-action__item error-action`} />
         ) : null}
-        {getShowNotice() ? <Notify className={`${prefixCls}-action__item notify-item`} /> : null}
-        {getShowFullScreen() ? (
+        {showNotice ? <Notify className={`${prefixCls}-action__item notify-item`} /> : null}
+        {showFullScreen ? (
           <FullScreen className={`${prefixCls}-action__item fullscreen-item`} />
         ) : null}
         <AppLocalePicker reload showText={false} className={`${prefixCls}-action__item`} />
-        <UserDropDown theme={getHeaderTheme()} />
+        <UserDropDown theme={headerTheme} />
         {getShowSetting() ? <SettingDrawer className={`${prefixCls}-action__item`} /> : null}
       </div>
     </Header>

@@ -8,101 +8,95 @@ import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { useFullContent } from '/@/hooks/web/useFullContent';
 
 import { MenuModeEnum } from '/@/enums/menuEnum';
+import { useMemo } from 'react';
 
 const appActions = actions.app;
 
 export function useHeaderSetting() {
   const dispatch = useDispatch();
   const appState = useStoreState('app');
-  const { getFullContent } = useFullContent();
+  const fullContent = useFullContent();
 
-  const getShowFullHeaderRef = () => {
-    return (
-      !getFullContent() &&
-      getShowMixHeaderRef() &&
-      getShowHeader() &&
-      !getIsTopMenu() &&
-      !getIsMixSidebar()
-    );
-  };
-
-  const getUnFixedAndFull = () => !getFixed() && !getShowFullHeaderRef();
-
-  const getShowInsetHeaderRef = () => {
-    const need = !getFullContent() && getShowHeader();
-    return (
-      (need && !getShowMixHeaderRef()) ||
-      (need && getIsTopMenu()) ||
-      (need && getIsMixSidebar())
-    );
-  };
 
   const {
-    getMenuMode,
-    getSplit,
-    getShowHeaderTrigger,
-    getIsSidebarType,
-    getIsMixSidebar,
-    getIsTopMenu,
+    menuMode,
+    split,
+    showHeaderTrigger,
+    isSidebarType,
+    isMixSidebar,
+    isTopMenu,
   } = useMenuSetting();
-  const { getShowBreadCrumb, getShowLogo } = useRootSetting();
+  const { showBreadCrumb, showLogo } = useRootSetting();
 
-  const getShowMixHeaderRef = () => !getIsSidebarType() && getShowHeader();
+  const showHeader = appState.projectConfig?.headerSetting.show;
 
-  const getShowDoc = () => appState.projectConfig?.headerSetting.showDoc;
+  const showMixHeaderRef = !isSidebarType && showHeader;
 
-  const getHeaderTheme = () => appState.projectConfig?.headerSetting.theme;
+  const showDoc = appState.projectConfig?.headerSetting.showDoc;
 
-  const getShowHeader = () => appState.projectConfig?.headerSetting.show;
+  const headerTheme = appState.projectConfig?.headerSetting.theme;
 
-  const getFixed = () => appState.projectConfig?.headerSetting.fixed;
 
-  const getHeaderBgColor = () => appState.projectConfig?.headerSetting.bgColor;
+  const fixed = appState.projectConfig?.headerSetting.fixed;
 
-  const getShowSearch = () => appState.projectConfig?.headerSetting.showSearch;
+  const headerBgColor = appState.projectConfig?.headerSetting.bgColor;
 
-  const getUseLockPage = () => appState.projectConfig?.headerSetting.useLockPage;
+  const showSearch = appState.projectConfig?.headerSetting.showSearch;
 
-  const getShowFullScreen = () => appState.projectConfig?.headerSetting.showFullScreen;
+  const useLockPage = appState.projectConfig?.headerSetting.useLockPage;
 
-  const getShowNotice = () => appState.projectConfig?.headerSetting.showNotice;
+  const showFullScreen = appState.projectConfig?.headerSetting.showFullScreen;
 
-  const getShowBread = () => {
-    return (
-      getMenuMode() !== MenuModeEnum.HORIZONTAL && getShowBreadCrumb() && !getSplit()
-    );
-  };
+  const showNotice = appState.projectConfig?.headerSetting.showNotice;
 
-  const getShowHeaderLogo = () => {
-    return getShowLogo() && !getIsSidebarType() && !getIsMixSidebar();
-  };
+  const showBread = menuMode !== MenuModeEnum.HORIZONTAL && showBreadCrumb && !split;
 
-  const getShowContent = () => {
-    return getShowBread() || getShowHeaderTrigger();
-  };
+  const showHeaderLogo = showLogo && !isSidebarType && !isMixSidebar;
+
+  const showContent = showBread || showHeaderTrigger
 
   // Set header configuration
   function setHeaderSetting(headerSetting: Partial<HeaderSetting>) {
     dispatch(appActions.setProjectConfig({ headerSetting }))
   }
+
+  const showFullHeaderRef = (
+    !fullContent &&
+    showMixHeaderRef &&
+    showHeader &&
+    !isTopMenu &&
+    !isMixSidebar
+  );
+
+  const unFixedAndFull = !fixed && !showFullHeaderRef;
+
+  const showInsetHeaderRef = useMemo(() => {
+    const need = !fullContent && showHeader;
+    return (
+      (need && !showMixHeaderRef) ||
+      (need && isTopMenu) ||
+      (need && isMixSidebar)
+    );
+  }, [fullContent, isMixSidebar, isTopMenu, showHeader, showMixHeaderRef]);
+
   return {
     setHeaderSetting,
 
-    getShowDoc,
-    getShowSearch,
-    getHeaderTheme,
-    getUseLockPage,
-    getShowFullScreen,
-    getShowNotice,
-    getShowBread,
-    getShowContent,
-    getShowHeaderLogo,
-    getShowHeader,
-    getFixed,
-    getShowMixHeaderRef,
-    getShowFullHeaderRef,
-    getShowInsetHeaderRef,
-    getUnFixedAndFull,
-    getHeaderBgColor,
+    showDoc,
+    showSearch,
+    headerTheme,
+    useLockPage,
+    showFullScreen,
+    showNotice,
+    showBread,
+    showContent,
+    showHeaderLogo,
+    showHeader,
+    fixed,
+    showMixHeaderRef,
+    showFullHeaderRef,
+    showInsetHeaderRef,
+    unFixedAndFull,
+    headerBgColor,
   };
 }

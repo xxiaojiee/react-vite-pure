@@ -46,54 +46,49 @@ interface SettingDrawerProp {
 
 const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
   const {
-    getContentMode,
-    getShowFooter,
-    getShowBreadCrumb,
-    getShowBreadCrumbIcon,
-    getShowLogo,
-    getFullContent,
-    getColorWeak,
-    getGrayMode,
-    getLockTime,
-    getShowDarkModeToggle,
-    getThemeColor,
+    contentMode,
+    showFooter,
+    showBreadCrumb,
+    showBreadCrumbIcon,
+    showLogo,
+    fullContent,
+    colorWeak,
+    grayMode,
+    lockTime,
+    showDarkModeToggle,
+    themeColor,
   } = useRootSetting();
 
-  const { getOpenPageLoading, getBasicTransition, getEnableTransition, getOpenNProgress } =
+  const { openPageLoading, basicTransition, enableTransition, openNProgress } =
     useTransitionSetting();
 
   const {
-    getIsHorizontal,
-    getShowMenu,
-    getMenuType,
-    getTrigger,
-    getCollapsedShowTitle,
-    getMenuFixed,
-    getCollapsed,
-    getCanDrag,
-    getTopMenuAlign,
-    getAccordion,
-    getMenuWidth,
-    getMenuBgColor,
-    getIsTopMenu,
-    getSplit,
-    getIsMixSidebar,
-    getCloseMixSidebarOnChange,
-    getMixSideTrigger,
-    getMixSideFixed,
+    isHorizontal,
+    showMenu,
+    menuType,
+    trigger,
+    collapsedShowTitle,
+    menuFixed,
+    collapsed,
+    canDrag,
+    topMenuAlign,
+    accordion,
+    menuWidth,
+    menuBgColor,
+    isTopMenu,
+    split,
+    isMixSidebar,
+    closeMixSidebarOnChange,
+    mixSideTrigger,
+    mixSideFixed,
   } = useMenuSetting();
 
-  const {
-    getShowHeader,
-    getFixed: getHeaderFixed,
-    getHeaderBgColor,
-    getShowSearch,
-  } = useHeaderSetting();
+  const { showHeader, fixed: headerFixed, headerBgColor, showSearch } = useHeaderSetting();
 
-  const { getShowMultipleTab, getShowQuick, getShowRedo, getShowFold } = useMultipleTabSetting();
+  const { showMultipleTab, showQuick, showRedo, showFold } = useMultipleTabSetting();
 
   const getShowMenuRef = () => {
-    return getShowMenu() && !getIsHorizontal();
+    return showMenu && !isHorizontal;
   };
 
   function renderSidebar() {
@@ -105,10 +100,10 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
             baseHandler(HandlerEnum.CHANGE_LAYOUT, {
               mode: item.mode,
               type: item.type,
-              split: getIsHorizontal() ? false : undefined,
+              split: isHorizontal ? false : undefined,
             });
           }}
-          def={getMenuType()}
+          def={menuType}
         />
       </>
     );
@@ -118,7 +113,7 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
     return (
       <ThemeColorPicker
         colorList={HEADER_PRESET_BG_COLOR_LIST}
-        def={getHeaderBgColor()}
+        def={headerBgColor}
         event={HandlerEnum.HEADER_THEME}
       />
     );
@@ -128,7 +123,7 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
     return (
       <ThemeColorPicker
         colorList={SIDE_BAR_BG_COLOR_LIST}
-        def={getMenuBgColor()}
+        def={menuBgColor}
         event={HandlerEnum.MENU_THEME}
       />
     );
@@ -138,7 +133,7 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
     return (
       <ThemeColorPicker
         colorList={APP_PRESET_COLOR_LIST}
-        def={getThemeColor()}
+        def={themeColor}
         event={HandlerEnum.CHANGE_THEME_COLOR}
       />
     );
@@ -148,9 +143,9 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
    * @description:
    */
   function renderFeatures() {
-    let triggerDef = getTrigger();
+    let triggerDef = trigger;
 
-    const triggerOptions = getMenuTriggerOptions(getSplit());
+    const triggerOptions = getMenuTriggerOptions(split);
     const some = triggerOptions.some((item) => item.value === triggerDef);
     if (!some) {
       triggerDef = TriggerEnum.FOOTER;
@@ -161,101 +156,99 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
         <SwitchItem
           title="分割菜单"
           event={HandlerEnum.MENU_SPLIT}
-          def={getSplit()}
-          disabled={!getShowMenuRef() || getMenuType() !== MenuTypeEnum.MIX}
+          def={split}
+          disabled={!getShowMenuRef() || menuType !== MenuTypeEnum.MIX}
         />
         <SwitchItem
           title="固定展开菜单"
           event={HandlerEnum.MENU_FIXED_MIX_SIDEBAR}
-          def={getMixSideFixed()}
-          disabled={!getIsMixSidebar()}
+          def={mixSideFixed}
+          disabled={!isMixSidebar}
         />
 
         <SwitchItem
           title="切换页面关闭菜单"
           event={HandlerEnum.MENU_CLOSE_MIX_SIDEBAR_ON_CHANGE}
-          def={getCloseMixSidebarOnChange()}
-          disabled={!getIsMixSidebar()}
+          def={closeMixSidebarOnChange}
+          disabled={!isMixSidebar}
         />
         <SwitchItem
           title="折叠菜单"
           event={HandlerEnum.MENU_COLLAPSED}
-          def={getCollapsed()}
+          def={collapsed}
           disabled={!getShowMenuRef()}
         />
 
         <SwitchItem
           title="侧边菜单拖拽"
           event={HandlerEnum.MENU_HAS_DRAG}
-          def={getCanDrag()}
+          def={canDrag}
           disabled={!getShowMenuRef()}
         />
         <SwitchItem
           title="菜单搜索"
           event={HandlerEnum.HEADER_SEARCH}
-          def={getShowSearch()}
-          disabled={!getShowHeader()}
+          def={showSearch}
+          disabled={!showHeader}
         />
         <SwitchItem
           title="侧边菜单手风琴模式"
           event={HandlerEnum.MENU_ACCORDION}
-          def={getAccordion()}
+          def={accordion}
           disabled={!getShowMenuRef()}
         />
 
         <SwitchItem
           title="折叠菜单显示名称"
           event={HandlerEnum.MENU_COLLAPSED_SHOW_TITLE}
-          def={getCollapsedShowTitle()}
-          disabled={!getShowMenuRef() || !getCollapsed() || getIsMixSidebar()}
+          def={collapsedShowTitle}
+          disabled={!getShowMenuRef() || !collapsed || isMixSidebar}
         />
 
         <SwitchItem
           title="固定header"
           event={HandlerEnum.HEADER_FIXED}
-          def={getHeaderFixed()}
-          disabled={!getShowHeader()}
+          def={headerFixed}
+          disabled={!showHeader}
         />
         <SwitchItem
           title="固定Sidebar"
           event={HandlerEnum.MENU_FIXED}
-          def={getMenuFixed()}
-          disabled={!getShowMenuRef() || getIsMixSidebar()}
+          def={menuFixed}
+          disabled={!getShowMenuRef() || isMixSidebar}
         />
         <SelectItem
           title="混合菜单触发方式"
           event={HandlerEnum.MENU_TRIGGER_MIX_SIDEBAR}
-          def={getMixSideTrigger()}
+          def={mixSideTrigger}
           options={mixSidebarTriggerOptions}
-          disabled={!getIsMixSidebar()}
+          disabled={!isMixSidebar}
         />
         <SelectItem
           title="顶部菜单布局"
           event={HandlerEnum.MENU_TOP_ALIGN}
-          def={getTopMenuAlign()}
+          def={topMenuAlign}
           options={topMenuAlignOptions}
-          disabled={
-            !getShowHeader() || getSplit() || (!getIsTopMenu() && !getSplit()) || getIsMixSidebar()
-          }
+          disabled={!showHeader || split || (!isTopMenu && !split) || isMixSidebar}
         />
         <SelectItem
           title="菜单折叠按钮"
           event={HandlerEnum.MENU_TRIGGER}
           def={triggerDef}
           options={triggerOptions}
-          disabled={!getShowMenuRef() || getIsMixSidebar()}
+          disabled={!getShowMenuRef() || isMixSidebar}
         />
         <SelectItem
           title="内容区域宽度"
           event={HandlerEnum.CONTENT_MODE}
-          def={getContentMode()}
+          def={contentMode}
           options={contentModeOptions}
         />
         <InputNumberItem
           title="自动锁屏"
           min={0}
           event={HandlerEnum.LOCK_TIME}
-          defaultValue={getLockTime()}
+          defaultValue={lockTime}
           formatter={(value: string) => {
             return parseInt(value, 10) === 0 ? `0(不自动锁屏)` : `${value}分钟`;
           }}
@@ -267,7 +260,7 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
           step={10}
           event={HandlerEnum.MENU_WIDTH}
           disabled={!getShowMenuRef()}
-          defaultValue={getMenuWidth()}
+          defaultValue={menuWidth}
           formatter={(value: string) => `${parseInt(value, 10)}px`}
         />
       </>
@@ -280,59 +273,59 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
         <SwitchItem
           title="面包屑"
           event={HandlerEnum.SHOW_BREADCRUMB}
-          def={getShowBreadCrumb()}
-          disabled={!getShowHeader()}
+          def={showBreadCrumb}
+          disabled={!showHeader}
         />
 
         <SwitchItem
           title="面包屑图标"
           event={HandlerEnum.SHOW_BREADCRUMB_ICON}
-          def={getShowBreadCrumbIcon()}
-          disabled={!getShowHeader()}
+          def={showBreadCrumbIcon}
+          disabled={!showHeader}
         />
 
-        <SwitchItem title="标签页" event={HandlerEnum.TABS_SHOW} def={getShowMultipleTab()} />
+        <SwitchItem title="标签页" event={HandlerEnum.TABS_SHOW} def={showMultipleTab} />
 
         <SwitchItem
           title="标签页刷新按钮"
           event={HandlerEnum.TABS_SHOW_REDO}
-          def={getShowRedo()}
-          disabled={!getShowMultipleTab()}
+          def={showRedo}
+          disabled={!showMultipleTab}
         />
 
         <SwitchItem
           title="标签页快捷按钮"
           event={HandlerEnum.TABS_SHOW_QUICK}
-          def={getShowQuick()}
-          disabled={!getShowMultipleTab()}
+          def={showQuick}
+          disabled={!showMultipleTab}
         />
         <SwitchItem
           title="标签页折叠按钮"
           event={HandlerEnum.TABS_SHOW_FOLD}
-          def={getShowFold()}
-          disabled={!getShowMultipleTab()}
+          def={showFold}
+          disabled={!showMultipleTab}
         />
 
         <SwitchItem
           title="左侧菜单"
           event={HandlerEnum.MENU_SHOW_SIDEBAR}
-          def={getShowMenu()}
-          disabled={getIsHorizontal()}
+          def={showMenu}
+          disabled={isHorizontal}
         />
 
-        <SwitchItem title="顶栏" event={HandlerEnum.HEADER_SHOW} def={getShowHeader()} />
+        <SwitchItem title="顶栏" event={HandlerEnum.HEADER_SHOW} def={showHeader} />
         <SwitchItem
           title="Logo"
           event={HandlerEnum.SHOW_LOGO}
-          def={getShowLogo()}
-          disabled={getIsMixSidebar()}
+          def={showLogo}
+          disabled={isMixSidebar}
         />
-        <SwitchItem title="页脚" event={HandlerEnum.SHOW_FOOTER} def={getShowFooter()} />
-        <SwitchItem title="全屏内容" event={HandlerEnum.FULL_CONTENT} def={getFullContent()} />
+        <SwitchItem title="页脚" event={HandlerEnum.SHOW_FOOTER} def={showFooter} />
+        <SwitchItem title="全屏内容" event={HandlerEnum.FULL_CONTENT} def={fullContent} />
 
-        <SwitchItem title="灰色模式" event={HandlerEnum.GRAY_MODE} def={getGrayMode()} />
+        <SwitchItem title="灰色模式" event={HandlerEnum.GRAY_MODE} def={grayMode} />
 
-        <SwitchItem title="色弱模式" event={HandlerEnum.COLOR_WEAK} def={getColorWeak()} />
+        <SwitchItem title="色弱模式" event={HandlerEnum.COLOR_WEAK} def={colorWeak} />
       </>
     );
   }
@@ -340,25 +333,25 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
   function renderTransition() {
     return (
       <>
-        <SwitchItem title="顶部进度条" event={HandlerEnum.OPEN_PROGRESS} def={getOpenNProgress()} />
+        <SwitchItem title="顶部进度条" event={HandlerEnum.OPEN_PROGRESS} def={openNProgress} />
         <SwitchItem
           title="切换loading"
           event={HandlerEnum.OPEN_PAGE_LOADING}
-          def={getOpenPageLoading()}
+          def={openPageLoading}
         />
 
         <SwitchItem
           title="切换动画"
           event={HandlerEnum.OPEN_ROUTE_TRANSITION}
-          def={getEnableTransition()}
+          def={enableTransition}
         />
 
         <SelectItem
           title="动画类型"
           event={HandlerEnum.ROUTER_TRANSITION}
-          def={getBasicTransition()}
+          def={basicTransition}
           options={routerTransitionOptions}
-          disabled={!getEnableTransition()}
+          disabled={!enableTransition}
         />
       </>
     );
@@ -366,8 +359,8 @@ const SettingDrawer: React.FC<SettingDrawerProp> = (props) => {
 
   return (
     <BasicDrawer {...props} title="项目配置" width={330} className="setting-drawer">
-      {getShowDarkModeToggle() && <Divider>主题</Divider>}
-      {getShowDarkModeToggle() && <AppDarkModeToggle className="mx-auto" />}
+      {showDarkModeToggle && <Divider>主题</Divider>}
+      {showDarkModeToggle && <AppDarkModeToggle className="mx-auto" />}
       <Divider>导航栏模式</Divider>
       {renderSidebar()}
       <Divider>系统主题</Divider>

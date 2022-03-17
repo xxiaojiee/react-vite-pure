@@ -14,50 +14,49 @@ export function useRootSetting() {
   const appState = useStoreState('app');
   const disPatch = useDispatch();
 
-  const getPageLoading = () => appState.pageLoading;
+  const { pageLoading } = appState;
 
-  const getOpenKeepAlive = () => appState.projectConfig?.openKeepAlive;
+  const openKeepAlive = appState.projectConfig?.openKeepAlive;
 
-  const getSettingButtonPosition = () => appState.projectConfig?.settingButtonPosition;
+  const settingButtonPosition = appState.projectConfig?.settingButtonPosition;
 
-  const getCanEmbedIFramePage = () => appState.projectConfig?.canEmbedIFramePage;
+  const canEmbedIFramePage = appState.projectConfig?.canEmbedIFramePage;
 
-  const getPermissionMode = () => appState.projectConfig?.permissionMode;
+  const permissionMode = appState.projectConfig?.permissionMode;
 
-  const getShowLogo = () => appState.projectConfig?.showLogo;
+  const showLogo = appState.projectConfig?.showLogo;
 
-  const getContentMode = () => appState.projectConfig?.contentMode;
+  const contentMode = appState.projectConfig?.contentMode;
 
-  const getUseOpenBackTop = () => appState.projectConfig?.useOpenBackTop;
+  const useOpenBackTop = appState.projectConfig?.useOpenBackTop;
 
-  const getShowSettingButton = () => appState.projectConfig?.showSettingButton;
+  const showSettingButton = appState.projectConfig?.showSettingButton;
 
-  const getUseErrorHandle = () => appState.projectConfig?.useErrorHandle;
+  const useErrorHandle = appState.projectConfig?.useErrorHandle;
 
-  const getShowFooter = () => appState.projectConfig?.showFooter;
+  const showFooter = appState.projectConfig?.showFooter;
 
-  const getShowBreadCrumb = () => appState.projectConfig?.showBreadCrumb;
+  const showBreadCrumb = appState.projectConfig?.showBreadCrumb;
 
-  const getThemeColor = () => appState.projectConfig?.themeColor;
+  const themeColor = appState.projectConfig?.themeColor;
 
-  const getShowBreadCrumbIcon = () => appState.projectConfig?.showBreadCrumbIcon;
+  const showBreadCrumbIcon = appState.projectConfig?.showBreadCrumbIcon;
 
-  const getFullContent = () => appState.projectConfig?.fullContent;
+  const fullContent = appState.projectConfig?.fullContent;
 
-  const getColorWeak = () => appState.projectConfig?.colorWeak;
+  const colorWeak = appState.projectConfig?.colorWeak;
 
-  const getGrayMode = () => appState.projectConfig?.grayMode;
+  const grayMode = appState.projectConfig?.grayMode;
 
-  const getLockTime = () => appState.projectConfig?.lockTime;
+  const lockTime = appState.projectConfig?.lockTime;
 
-  const getShowDarkModeToggle = () => appState.projectConfig?.showDarkModeToggle;
+  const showDarkModeToggle = appState.projectConfig?.showDarkModeToggle;
 
-  const getDarkMode = () => appState.darkMode;
+  const { darkMode } = appState;
 
-  const getLayoutContentMode = () =>
-    appState.projectConfig?.contentMode === ContentEnum.FULL
-      ? ContentEnum.FULL
-      : ContentEnum.FIXED;
+  const layoutContentMode = appState.projectConfig?.contentMode === ContentEnum.FULL
+    ? ContentEnum.FULL
+    : ContentEnum.FIXED;
 
   function setRootSetting(setting: Partial<RootSetting>) {
     disPatch(appActions.setProjectConfig(setting))
@@ -69,27 +68,27 @@ export function useRootSetting() {
   return {
     setRootSetting,
 
-    getSettingButtonPosition,
-    getFullContent,
-    getColorWeak,
-    getGrayMode,
-    getLayoutContentMode,
-    getPageLoading,
-    getOpenKeepAlive,
-    getCanEmbedIFramePage,
-    getPermissionMode,
-    getShowLogo,
-    getUseErrorHandle,
-    getShowBreadCrumb,
-    getShowBreadCrumbIcon,
-    getUseOpenBackTop,
-    getShowSettingButton,
-    getShowFooter,
-    getContentMode,
-    getLockTime,
-    getThemeColor,
-    getDarkMode,
+    settingButtonPosition,
+    fullContent,
+    colorWeak,
+    grayMode,
+    layoutContentMode,
+    pageLoading,
+    openKeepAlive,
+    canEmbedIFramePage,
+    permissionMode,
+    showLogo,
+    useErrorHandle,
+    showBreadCrumb,
+    showBreadCrumbIcon,
+    useOpenBackTop,
+    showSettingButton,
+    showFooter,
+    contentMode,
+    lockTime,
+    themeColor,
+    darkMode,
     setDarkMode,
-    getShowDarkModeToggle,
+    showDarkModeToggle,
   };
 }

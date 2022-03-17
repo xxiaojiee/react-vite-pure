@@ -10,11 +10,11 @@ interface HeaderTriggerProp {
 
 const HeaderTrigger: React.FC<HeaderTriggerProp> = (props) => {
   const { theme } = props;
-  const { getCollapsed, toggleCollapsed } = useMenuSetting();
+  const { collapsed, toggleCollapsed } = useMenuSetting();
   const { prefixCls } = useDesign('layout-header-trigger');
   return (
     <span className={classNames(prefixCls, theme)} onClick={toggleCollapsed}>
-      {getCollapsed() ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+      {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
     </span>
   );
 };

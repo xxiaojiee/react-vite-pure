@@ -30,7 +30,7 @@ const UserDropdown: React.FC<UserDropdownProp> = (props) => {
   const userState = useStoreState('user');
   const { prefixCls } = useDesign('header-user-dropdown');
 
-  const { getShowDoc, getUseLockPage } = useHeaderSetting();
+  const { showDoc, useLockPage } = useHeaderSetting();
   const getUserInfo = useMemo(() => {
     const { realName = '', avatar, desc } = userState.userInfo || {};
     return { realName, avatar: avatar || headerImg, desc };
@@ -63,11 +63,11 @@ const UserDropdown: React.FC<UserDropdownProp> = (props) => {
         overlayClassName={`${prefixCls}-dropdown-overlay`}
         overlay={
           <Menu onClick={handleMenuClick}>
-            {getShowDoc() ? (
+            {showDoc ? (
               <MenuItem eventKey="doc" text="文档" icon="ion:document-text-outline" />
             ) : null}
-            {getShowDoc() ? <MenuDivider /> : null}
-            {getUseLockPage() ? (
+            {showDoc ? <MenuDivider /> : null}
+            {useLockPage ? (
               <MenuItem eventKey="lock" text="锁定屏幕" icon="ion:lock-closed-outline" />
             ) : null}
             <MenuItem eventKey="logout" text="退出系统" icon="ion:power-outline" />

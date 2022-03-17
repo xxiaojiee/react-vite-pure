@@ -5,114 +5,105 @@ import { SIDE_BAR_MINI_WIDTH, SIDE_BAR_SHOW_TIT_MINI_WIDTH } from '/@/enums/appE
 import { MenuModeEnum, MenuTypeEnum, TriggerEnum } from '/@/enums/menuEnum';
 
 import { useFullContent } from '/@/hooks/web/useFullContent';
+import { useMemo } from 'react';
 
 const mixSideHasChildren = false;
 const appActions = actions.app;
 
 export function useMenuSetting() {
-  const { getFullContent: fullContent } = useFullContent();
+  const fullContent = useFullContent();
   const dispatch = useDispatch();
   const appState = useStoreState('app');
 
-  const getCollapsed = () => appState.projectConfig?.menuSetting.collapsed;
+  const collapsed = appState.projectConfig?.menuSetting.collapsed;
 
-  const getMenuType = () => appState.projectConfig?.menuSetting.type;
+  const menuType = appState.projectConfig?.menuSetting.type;
 
-  const getMenuMode = () => appState.projectConfig?.menuSetting.mode;
+  const menuMode = appState.projectConfig?.menuSetting.mode;
 
-  const getMenuFixed = () => appState.projectConfig?.menuSetting.fixed;
+  const menuFixed = appState.projectConfig?.menuSetting.fixed;
 
-  const getShowMenu = () => appState.projectConfig?.menuSetting.show;
+  const showMenu = appState.projectConfig?.menuSetting.show;
 
-  const getMenuHidden = () => appState.projectConfig?.menuSetting.hidden;
+  const menuHidden = appState.projectConfig?.menuSetting.hidden;
 
-  const getMenuWidth = () => appState.projectConfig?.menuSetting.menuWidth;
+  const menuWidth = appState.projectConfig?.menuSetting.menuWidth;
 
-  const getTrigger = () => appState.projectConfig?.menuSetting.trigger;
+  const trigger = appState.projectConfig?.menuSetting.trigger;
 
-  const getMenuTheme = () => appState.projectConfig?.menuSetting.theme;
+  const menuTheme = appState.projectConfig?.menuSetting.theme;
 
-  const getSplit = () => appState.projectConfig?.menuSetting.split;
+  const split = appState.projectConfig?.menuSetting.split;
 
-  const getMenuBgColor = () => appState.projectConfig?.menuSetting.bgColor;
+  const menuBgColor = appState.projectConfig?.menuSetting.bgColor;
 
-  const getMixSideTrigger = () => appState.projectConfig?.menuSetting.mixSideTrigger;
+  const mixSideTrigger = appState.projectConfig?.menuSetting.mixSideTrigger;
 
-  const getCanDrag = () => appState.projectConfig?.menuSetting.canDrag;
+  const canDrag = appState.projectConfig?.menuSetting.canDrag;
 
-  const getAccordion = () => appState.projectConfig?.menuSetting.accordion;
+  const accordion = appState.projectConfig?.menuSetting.accordion;
 
-  const getMixSideFixed = () => appState.projectConfig?.menuSetting.mixSideFixed;
+  const mixSideFixed = appState.projectConfig?.menuSetting.mixSideFixed;
 
-  const getTopMenuAlign = () => appState.projectConfig?.menuSetting.topMenuAlign;
+  const topMenuAlign = appState.projectConfig?.menuSetting.topMenuAlign;
 
-  const getCloseMixSidebarOnChange = () => appState.projectConfig?.menuSetting.closeMixSidebarOnChange;
+  const closeMixSidebarOnChange = appState.projectConfig?.menuSetting.closeMixSidebarOnChange;
 
-  const getIsSidebarType = () => getMenuType() === MenuTypeEnum.SIDEBAR;
+  const isSidebarType = menuType === MenuTypeEnum.SIDEBAR;
 
-  const getIsTopMenu = () => getMenuType() === MenuTypeEnum.TOP_MENU;
+  const isTopMenu = menuType === MenuTypeEnum.TOP_MENU;
 
-  const getCollapsedShowTitle = () => appState.projectConfig?.menuSetting?.collapsedShowTitle;
+  const collapsedShowTitle = appState.projectConfig?.menuSetting?.collapsedShowTitle;
 
-  const getShowTopMenu = () => getMenuMode() === MenuModeEnum.HORIZONTAL || getSplit();
+  const showTopMenu = menuMode === MenuModeEnum.HORIZONTAL || split;
 
-  const getShowSidebar = () => {
-    return (
-      getSplit() ||
-      (getShowMenu() && getMenuMode() !== MenuModeEnum.HORIZONTAL && !fullContent())
-    );
-  };
+  const showSidebar = split || (showMenu && menuMode !== MenuModeEnum.HORIZONTAL && !fullContent);
 
 
-  const getShowHeaderTrigger = () => {
+  const showHeaderTrigger = useMemo(() => {
     if (
-      getMenuType() === MenuTypeEnum.TOP_MENU ||
-      !getShowMenu() ||
-      getMenuHidden()
+      menuType === MenuTypeEnum.TOP_MENU ||
+      !showMenu ||
+      menuHidden
     ) {
       return false;
     }
 
-    return getTrigger() === TriggerEnum.HEADER;
-  };
+    return trigger === TriggerEnum.HEADER;
+  }, [menuHidden, menuType, showMenu, trigger]);
 
-  const getIsHorizontal = () => {
-    return getMenuMode() === MenuModeEnum.HORIZONTAL;
-  };
+  const isHorizontal = menuMode === MenuModeEnum.HORIZONTAL;
 
-  const getIsMixSidebar = () => {
-    return getMenuType() === MenuTypeEnum.MIX_SIDEBAR;
-  };
+  const isMixSidebar = menuType === MenuTypeEnum.MIX_SIDEBAR;
 
-  const getIsMixMode = () => {
-    return getMenuMode() === MenuModeEnum.INLINE && getMenuType() === MenuTypeEnum.MIX;
-  };
+  const isMixMode = menuMode === MenuModeEnum.INLINE && menuType === MenuTypeEnum.MIX;
 
-  const getRealWidth = () => {
-    if (getIsMixSidebar()) {
-      return getCollapsed() && !getMixSideFixed()
-        ? getMiniWidthNumber()
-        : getMenuWidth();
+  const miniWidthNumber = appState.projectConfig?.menuSetting.collapsedShowTitle ? SIDE_BAR_SHOW_TIT_MINI_WIDTH : SIDE_BAR_MINI_WIDTH;
+
+  const realWidth = useMemo(() => {
+    if (isMixSidebar) {
+      return collapsed && !mixSideFixed
+        ? miniWidthNumber
+        : menuWidth;
     }
-    return getCollapsed() ? getMiniWidthNumber() : getMenuWidth();
-  };
+    return collapsed ? miniWidthNumber : menuWidth;
+  }, [collapsed, isMixSidebar, menuWidth, miniWidthNumber, mixSideFixed]);
 
-  const getMiniWidthNumber = () => {
-    const { collapsedShowTitle } = appState.projectConfig?.menuSetting;
-    return collapsedShowTitle ? SIDE_BAR_SHOW_TIT_MINI_WIDTH : SIDE_BAR_MINI_WIDTH;
-  };
 
-  const getCalcContentWidth = () => {
-    const width =
-      getIsTopMenu() || !getShowMenu() || (getSplit() && getMenuHidden())
-        ? 0
-        : getIsMixSidebar()
-          ? (getCollapsed() ? SIDE_BAR_MINI_WIDTH : SIDE_BAR_SHOW_TIT_MINI_WIDTH) +
-          (getMixSideFixed() && mixSideHasChildren ? getRealWidth() : 0)
-          : getRealWidth();
 
+  const calcContentWidth = useMemo(() => {
+    let width = 0;
+    if (!(isTopMenu || !showMenu || (split && menuHidden))) {
+      if (isMixSidebar) {
+        const d1: number = collapsed ? SIDE_BAR_MINI_WIDTH : SIDE_BAR_SHOW_TIT_MINI_WIDTH;
+        const d2: number = mixSideFixed && mixSideHasChildren ? realWidth : 0
+        width = d1 + d2;
+      } else {
+        width = realWidth
+      }
+    }
     return `calc(100% - ${width}px)`;
-  };
+  }, [collapsed, isMixSidebar, isTopMenu, menuHidden, mixSideFixed, realWidth, showMenu, split]);
 
   // Set menu configuration
   function setMenuSetting(menuSetting: Partial<MenuSetting>): void {
@@ -121,7 +112,7 @@ export function useMenuSetting() {
 
   function toggleCollapsed() {
     setMenuSetting({
-      collapsed: !getCollapsed(),
+      collapsed: !collapsed,
     });
   }
   return {
@@ -129,35 +120,35 @@ export function useMenuSetting() {
 
     toggleCollapsed,
 
-    getMenuFixed,
-    getRealWidth,
-    getMenuType,
-    getMenuMode,
-    getShowMenu,
-    getCollapsed,
-    getMiniWidthNumber,
-    getCalcContentWidth,
-    getMenuWidth,
-    getTrigger,
-    getSplit,
-    getMenuTheme,
-    getCanDrag,
-    getCollapsedShowTitle,
-    getIsHorizontal,
-    getIsSidebarType,
-    getAccordion,
-    getShowTopMenu,
-    getShowHeaderTrigger,
-    getTopMenuAlign,
-    getMenuHidden,
-    getIsTopMenu,
-    getMenuBgColor,
-    getShowSidebar,
-    getIsMixMode,
-    getIsMixSidebar,
-    getCloseMixSidebarOnChange,
-    getMixSideTrigger,
-    getMixSideFixed,
+    menuFixed,
+    realWidth,
+    menuType,
+    menuMode,
+    showMenu,
+    collapsed,
+    miniWidthNumber,
+    calcContentWidth,
+    menuWidth,
+    trigger,
+    split,
+    menuTheme,
+    canDrag,
+    collapsedShowTitle,
+    isHorizontal,
+    isSidebarType,
+    accordion,
+    showTopMenu,
+    showHeaderTrigger,
+    topMenuAlign,
+    menuHidden,
+    isTopMenu,
+    menuBgColor,
+    showSidebar,
+    isMixMode,
+    isMixSidebar,
+    closeMixSidebarOnChange,
+    mixSideTrigger,
+    mixSideFixed,
     mixSideHasChildren,
   };
 }

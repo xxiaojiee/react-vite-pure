@@ -3,7 +3,6 @@ import { Menu } from 'antd';
 import classNames from 'classnames';
 import { useAppContainer } from '/@/hooks/core/useAppContext';
 import BasicSubMenuItem from './components/BasicSubMenuItem';
-import { listenerRouteChange } from '/@/logics/mitt/routeChange';
 import { useOpenKeys } from './useOpenKeys';
 import { isFunction } from '/@/utils/is';
 import { BasicProps } from './props';
@@ -39,7 +38,7 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
 
   const { prefixCls } = useDesign('basic-menu');
 
-  const { getCollapsed, getTopMenuAlign, getSplit } = useMenuSetting();
+  const { collapsed, topMenuAlign, split } = useMenuSetting();
 
   const { route: currentRoute } = useAppContainer();
 
@@ -48,38 +47,59 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
   const getIsTopMenu = useMemo(() => {
     return (
       (type === MenuTypeEnum.TOP_MENU && mode === MenuModeEnum.HORIZONTAL) ||
-      (isHorizontal && getSplit())
+      (isHorizontal && split)
     );
-  }, [getSplit, mode, isHorizontal, type]);
+  }, [split, mode, isHorizontal, type]);
 
   const getMenuClass = useMemo(() => {
-    const align = isHorizontal && getSplit() ? 'start' : getTopMenuAlign();
+    const align = isHorizontal && split ? 'start' : topMenuAlign;
     return classNames(prefixCls, `justify-${align}`, {
-      [`${prefixCls}__second`]: !isHorizontal && getSplit(),
-      [`${prefixCls}__sidebar-hor`]: getIsTopMenu(),
+      [`${prefixCls}__second`]: !isHorizontal && split,
+      [`${prefixCls}__sidebar-hor`]: getIsTopMenu,
     });
-  }, [getIsTopMenu, getSplit, getTopMenuAlign, isHorizontal, prefixCls]);
+  }, [getIsTopMenu, split, topMenuAlign, isHorizontal, prefixCls]);
 
   const getInlineCollapseOptions = useMemo(() => {
     const isInline = mode === MenuModeEnum.INLINE;
 
     const inlineCollapseOptions: { inlineCollapsed?: boolean } = {};
     if (isInline) {
-      inlineCollapseOptions.inlineCollapsed = mixSider ? false : getCollapsed();
+      inlineCollapseOptions.inlineCollapsed = mixSider ? false : collapsed;
     }
     return inlineCollapseOptions;
-  }, [getCollapsed, mixSider, mode]);
+  }, [collapsed, mixSider, mode]);
 
-  listenerRouteChange((route) => {
-    if (route.name === REDIRECT_NAME) return;
-    handleMenuChange(route);
-    currentActiveMenu.current = route.meta?.currentActiveMenu as string;
+  const handleMenuChange = useCallback(
+    async (route?: AppRouteRecordRaw) => {
+      if (isClickGo.current) {
+        isClickGo.current = false;
+        return;
+      }
+      const path = (route || currentRoute).meta?.currentActiveMenu || (route || currentRoute).path;
+      setOpenKeys(path);
+      if (currentActiveMenu.current) return;
+      if (isHorizontal && split) {
+        const parentPath = await getCurrentParentPath(path);
+        setSelectedKeys([parentPath]);
+      } else {
+        const parentPaths = await getAllParentPath(items, path);
+        setSelectedKeys(parentPaths);
+      }
+    },
+    [currentRoute, setOpenKeys, isHorizontal, split, getCurrentParentPath, items],
+  );
 
-    if (currentActiveMenu.current) {
-      setSelectedKeys([currentActiveMenu.current]);
-      setOpenKeys(currentActiveMenu.current);
-    }
-  });
+  useEffect(() => {
+    if (currentRoute.name === REDIRECT_NAME) return;
+    console.log('currentRoute:', currentRoute);
+    // handleMenuChange(currentRoute);
+    // currentActiveMenu.current = currentRoute.meta?.currentActiveMenu as string;
+
+    // if (currentActiveMenu.current) {
+    //   setSelectedKeys([currentActiveMenu.current]);
+    //   setOpenKeys(currentActiveMenu.current);
+    // }
+  }, [currentRoute])
 
   const handleMenuClick = useCallback(
     async ({ key }: { key: string; keyPath: string[] }) => {
@@ -92,26 +112,6 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
       setSelectedKeys([key]);
     },
     [beforeClickFn, menuClick],
-  );
-
-  const handleMenuChange = useCallback(
-    async (route?: AppRouteRecordRaw) => {
-      if (isClickGo.current) {
-        isClickGo.current = false;
-        return;
-      }
-      const path = (route || currentRoute).meta?.currentActiveMenu || (route || currentRoute).path;
-      setOpenKeys(path);
-      if (currentActiveMenu.current) return;
-      if (isHorizontal && getSplit()) {
-        const parentPath = await getCurrentParentPath(path);
-        setSelectedKeys([parentPath]);
-      } else {
-        const parentPaths = await getAllParentPath(items, path);
-        setSelectedKeys(parentPaths);
-      }
-    },
-    [currentRoute, setOpenKeys, isHorizontal, getSplit, getCurrentParentPath, items],
   );
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
       {...getInlineCollapseOptions}
     >
       {items.map((item) => (
-        <BasicSubMenuItem item={item} theme={theme} isHorizontal={isHorizontal} />
+        <BasicSubMenuItem key={item.path} item={item} theme={theme} isHorizontal={isHorizontal} />
       ))}
     </Menu>
   );

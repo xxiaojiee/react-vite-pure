@@ -32,7 +32,7 @@ const BasicSubMenuItem: React.FC<ItemProps> = (props) => {
           title={<MenuItemContent item={item} />}
         >
           {item.children?.map((childrenItem) => (
-            <BasicSubMenuItem {...omit(props, 'item')} item={childrenItem} />
+            <BasicSubMenuItem key={childrenItem.path} {...omit(props, 'item')} item={childrenItem} />
           ))}
         </SubMenu>
       ) : null}

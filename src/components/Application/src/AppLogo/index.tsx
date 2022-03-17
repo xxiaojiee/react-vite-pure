@@ -36,11 +36,11 @@ const AppLogo: React.FC<AppLogoProp> = (props) => {
   const { theme, showTitle = true, alwaysShowTitle, className = '', style = {} } = props;
   const { prefixCls } = useDesign('app-logo');
   const history = useHistory();
-  const { getCollapsedShowTitle } = useMenuSetting();
+  const { collapsedShowTitle } = useMenuSetting();
   const userState = useStoreState('user');
   const { title } = getGlobSetting();
   const appLogoClass = classnames('anticon', prefixCls, theme, {
-    'collapsed-show-title': getCollapsedShowTitle(),
+    'collapsed-show-title': collapsedShowTitle,
   });
   const titleClass = classnames('ml-2 truncate md:opacity-100', `${prefixCls}__title`, {
     'xs:opacity-0': !alwaysShowTitle,

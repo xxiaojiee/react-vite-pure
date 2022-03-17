@@ -29,31 +29,31 @@ export type BasicLayoutProps = ProLayoutProps &
 const DefaultLayout = (props: BasicLayoutProps) => {
   const { children } = props;
   const { prefixCls } = useDesign('default-layout');
-  const { getIsMobile } = useAppInject();
-  const { getShowFullHeaderRef } = useHeaderSetting();
-  const { getShowSidebar, getIsMixSidebar, getShowMenu } = useMenuSetting();
+  const { isMobile } = useAppInject();
+  const { showFullHeaderRef } = useHeaderSetting();
+  const { showSidebar, isMixSidebar, showMenu } = useMenuSetting();
 
   // 创建锁屏监视器
   const lockEvents = useLockPage();
 
   const layoutClass = useMemo(() => {
     const cls: string[] = ['ant-layout'];
-    if (getIsMixSidebar() || getShowMenu()) {
+    if (isMixSidebar || showMenu) {
       cls.push('ant-layout-has-sider');
     }
     return cls;
-  }, [getIsMixSidebar, getShowMenu]);
+  }, [isMixSidebar, showMenu]);
 
   useMount(() => {
-    console.log('我是Layout，我渲染了', getShowFullHeaderRef(), props);
+    console.log('我是Layout，我渲染了', showFullHeaderRef, props);
   });
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />
       <LayoutHeader fixed />
-      {/* {getShowFullHeaderRef() ? <LayoutHeader fixed /> : null} */}
+      {/* {showFullHeaderRef ? <LayoutHeader fixed /> : null} */}
       <Layout className={classNames(layoutClass)}>
-        {getShowSidebar() || getIsMobile() ? <LayoutSideBar /> : null}
+        {showSidebar || isMobile ? <LayoutSideBar /> : null}
         <Layout className={classNames(`${prefixCls}-main`)}>
           <LayoutMultipleHeader />
           <LayoutContent>{children}</LayoutContent>

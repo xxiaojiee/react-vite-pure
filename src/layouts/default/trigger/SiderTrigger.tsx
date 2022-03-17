@@ -3,14 +3,14 @@ import { DoubleRightOutlined, DoubleLeftOutlined } from '@ant-design/icons';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 
 const SiderTrigger: React.FC = () => {
-  const { getCollapsed, toggleCollapsed } = useMenuSetting();
+  const { collapsed, toggleCollapsed } = useMenuSetting();
   const onToggleCollapsed = (e) => {
     e.stopPropagation();
     toggleCollapsed();
   };
   return (
     <div onClick={onToggleCollapsed}>
-      {getCollapsed() ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
+      {collapsed ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
     </div>
   );
 };

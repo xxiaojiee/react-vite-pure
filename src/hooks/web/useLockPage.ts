@@ -9,7 +9,7 @@ const lockActions = actions.lock
 
 export function useLockPage() {
   const dispatch = useDispatch();
-  const { getLockTime } = useRootSetting();
+  const { lockTime } = useRootSetting();
   const userState = useStoreState('user');
   const appState = useStoreState('app');
   const timeId = useRef<TimeoutHandle | null>(null);
@@ -67,7 +67,7 @@ export function useLockPage() {
   }, { wait: 2000 });
 
   return () => {
-    if (getLockTime()) {
+    if (lockTime) {
       return { onKeyup: run, onMousemove: run };
     } else {
       clear();

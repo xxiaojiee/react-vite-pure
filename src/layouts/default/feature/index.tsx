@@ -16,29 +16,28 @@ const LayoutLockPage = load(() => import('/@/pages/sys/lock'));
 const SettingDrawer = load(() => import('/@/layouts/default/setting'));
 
 const Feature: React.FC = () => {
-  const { getUseOpenBackTop, getShowSettingButton, getSettingButtonPosition, getFullContent } =
+  const { useOpenBackTop, showSettingButton, settingButtonPosition, fullContent } =
     useRootSetting();
   const userState = useStoreState('user');
   const { prefixCls } = useDesign('setting-drawer-feature');
-  const { getShowHeader } = useHeaderSetting();
+  const { showHeader } = useHeaderSetting();
 
   const getIsSessionTimeout = () => userState.sessionTimeout;
 
   const getIsFixedSettingDrawer = () => {
-    if (!getShowSettingButton()) {
+    if (!showSettingButton) {
       return false;
     }
-    const settingButtonPosition = getSettingButtonPosition();
 
     if (settingButtonPosition === SettingButtonPositionEnum.AUTO) {
-      return !getShowHeader() || getFullContent();
+      return !showHeader || fullContent;
     }
     return settingButtonPosition === SettingButtonPositionEnum.FIXED;
   };
   return (
     <>
       <LayoutLockPage />
-      {getUseOpenBackTop() ? <BackTop target={() => document.body} /> : null}
+      {useOpenBackTop ? <BackTop target={() => document.body} /> : null}
       {getIsFixedSettingDrawer() ? <SettingDrawer className={prefixCls} /> : null}
       {getIsSessionTimeout() ? <SessionTimeoutLogin /> : null}
     </>
