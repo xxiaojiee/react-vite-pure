@@ -1,43 +1,50 @@
-import React from 'react';
-import type { Menu as MenuType } from '/@/router/types';
+import React, { useMemo } from 'react';
 import { Menu } from 'antd';
 // import { useDesign } from '/@/hooks/web/useDesign';
 import { ItemProps } from '../props';
-import { omit } from 'lodash-es';
 import BasicMenuItem from './BasicMenuItem';
 import MenuItemContent from './MenuItemContent';
 
 const { SubMenu } = Menu;
 
 const BasicSubMenuItem: React.FC<ItemProps> = (props) => {
-  const { item, theme } = props;
+  const { item, theme, isHorizontal, ...eventKeyProp } = props;
   // const { prefixCls } = useDesign('basic-menu-item');
 
-  const getShowMenu = item?.meta?.hideMenu;
-  const menuHasChildren = (menuTreeItem: MenuType): boolean => {
+  const getShowMenu = !item?.meta?.hideMenu;
+  const isMenuHasChildren = useMemo((): boolean => {
     return (
-      !menuTreeItem.meta?.hideChildrenInMenu &&
-      Reflect.has(menuTreeItem, 'children') &&
-      !!menuTreeItem.children &&
-      menuTreeItem.children.length > 0
+      !item.meta?.hideChildrenInMenu &&
+      Reflect.has(item, 'children') &&
+      !!item.children &&
+      item.children.length > 0
     );
-  };
-  return (
-    <>
-      {!menuHasChildren(item) && getShowMenu ? <BasicMenuItem {...props} /> : null}
-      {menuHasChildren(item) && getShowMenu ? (
-        <SubMenu
-          className={theme}
-          popupClassName="app-top-menu-popup"
-          title={<MenuItemContent item={item} />}
-        >
-          {item.children?.map((childrenItem) => (
-            <BasicSubMenuItem key={childrenItem.path} {...omit(props, 'item')} item={childrenItem} />
-          ))}
-        </SubMenu>
-      ) : null}
-    </>
-  );
+  }, [item]);
+  if (!getShowMenu) {
+    return null;
+  }
+  if (isMenuHasChildren) {
+    return (
+      <SubMenu
+        {...eventKeyProp}
+        className={theme}
+        popupClassName="app-top-menu-popup"
+        title={<MenuItemContent item={item} />}
+      >
+        {item.children?.map((childrenItem) => {
+          return (
+            <BasicSubMenuItem
+              key={childrenItem.path}
+              theme={theme}
+              isHorizontal={isHorizontal}
+              item={childrenItem}
+            />
+          );
+        })}
+      </SubMenu>
+    );
+  }
+  return <BasicMenuItem {...props} />;
 };
 
 export default BasicSubMenuItem;

@@ -1,6 +1,11 @@
 import React from 'react';
 
-const Sider: React.FC = () => {
+interface SiderProp {
+  className?: string;
+}
+
+const Sider: React.FC<SiderProp> = (props) => {
+  const { className } = props;
   return <div>Sider</div>;
 };
 

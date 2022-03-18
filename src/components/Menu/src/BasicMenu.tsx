@@ -1,8 +1,8 @@
 import React, { useRef, useState, useMemo, useEffect, useCallback } from 'react';
-import { Menu } from 'antd';
 import classNames from 'classnames';
-import { useAppContainer } from '/@/hooks/core/useAppContext';
 import BasicSubMenuItem from './components/BasicSubMenuItem';
+import { Menu } from 'antd';
+import { useAppContainer } from '/@/hooks/core/useAppContext';
 import { useOpenKeys } from './useOpenKeys';
 import { isFunction } from '/@/utils/is';
 import { BasicProps } from './props';
@@ -13,7 +13,6 @@ import { getAllParentPath } from '/@/router/helper/menuHelper';
 import { useCurrentParentPath } from '/@/router/menus';
 
 import type { AppRouteRecordRaw } from '/@/router/types';
-
 import { MenuModeEnum, MenuTypeEnum } from '/@/enums/menuEnum';
 import { ThemeEnum } from '/@/enums/appEnum';
 
@@ -27,13 +26,12 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
     type = MenuTypeEnum.MIX,
     theme = ThemeEnum.DARK,
     accordion = true,
-    menuClick,
+    onMenuClick,
     beforeClickFn,
   } = props;
   const isClickGo = useRef(false);
   const currentActiveMenu = useRef('');
   const getCurrentParentPath = useCurrentParentPath();
-  const [defaultSelectedKeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const { prefixCls } = useDesign('basic-menu');
@@ -70,7 +68,7 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
   }, [collapsed, mixSider, mode]);
 
   const handleMenuChange = useCallback(
-    async (route?: AppRouteRecordRaw) => {
+    (route?: AppRouteRecordRaw) => {
       if (isClickGo.current) {
         isClickGo.current = false;
         return;
@@ -79,10 +77,11 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
       setOpenKeys(path);
       if (currentActiveMenu.current) return;
       if (isHorizontal && split) {
-        const parentPath = await getCurrentParentPath(path);
+        const parentPath = getCurrentParentPath(path);
         setSelectedKeys([parentPath]);
       } else {
-        const parentPaths = await getAllParentPath(items, path);
+        const parentPaths = getAllParentPath(items, path);
+        console.log('设置selectkey拉33', path, items, parentPaths);
         setSelectedKeys(parentPaths);
       }
     },
@@ -91,15 +90,16 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
 
   useEffect(() => {
     if (currentRoute.name === REDIRECT_NAME) return;
-    console.log('currentRoute:', currentRoute);
-    // handleMenuChange(currentRoute);
-    // currentActiveMenu.current = currentRoute.meta?.currentActiveMenu as string;
+    handleMenuChange(currentRoute);
+    // currentActiveMenu： 最顶层memu
+    currentActiveMenu.current = currentRoute.meta?.currentActiveMenu as string;
 
-    // if (currentActiveMenu.current) {
-    //   setSelectedKeys([currentActiveMenu.current]);
-    //   setOpenKeys(currentActiveMenu.current);
-    // }
-  }, [currentRoute])
+    if (currentActiveMenu.current) {
+      setSelectedKeys([currentActiveMenu.current]);
+      setOpenKeys(currentActiveMenu.current);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRoute]);
 
   const handleMenuClick = useCallback(
     async ({ key }: { key: string; keyPath: string[] }) => {
@@ -107,23 +107,24 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
         const flag = await beforeClickFn(key);
         if (!flag) return;
       }
-      menuClick(key);
+      onMenuClick && onMenuClick(key);
       isClickGo.current = true;
       setSelectedKeys([key]);
     },
-    [beforeClickFn, menuClick],
+    [beforeClickFn, onMenuClick],
   );
 
   useEffect(() => {
     if (!mixSider) {
       handleMenuChange();
     }
-  }, [handleMenuChange, items, mixSider]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mixSider]);
+  console.log('items:', items);
   return (
     <Menu
       selectedKeys={selectedKeys}
-      defaultSelectedKeys={defaultSelectedKeys}
+      defaultSelectedKeys={[]}
       mode={mode}
       openKeys={getOpenKeys}
       inlineIndent={inlineIndent}
@@ -134,9 +135,11 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
       subMenuOpenDelay={0.2}
       {...getInlineCollapseOptions}
     >
-      {items.map((item) => (
-        <BasicSubMenuItem key={item.path} item={item} theme={theme} isHorizontal={isHorizontal} />
-      ))}
+      {items.map((item) => {
+        return (
+          <BasicSubMenuItem key={item.path} item={item} theme={theme} isHorizontal={isHorizontal} />
+        );
+      })}
     </Menu>
   );
 };

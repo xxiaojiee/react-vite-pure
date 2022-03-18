@@ -1,7 +1,7 @@
 import type { Menu } from '/@/router/types';
 import { useCallback, useEffect, useState } from 'react';
 import { MenuSplitTyeEnum } from '/@/enums/menuEnum';
-import { useThrottleFn } from 'ahooks';
+import { useThrottleFn, useMount } from 'ahooks';
 import { useAppContainer } from '/@/hooks/core/useAppContext';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import { useChildrenMenus, useCurrentParentPath, useMenus, useShallowMenus } from '/@/router/menus';
@@ -66,17 +66,21 @@ export function useSplitMenu(splitType: MenuSplitTyeEnum) {
 
 
   // get menus
-  // const genMenus = useCallback(() => {
-  //   // normal mode
-  //   if (normalType || isMobile) {
-  //     setmenusRef(menus);
-  //     return;
-  //   }
-  //   // split-top
-  //   if (getSpiltTop) {
-  //     setmenusRef(shallowMenuList);
-  //   }
-  // }, [isMobile, getSpiltTop, menus, normalType, shallowMenuList])
+  const genMenus = useCallback(() => {
+    // normal mode
+    if (normalType || isMobile) {
+      setmenusRef(menus);
+      return;
+    }
+    // split-top
+    if (getSpiltTop) {
+      setmenusRef(shallowMenuList);
+    }
+  }, [isMobile, getSpiltTop, menus, normalType, shallowMenuList])
+
+  useMount(() => {
+    genMenus();
+  })
 
   // // Menu changes
   // useEffect(

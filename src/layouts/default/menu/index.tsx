@@ -107,7 +107,7 @@ const Menu: React.FC<MenuProp> = (props) => {
 
   const renderMenu = () => {
     const { menus, ...menuProps } = getCommonProps;
-    console.log('菜单：', menus);
+    console.log('菜单：', menus, isHorizontal);
     if (!menus || !menus.length) return null;
     return !isHorizontal ? (
       <SimpleMenu {...menuProps} isSplitMenu={split} items={menus} />

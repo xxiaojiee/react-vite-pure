@@ -7,7 +7,6 @@ import LayoutContent from './content';
 import LayoutSideBar from './sider';
 import LayoutMultipleHeader from './header/MultipleHeader';
 
-import { useMount } from 'ahooks';
 import { useAppInject } from '/@/hooks/web/useAppInject';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { useHeaderSetting } from '/@/hooks/setting/useHeaderSetting';
@@ -44,14 +43,10 @@ const DefaultLayout = (props: BasicLayoutProps) => {
     return cls;
   }, [isMixSidebar, showMenu]);
 
-  useMount(() => {
-    console.log('我是Layout，我渲染了', showFullHeaderRef, props);
-  });
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />
-      <LayoutHeader fixed />
-      {/* {showFullHeaderRef ? <LayoutHeader fixed /> : null} */}
+      {showFullHeaderRef ? <LayoutHeader fixed /> : null}
       <Layout className={classNames(layoutClass)}>
         {showSidebar || isMobile ? <LayoutSideBar /> : null}
         <Layout className={classNames(`${prefixCls}-main`)}>

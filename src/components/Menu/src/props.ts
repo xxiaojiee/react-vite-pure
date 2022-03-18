@@ -19,7 +19,7 @@ export interface BasicProps {
   isHorizontal: boolean;
   accordion?: boolean;
   beforeClickFn: (key: string) => Promise<boolean>;
-  menuClick: (key: string) => any;
+  onMenuClick: (key: string) => any;
 };
 
 export interface ItemProps {
