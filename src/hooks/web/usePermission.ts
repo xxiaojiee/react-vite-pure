@@ -13,6 +13,7 @@ import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/rout
 import { ERROR_LOG_ROUTE } from '/@/router/routes/basic';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { PageEnum } from '/@/enums/pageEnum';
+import { cloneDeep } from 'lodash-es';
 import projectSetting from '/@/settings/projectSetting';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
 import { getMenuList } from '/@/api/sys/menu';

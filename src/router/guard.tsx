@@ -85,7 +85,7 @@ export function useGuard(props) {
     return false;
   }, [path, token, sessionTimeout]);
   const isAuthorize = (isWhite || isDynamicAddedRoute) && !isLoginPageAndAuth; // 是否已经授权（授权才显示组件）
-  const isShowComponent = isAuthorize && isGetCurrentRoute && !isLoginToFount;
+  const isShowComponent = isAuthorize && !isLoginToFount;
   const isLastRoute = !children; // 页面地址是否为最终路由地址
 
   const beforeMount = () => {

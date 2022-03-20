@@ -5,7 +5,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { useClickAway } from 'ahooks';
 import AppSearchFooter from '../AppSearchFooter';
 import Icon from '/@/components/Icon';
-import { Input, InputRef } from 'antd';
+import { Input } from 'antd';
 import { Transition } from '/@/components/Transition';
 
 // import vClickOutside from '/@/directives/clickOutside';
@@ -25,7 +25,7 @@ const AppSearchModal: React.FC<AppSearchModalProp> = (props) => {
   const { visible, className, onClose = () => {} } = props;
   const scrollWrap = useRef<HTMLUListElement>(null);
   const outsideRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<InputRef>(null);
+  const searchRef = useRef<any>(null);
 
   const { prefixCls } = useDesign('app-search-modal');
   const refs = useRef({});

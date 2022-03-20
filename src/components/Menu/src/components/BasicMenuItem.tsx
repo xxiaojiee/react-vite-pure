@@ -6,7 +6,7 @@ import MenuItemContent from './MenuItemContent';
 const MenuItem = Menu.Item;
 
 const BasicMenuItem: React.FC<ItemProps> = (props) => {
-  const { item, ...otherProps } = props;
+  const { item, isHorizontal, ...otherProps } = props;
   return (
     <MenuItem {...otherProps}>
       <MenuItemContent item={item} />

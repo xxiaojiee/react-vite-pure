@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
-import type { CSSProperties } from 'react';
 import type { Menu } from '/@/router/types';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { Tooltip } from 'antd';
@@ -11,20 +10,24 @@ interface MenuItemProp {
   disabled?: boolean;
   collapse: boolean;
   title?: React.ReactNode;
-  indentSize?: number;
   item: Menu;
 }
 
 const MenuItem: React.FC<MenuItemProp> = (props) => {
-  const { className, disabled = false, collapse, title, item, indentSize = 20, children } = props;
+  const { className, disabled = false, collapse, title, item, children } = props;
 
   const { path, parentPathList } = item;
-
   const [active, setActive] = useState(false);
 
   const { prefixCls } = useDesign('menu');
 
-  const { currentMenu, rootMenuEmitter } = useMenuContextContainer();
+  const {
+    currentMenu,
+    onMenuItemSelect,
+    handleMouseenter,
+    handleMouseleave,
+    getItemStyle,
+  } = useMenuContextContainer();
 
   const getClass = classNames(`${prefixCls}-item`, className, {
     [`${prefixCls}-item-active`]: active,
@@ -40,42 +43,39 @@ const MenuItem: React.FC<MenuItemProp> = (props) => {
       if (disabled) {
         return;
       }
-      rootMenuEmitter.emit('on-menu-item-select', item);
-      if (collapse) {
-        return;
-      }
-      rootMenuEmitter.emit('on-update-opened', {
-        opend: false,
-        parentPath: parentPathList[parentPathList.length - 1],
-        parentPathList,
-      });
+      onMenuItemSelect(item);
     },
-    [collapse, disabled, item, parentPathList, rootMenuEmitter],
+    [disabled, item, onMenuItemSelect],
   );
 
   useEffect(() => {
     if (currentMenu?.path === path) {
       setActive(true);
-      rootMenuEmitter.emit('on-update-active-name:submenu', parentPathList);
     } else {
       setActive(false);
     }
-  }, [currentMenu?.path, parentPathList, path, rootMenuEmitter]);
+  }, [currentMenu?.path, parentPathList, path]);
 
-  const getItemStyle = useMemo((): CSSProperties => {
-    if (!parent) return {};
-    let padding = indentSize;
-
-    if (collapse) {
-      padding = indentSize;
-    } else {
-      padding += indentSize * (parentPathList.length - 1);
+  const getEvents = useMemo(() => {
+    if (!collapse) {
+      return {};
     }
-    return { paddingLeft: padding };
-  }, [collapse, indentSize, parentPathList.length]);
+    return {
+      onMouseEnter: () =>
+        handleMouseenter(item, {
+          disabled,
+        }),
+      onMouseLeave: handleMouseleave,
+    };
+  }, [disabled, collapse, handleMouseenter, handleMouseleave, item]);
 
   return (
-    <li className={getClass} onClick={handleClickItem} style={collapse ? {} : getItemStyle}>
+    <li
+      className={getClass}
+      onClick={handleClickItem}
+      style={collapse ? {} : getItemStyle(item)}
+      {...getEvents}
+    >
       {showTooptip ? (
         <Tooltip placement="right" title={title}>
           <div className={`${prefixCls}-tooltip`}>{children}</div>

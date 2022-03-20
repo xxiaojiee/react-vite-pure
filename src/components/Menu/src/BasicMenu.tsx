@@ -120,7 +120,6 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mixSider]);
-  console.log('items:', items);
   return (
     <Menu
       selectedKeys={selectedKeys}

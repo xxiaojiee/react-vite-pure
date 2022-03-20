@@ -3,7 +3,6 @@ import { BasicMenu } from '/@/components/Menu';
 import { SimpleMenu } from '/@/components/SimpleMenu';
 import { AppLogo } from '/@/components/Application';
 import classNames from 'classnames';
-
 import { MenuModeEnum, MenuSplitTyeEnum } from '/@/enums/menuEnum';
 
 import { useHistory } from 'react-router-dom';
@@ -17,18 +16,21 @@ import { useRootSetting } from '/@/hooks/setting/useRootSetting';
 import { useAppInject } from '/@/hooks/web/useAppInject';
 import { useDesign } from '/@/hooks/web/useDesign';
 
+import './index.less';
+
 interface MenuProp {
   theme: 'light' | 'dark';
 
   splitType?: MenuSplitTyeEnum;
 
-  isHorizontal: boolean;
+  isHorizontal?: boolean;
   // menu Mode
   menuMode?: MenuModeEnum;
 }
 
 const Menu: React.FC<MenuProp> = (props) => {
   const { isHorizontal, theme, splitType = MenuSplitTyeEnum.NONE, menuMode = '' } = props;
+
   const { push } = useHistory();
 
   const {
@@ -76,7 +78,6 @@ const Menu: React.FC<MenuProp> = (props) => {
   const handleMenuClick = (path: string) => {
     push(path);
   };
-
   /**
    * before click menu
    * @param menu
@@ -107,7 +108,6 @@ const Menu: React.FC<MenuProp> = (props) => {
 
   const renderMenu = () => {
     const { menus, ...menuProps } = getCommonProps;
-    console.log('菜单：', menus, isHorizontal);
     if (!menus || !menus.length) return null;
     return !isHorizontal ? (
       <SimpleMenu {...menuProps} isSplitMenu={split} items={menus} />
@@ -122,7 +122,6 @@ const Menu: React.FC<MenuProp> = (props) => {
       />
     );
   };
-  console.log('getUseScroll:', getUseScroll);
   return (
     <>
       {renderHeader()}

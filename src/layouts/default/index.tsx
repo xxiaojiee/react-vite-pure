@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo } from 'react';
 import { Layout } from 'antd';
 import classNames from 'classnames';
-
+import { useUnmount } from 'ahooks';
 import LayoutHeader from './header';
 import LayoutContent from './content';
 import LayoutSideBar from './sider';
@@ -42,7 +42,9 @@ const DefaultLayout = (props: BasicLayoutProps) => {
     }
     return cls;
   }, [isMixSidebar, showMenu]);
-
+  useUnmount(() => {
+    console.log('我卸载啦8')
+  })
   return (
     <Layout className={prefixCls} {...lockEvents}>
       <LayoutFeatures />

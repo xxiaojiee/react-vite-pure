@@ -10,7 +10,7 @@ interface DragBarProp {
   mobile?: boolean;
 }
 
-const DragBar: React.FC<DragBarProp> = (props) => {
+const DragBar: React.FC<DragBarProp> = (props, ref) => {
   const { className, mobile = false } = props;
   const { miniWidthNumber, collapsed, canDrag } = useMenuSetting();
 
@@ -26,7 +26,7 @@ const DragBar: React.FC<DragBarProp> = (props) => {
     [`${prefixCls}--hide`]: !canDrag || mobile,
   });
 
-  return <div className={getClass} style={getDragBarStyle} />;
+  return <div ref={ref} className={getClass} style={getDragBarStyle} />;
 };
 
-export default DragBar;
+export default React.forwardRef(DragBar);

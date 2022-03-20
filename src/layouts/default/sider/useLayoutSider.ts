@@ -6,7 +6,7 @@ import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import { useDebounceFn, useMount } from 'ahooks';
 
 /**
- * Handle related operations of menu events
+ * 处理菜单事件相关操作
  */
 export function useSiderEvent() {
   const [broken, setBroken] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export function useSiderEvent() {
 }
 
 /**
- * Handle related operations of menu folding
+ * 处理菜单折叠的相关操作
  */
 export function useTrigger(isMobile: boolean) {
   const { trigger, split } = useMenuSetting();
@@ -42,14 +42,12 @@ export function useTrigger(isMobile: boolean) {
 }
 
 /**
- * Handle menu drag and drop related operations
+ * 处理菜单拖放相关操作
  * @param siderRef
  * @param dragBarRef
  */
 export function useDragLine(siderRef: MutableRefObject<any>, dragBarRef: MutableRefObject<any>, mix = false) {
   const { miniWidthNumber, collapsed, setMenuSetting } = useMenuSetting();
-
-
   const handleMouseMove = (ele: any, wrap: any, clientX: number) => {
     document.onmousemove = function (innerE) {
       // eslint-disable-next-line @typescript-eslint/restrict-plus-operands

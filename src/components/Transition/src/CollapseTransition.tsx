@@ -1,10 +1,16 @@
 import React from 'react';
-import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import { CSSTransition } from 'react-transition-group';
 import { addClass, removeClass } from '/@/utils/domUtils';
 
-const CollapseTransition: React.FC = (props) => {
+interface CollapseTransitionProp {
+  show?: boolean;
+}
+
+const CollapseTransition: React.FC<CollapseTransitionProp> = (props) => {
+  const { show = true } = props;
   const method = {
     onEnter(el) {
+      if (!el) return;
       addClass(el, 'collapse-transition');
       if (!el.dataset) el.dataset = {};
 
@@ -17,6 +23,7 @@ const CollapseTransition: React.FC = (props) => {
     },
 
     onEntering(el) {
+      if (!el) return;
       el.dataset.oldOverflow = el.style.overflow;
       if (el.scrollHeight !== 0) {
         el.style.height = `${el.scrollHeight}px`;
@@ -32,12 +39,14 @@ const CollapseTransition: React.FC = (props) => {
     },
 
     onEntered(el) {
+      if (!el) return;
       removeClass(el, 'collapse-transition');
       el.style.height = '';
       el.style.overflow = el.dataset.oldOverflow;
     },
 
     onExit(el) {
+      if (!el) return;
       if (!el.dataset) el.dataset = {};
       el.dataset.oldPaddingTop = el.style.paddingTop;
       el.dataset.oldPaddingBottom = el.style.paddingBottom;
@@ -48,6 +57,7 @@ const CollapseTransition: React.FC = (props) => {
     },
 
     onExiting(el) {
+      if (!el) return;
       if (el.scrollHeight !== 0) {
         addClass(el, 'collapse-transition');
         el.style.height = 0;
@@ -65,15 +75,14 @@ const CollapseTransition: React.FC = (props) => {
     },
   };
   return (
-    <SwitchTransition mode="out-in">
-      <CSSTransition
-        addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
-        unmountOnExit
-        {...method}
-      >
-        {props.children}
-      </CSSTransition>
-    </SwitchTransition>
+    <CSSTransition
+      in={show}
+      addEndListener={(node, done) => node.addEventListener('transitionend', done, false)}
+      unmountOnExit
+      {...method}
+    >
+      {props.children}
+    </CSSTransition>
   );
 };
 

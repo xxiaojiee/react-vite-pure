@@ -5,13 +5,13 @@ import { SIDE_BAR_MINI_WIDTH, SIDE_BAR_SHOW_TIT_MINI_WIDTH } from '/@/enums/appE
 import { MenuModeEnum, MenuTypeEnum, TriggerEnum } from '/@/enums/menuEnum';
 
 import { useFullContent } from '/@/hooks/web/useFullContent';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
-const mixSideHasChildren = false;
 const appActions = actions.app;
 
 export function useMenuSetting() {
   const fullContent = useFullContent();
+  const mixSideHasChildren = useRef(false);
   const dispatch = useDispatch();
   const appState = useStoreState('app');
 
@@ -96,7 +96,7 @@ export function useMenuSetting() {
     if (!(isTopMenu || !showMenu || (split && menuHidden))) {
       if (isMixSidebar) {
         const d1: number = collapsed ? SIDE_BAR_MINI_WIDTH : SIDE_BAR_SHOW_TIT_MINI_WIDTH;
-        const d2: number = mixSideFixed && mixSideHasChildren ? realWidth : 0
+        const d2: number = mixSideFixed && mixSideHasChildren.current ? realWidth : 0
         width = d1 + d2;
       } else {
         width = realWidth

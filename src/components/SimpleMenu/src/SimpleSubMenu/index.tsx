@@ -20,10 +20,10 @@ interface SimpleSubMenuProp {
 }
 
 const SimpleSubMenu: React.FC<SimpleSubMenuProp> = (props) => {
-  const { className, item, parent, collapsedShowTitle, collapse, theme, children } = props;
+  const { className, item, parent, collapsedShowTitle, collapse, theme } = props;
   const { prefixCls } = useDesign('simple-menu');
 
-  const getShowMenu = item?.meta?.hideMenu;
+  const getShowMenu = !item?.meta?.hideMenu;
   const getIcon = item?.icon;
   const getI18nName = item?.name;
   const getShowSubTitle = !collapse || !parent;
@@ -41,26 +41,10 @@ const SimpleSubMenu: React.FC<SimpleSubMenuProp> = (props) => {
       menuTreeItem.children.length > 0
     );
   };
-  if (!menuHasChildren(item) && getShowMenu) {
-    return (
-      <MenuItem
-        {...omit(props, ['className'])}
-        className={getLevelClass}
-        title={
-          <>
-            <span className={classNames('ml-2', `${prefixCls}-sub-title`)}>{getI18nName}</span>
-            <SimpleMenuTag item={item} collapseParent={getIsCollapseParent} />
-          </>
-        }
-      >
-        {getIcon ? <Icon icon={getIcon} size={16} /> : null}
-        {collapsedShowTitle && getIsCollapseParent ? (
-          <div className="mt-1 collapse-title">{getI18nName}</div>
-        ) : null}
-      </MenuItem>
-    );
+  if (!getShowMenu) {
+    return null;
   }
-  if (menuHasChildren(item) && getShowMenu) {
+  if (menuHasChildren(item)) {
     return (
       <SubMenu
         {...omit(props, ['className'])}
@@ -82,17 +66,28 @@ const SimpleSubMenu: React.FC<SimpleSubMenuProp> = (props) => {
         }
       >
         {item.children?.map((childrenItem) => (
-          <SimpleSubMenu
-            {...props}
-            key={childrenItem.path}
-            item={childrenItem}
-            parent={false}
-          />
+          <SimpleSubMenu {...props} key={childrenItem.path} item={childrenItem} parent={false} />
         ))}
       </SubMenu>
     );
   }
-  return null;
+  return (
+    <MenuItem
+      {...omit(props, ['className'])}
+      className={getLevelClass}
+      title={
+        <>
+          <span className={classNames('ml-2', `${prefixCls}-sub-title`)}>{getI18nName}</span>
+          <SimpleMenuTag item={item} collapseParent={getIsCollapseParent} />
+        </>
+      }
+    >
+      {getIcon ? <Icon icon={getIcon} size={16} /> : null}
+      {collapsedShowTitle && getIsCollapseParent ? (
+        <div className="mt-1 collapse-title">{getI18nName}</div>
+      ) : null}
+    </MenuItem>
+  );
 };
 
 export default SimpleSubMenu;

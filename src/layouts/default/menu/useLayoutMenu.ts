@@ -1,7 +1,7 @@
 import type { Menu } from '/@/router/types';
 import { useCallback, useEffect, useState } from 'react';
 import { MenuSplitTyeEnum } from '/@/enums/menuEnum';
-import { useThrottleFn, useMount } from 'ahooks';
+import { useThrottleFn } from 'ahooks';
 import { useAppContainer } from '/@/hooks/core/useAppContext';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
 import { useChildrenMenus, useCurrentParentPath, useMenus, useShallowMenus } from '/@/router/menus';
@@ -51,7 +51,7 @@ export function useSplitMenu(splitType: MenuSplitTyeEnum) {
 
   useEffect(
     () => {
-      if (splitNotLeft || isMobile) return;
+      if (splitNotLeft || isMobile || !currentRoute?.path) return;
 
       const currentActiveMenu = currentRoute.meta.currentActiveMenu as string;
       let parentPath = getCurrentParentPath(currentRoute.path);
@@ -60,7 +60,8 @@ export function useSplitMenu(splitType: MenuSplitTyeEnum) {
       }
       parentPath && throttleHandleSplitLeftMenu(parentPath);
     },
-    [currentRoute.meta.currentActiveMenu, currentRoute.path, splitNotLeft, splitType, getCurrentParentPath, isMobile, throttleHandleSplitLeftMenu],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentRoute?.path, splitType],
   );
 
 
@@ -78,26 +79,25 @@ export function useSplitMenu(splitType: MenuSplitTyeEnum) {
     }
   }, [isMobile, getSpiltTop, menus, normalType, shallowMenuList])
 
-  useMount(() => {
-    genMenus();
-  })
 
   // // Menu changes
-  // useEffect(
-  //   () => {
-  //     genMenus();
-  //   },
-  //   [permissionState.lastBuildMenuTime, permissionState.backMenuList, genMenus]
-  // );
+  useEffect(
+    () => {
+      genMenus();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [permissionState.lastBuildMenuTime, permissionState.backMenuList]
+  );
 
-  // // split Menu changes
-  // useEffect(
-  //   () => {
-  //     if (splitNotLeft) return;
-  //     genMenus();
-  //   },
-  //   [genMenus, split, splitNotLeft]
-  // );
+  // split Menu changes
+  useEffect(
+    () => {
+      if (splitNotLeft) return;
+      genMenus();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [split, splitNotLeft]
+  );
 
   return { menusRef };
 }

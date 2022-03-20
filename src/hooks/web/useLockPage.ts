@@ -33,7 +33,6 @@ export function useLockPage() {
       clear();
       return;
     }
-    const { lockTime } = appState.projectConfig;
     if (!lockTime || lockTime < 1) {
       clear();
       return;
@@ -44,7 +43,7 @@ export function useLockPage() {
       lockPage();
     }, lockTime * 60 * 1000);
 
-  }, [appState.projectConfig, lockPage, token])
+  }, [lockPage, lockTime, token])
 
   useEffect(() => {
     if (token) {

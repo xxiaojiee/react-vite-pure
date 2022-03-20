@@ -13,14 +13,13 @@ function joinParentPath(menus: Menu[], parentPath = '', parentPathList: string[]
   for (let index = 0; index < menus.length; index++) {
     const menu = menus[index];
     const path = menu.path as string;
-    let nextParentPathList: string[] = [];
     if (!(path.startsWith('/') || isUrl(path))) {
       // path doesn't start with /, nor is it a url, join parent path
       const fullPath = `${parentPath}/${path}`
       menu.path = fullPath;
-      menu.parentPathList = parentPathList;
-      nextParentPathList = [...parentPathList, fullPath]
     }
+    menu.parentPathList = parentPathList;
+    const nextParentPathList: string[] = [...parentPathList, menu.path];
     if (menu?.children?.length) {
       joinParentPath(menu.children, menu.meta?.hidePathForChildren ? parentPath : menu.path, nextParentPathList);
     }
