@@ -8,7 +8,6 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { isString } from '/@/utils/is';
 import { filter } from '/@/utils/helper/treeHelper';
 import { useMenus } from '/@/router/menus';
-import { REDIRECT_NAME } from '/@/router/constant';
 import { getAllParentPath } from '/@/router/helper/menuHelper';
 
 import type { AppRouteRecordRaw, Menu } from '/@/router/types';
@@ -60,7 +59,7 @@ const LayoutBreadcrumb: React.FC<LayoutBreadcrumbProp> = (props) => {
   // const { showBreadCrumbIcon } = useRootSetting();
 
   useMount(() => {
-    if (!route || route.name === REDIRECT_NAME) return;
+    if (!route ) return;
     const cur = matched?.[matched.length - 1];
     let path: string = route.path || '';
 

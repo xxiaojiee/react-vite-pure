@@ -3,7 +3,6 @@ import { Loading } from '/@/components/Loading';
 
 export const ROOT_NAME = 'Root';
 export const LOGIN_NAME = 'Login';
-export const REDIRECT_NAME = 'Redirect';
 export const PARENT_LAYOUT_NAME = 'ParentLayout';
 export const PAGE_NOT_FOUND_NAME = 'PageNotFound';
 

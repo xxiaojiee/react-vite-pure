@@ -7,7 +7,6 @@ import { useOpenKeys } from './useOpenKeys';
 import { isFunction } from '/@/utils/is';
 import { BasicProps } from './props';
 import { useMenuSetting } from '/@/hooks/setting/useMenuSetting';
-import { REDIRECT_NAME } from '/@/router/constant';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { getAllParentPath } from '/@/router/helper/menuHelper';
 import { useCurrentParentPath } from '/@/router/menus';
@@ -89,7 +88,6 @@ const BasicMenu: React.FC<BasicProps> = (props) => {
   );
 
   useEffect(() => {
-    if (currentRoute.name === REDIRECT_NAME) return;
     handleMenuChange(currentRoute);
     // currentActiveMenu： 最顶层memu
     currentActiveMenu.current = currentRoute.meta?.currentActiveMenu as string;

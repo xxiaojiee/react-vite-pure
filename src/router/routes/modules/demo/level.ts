@@ -53,7 +53,7 @@ const permission: AppRouteRecordRaw = {
     {
       path: 'menu2',
       name: 'Menu2Demo',
-      component: () => import('/@/pages/demo/level/Menu2'),
+      component: load(() => import('/@/pages/demo/level/Menu2')),
       meta: {
         title: 'Menu2',
         // ignoreKeepAlive: true,

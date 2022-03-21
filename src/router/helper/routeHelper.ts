@@ -4,7 +4,7 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 import { LAYOUT, EXCEPTION_COMPONENT, load } from '/@/router/constant';
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '/@/utils/log';
-import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
+import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = load(() => import('/@/pages/sys/iframe/FrameBlank'));

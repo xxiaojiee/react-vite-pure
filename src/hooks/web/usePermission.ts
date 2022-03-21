@@ -4,22 +4,19 @@ import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { useStoreState, actions } from '/@/store';
 import { getAuthCache } from '/@/utils/auth';
-import { asyncRoutes } from '/@/router/routes';
+import { getLocalRoutes } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
-import { getMessage } from '/@/hooks/web/getMessage';
 import { useDispatch } from 'react-redux'
 import { ROLES_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
 import { ERROR_LOG_ROUTE } from '/@/router/routes/basic';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { PageEnum } from '/@/enums/pageEnum';
-import { cloneDeep } from 'lodash-es';
 import projectSetting from '/@/settings/projectSetting';
 import { transformRouteToMenu } from '/@/router/helper/menuHelper';
 import { getMenuList } from '/@/api/sys/menu';
 import { getPermCode } from '/@/api/sys/user';
 
-const { createMessage } = getMessage();
 
 const permissionActions = actions.permission
 
@@ -104,14 +101,14 @@ export function useBuildRoutesAction() {
     };
     switch (permissionMode) {
       case PermissionModeEnum.ROLE:
-        routes = filter(asyncRoutes, routeFilter);
+        routes = filter(getLocalRoutes(), routeFilter);
         routes = routes.filter(routeFilter);
         // 将多级路由转换为 2 级路由
         routes = flatMultiLevelRoutes(routes);
         break;
 
       case PermissionModeEnum.ROUTE_MAPPING:
-        routes = filter(asyncRoutes, routeFilter);
+        routes = filter(getLocalRoutes(), routeFilter);
         routes = routes.filter(routeFilter);
         menuList = transformRouteToMenu(routes, true);
         routes = filter(routes, routeRemoveIgnoreFilter);

@@ -81,7 +81,6 @@ export const useMenuContext = (memuProps: MenuProp) => {
   }, [indentSize, collapse]);
 
   // useEffect(() => {
-  //   if (currentRoute.name === REDIRECT_NAME) return;
   //   // currentActiveMenu.current = currentRoute.meta?.currentActiveMenu as string;
 
   //   if (accordion) {
