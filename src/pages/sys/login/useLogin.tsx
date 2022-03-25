@@ -6,19 +6,15 @@ import { getUserInfo, loginApi, doLogout } from '/@/api/sys/user';
 import { useBuildRoutesAction } from '/@/hooks/web/usePermission';
 import { getMessage } from '/@/hooks/web/getMessage';
 import { LoginParams } from '/@/api/sys/types/user';
-import { twoLevelAddNotFoundPageAddAxact } from '/@/router/helper/routeHelper';
 import { actions, useStoreState, store } from '/@/store';
-import { useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux';
 import { isArray } from '/@/utils/is';
-import { basicRoutes } from '/@/router/routes';
-
 
 import type { ErrorMessageMode } from '/#/axios';
 import type { UserInfo } from '/#/store';
 
-const userActions = actions.user
-const permissionActions = actions.permission
-
+const userActions = actions.user;
+const permissionActions = actions.permission;
 
 export function useLoginState() {
   const userState = useStoreState('user');
@@ -36,7 +32,6 @@ export function useLoginState() {
   return { setLoginState, getLoginState, handleBackLogin };
 }
 
-
 export function useGetUserInfoAction() {
   const dispatch = useDispatch();
   return async function getUserInfoAction(): Promise<UserInfo | null> {
@@ -46,14 +41,14 @@ export function useGetUserInfoAction() {
     const { roles = [] } = userInfo;
     if (isArray(roles)) {
       const roleList = roles.map((item) => item.value) as RoleEnum[];
-      dispatch(userActions.setRoleList(roleList))
+      dispatch(userActions.setRoleList(roleList));
     } else {
       userInfo.roles = [];
-      dispatch(userActions.setRoleList([]))
+      dispatch(userActions.setRoleList([]));
     }
-    dispatch(userActions.setUserInfo(userInfo))
+    dispatch(userActions.setUserInfo(userInfo));
     return userInfo;
-  }
+  };
 }
 
 export function useAfterLoginAction() {
@@ -69,25 +64,25 @@ export function useAfterLoginAction() {
     const { sessionTimeout } = userState;
     // 登录是否过期
     if (sessionTimeout) {
-      disPatch(userActions.setSessionTimeout(false))
+      disPatch(userActions.setSessionTimeout(false));
       // 动态添加路由
     } else if (!permissionState.isDynamicAddedRoute) {
       const actionroutes = await buildRoutesAction();
-      const routes = [...actionroutes, ...basicRoutes];
-      twoLevelAddNotFoundPageAddAxact(routes);
       // 设置routes, 页面会重新卸载，重新加载页面
-      disPatch(permissionActions.setRoutes(routes))
+      disPatch(permissionActions.setRoutes(actionroutes));
     }
     return userInfo;
-  }
+  };
 }
 
 export function useLogin() {
   const dispatch = useDispatch();
   const afterLoginAction = useAfterLoginAction();
-  return async function login(params: LoginParams & {
-    mode?: ErrorMessageMode;
-  }): Promise<UserInfo | null> {
+  return async function login(
+    params: LoginParams & {
+      mode?: ErrorMessageMode;
+    },
+  ): Promise<UserInfo | null> {
     try {
       const { mode, ...loginParams } = params;
       const data = await loginApi(loginParams, mode);
@@ -98,7 +93,7 @@ export function useLogin() {
     } catch (error) {
       return Promise.reject(error);
     }
-  }
+  };
 }
 
 /**
@@ -133,7 +128,6 @@ export function confirmLoginOut() {
   });
 }
 
-
 export function useFormValid<T extends Object = any>(formRef: any) {
   async function validForm() {
     const form = formRef.current;
@@ -143,5 +137,3 @@ export function useFormValid<T extends Object = any>(formRef: any) {
   }
   return { validForm };
 }
-
-

@@ -37,27 +37,21 @@ const DynamicRoute: React.FC<{ routes?: AppRouteRecordRaw[]; matched?: AppRouteR
 }) => (
   <Switch>
     {map(rous, (route, index) => {
-      const path = route.path[0] !== '/' ? `${matched[0].path}/${route.path}` : route.path;
+      console.log('route:', route);
       return (
         <Route
           key={index}
-          path={path}
+          path={route.path}
           exact={!!route.exact}
           render={(props: RouteComponentProps) => {
             const { match, ...otherProp } = props;
             const newRoute = {
               ...route,
               match,
-              path,
             };
-            const newMatched = [...matched, newRoute];
-            newRoute.matched = cloneDeep(newMatched);
-            const routerRenderProps = {
-              ...otherProp,
-              route: newRoute,
-              matched: newMatched,
-            };
-            return <RouterRender {...routerRenderProps} />;
+            const matcheds = [...matched, newRoute];
+            newRoute.matched = cloneDeep(matcheds);
+            return <RouterRender {...otherProp} route={newRoute} matched={matcheds} />;
           }}
         />
       );

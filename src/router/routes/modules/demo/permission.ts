@@ -1,6 +1,5 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 
 import { load } from '../../../constant';
@@ -8,7 +7,6 @@ import { load } from '../../../constant';
 const permission: AppRouteRecordRaw = {
   path: '/permission',
   name: 'Permission',
-  component: LAYOUT,
   // redirect: '/permission/front/page',
   meta: {
     orderNo: 15,

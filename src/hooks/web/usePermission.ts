@@ -4,12 +4,11 @@ import type { UserInfo } from '/#/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { useStoreState, actions } from '/@/store';
 import { getAuthCache } from '/@/utils/auth';
-import { getLocalRoutes } from '/@/router/routes';
+import { getStaticRoutes, getPermissionRouter } from '/@/router/routes';
 import { filter } from '/@/utils/helper/treeHelper';
 import { useDispatch } from 'react-redux'
 import { ROLES_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
-import { transformObjToRoute, flatMultiLevelRoutes } from '/@/router/helper/routeHelper';
-import { ERROR_LOG_ROUTE } from '/@/router/routes/basic';
+import { transformObjToRoute, flatRoutesToFirstLevel } from '/@/router/helper/routeHelper';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { PageEnum } from '/@/enums/pageEnum';
 import projectSetting from '/@/settings/projectSetting';
@@ -36,6 +35,39 @@ const permissionActions = actions.permission
 // import { isArray } from '/@/utils/is';
 // import { useMultipleTabStore } from '/@/store/modules/multipleTab';
 
+/**
+ * @description 根据用户设置的首页，在对应的route中的加上affix标记
+ * */
+const patchHomeAffix = (routeLists: AppRouteRecordRaw[], userhomePath) => {
+  if (!routeLists || routeLists.length === 0) return;
+  let homePath = userhomePath;
+  function patcher(routeListsd: AppRouteRecordRaw[], parentPath = '') {
+    let newParentPath = parentPath;
+    if (newParentPath) {
+      newParentPath += '/'
+    };
+    routeListsd.forEach((route: AppRouteRecordRaw) => {
+      const { path, children, redirect } = route;
+      const currentPath = path.startsWith('/') ? path : `${newParentPath}${path}`;
+      if (currentPath === homePath) {
+        // 如果该路由存在重定向，找到重定向的路由，并加上affix标记
+        if (redirect) {
+          homePath = route.redirect!;
+        } else {
+          route.meta = Object.assign({}, route.meta, { affix: true });
+          throw new Error('end');  // 通过抛出错误退出循环
+        }
+      }
+      children && children.length > 0 && patcher(children, currentPath);
+    });
+  }
+  try {
+    patcher(routeLists);
+  } catch (e) {
+    // 已处理完毕跳出循环
+  }
+};
+
 
 export function useBuildRoutesAction() {
   const userState = useStoreState('user')
@@ -46,12 +78,17 @@ export function useBuildRoutesAction() {
     let menuList: Menu[] = [];
     let routeList: AppRouteRecordRaw[] = [];
     let backMenuList: Menu[] = [];
+    // 获取角色列表
     const getRoleList = (): RoleEnum[] => {
       return userState.roleList.length > 0 ? userState.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
     }
     const roleList = getRoleList() || [];
     const { permissionMode = projectSetting.permissionMode } = appState.projectConfig;
 
+    const userInfo: UserInfo = userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {}
+    const homePath: string = userInfo.homePath || PageEnum.BASE_HOME;
+
+    // 通过角色roles，来过滤路由列表
     const routeFilter = (route: AppRouteRecordRaw) => {
       const { meta } = route;
       const { roles } = meta || {};
@@ -59,66 +96,26 @@ export function useBuildRoutesAction() {
       return roleList.some((role) => roles.includes(role));
     };
 
+    // 移除需要忽略的路由
     const routeRemoveIgnoreFilter = (route: AppRouteRecordRaw) => {
       const { meta } = route;
       const { ignoreRoute } = meta || {};
-      return !ignoreRoute;
+      return !ignoreRoute;  // ignoreRoute 是否忽略路由
     };
 
-    /**
-     * @description 根据设置的首页path，修正routes中的affix标记（固定首页）
-     * */
-    const patchHomeAffix = (routeLists: AppRouteRecordRaw[]) => {
-      if (!routeLists || routeLists.length === 0) return;
-      const getUserInfo = (): UserInfo => {
-        return userState.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
-      };
-      let homePath: string = getUserInfo().homePath || PageEnum.BASE_HOME;
-      function patcher(routeListsd: AppRouteRecordRaw[], parentPath = '') {
-        let newParentPath = parentPath;
-        if (newParentPath) {
-          newParentPath += '/'
-        };
-        routeListsd.forEach((route: AppRouteRecordRaw) => {
-          const { path, children, redirect } = route;
-          const currentPath = (path as string).startsWith('/') ? (path as string) : `${newParentPath}${path}`;
-          if (currentPath === homePath) {
-            if (redirect) {
-              homePath = route.redirect! as string;
-            } else {
-              route.meta = Object.assign({}, route.meta, { affix: true });
-              throw new Error('end');
-            }
-          }
-          children && children.length > 0 && patcher(children, currentPath);
-        });
-      }
-      try {
-        patcher(routeLists);
-      } catch (e) {
-        // 已处理完毕跳出循环
-      }
-    };
     switch (permissionMode) {
       case PermissionModeEnum.ROLE:
-        routes = filter(getLocalRoutes(), routeFilter);
-        routes = routes.filter(routeFilter);
-        // 将多级路由转换为 2 级路由
-        routes = flatMultiLevelRoutes(routes);
+        routes = filter(getStaticRoutes(), routeFilter); // 通过角色roles过滤路由
         break;
 
       case PermissionModeEnum.ROUTE_MAPPING:
-        routes = filter(getLocalRoutes(), routeFilter);
-        routes = routes.filter(routeFilter);
+        routes = filter(getStaticRoutes(), routeFilter);  // 通过角色roles过滤路由
         menuList = transformRouteToMenu(routes, true);
         routes = filter(routes, routeRemoveIgnoreFilter);
-        routes = routes.filter(routeRemoveIgnoreFilter);
         menuList.sort((a, b) => {
           return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
         });
         dispatch(permissionActions.setFrontMenuList(menuList))
-        // 将多级路由转换为 2 级路由
-        routes = flatMultiLevelRoutes(routes);
         break;
 
       // 如果确定不需要做后台动态权限，请在下方评论整个判断
@@ -137,27 +134,25 @@ export function useBuildRoutesAction() {
         } catch (error) {
           console.error(error);
         }
-
         // 动态引入组件
         routeList = transformObjToRoute(routeList);
         //  通过后台路由获取菜单结构
         backMenuList = transformRouteToMenu(routeList);
         dispatch(permissionActions.setBackMenuList(backMenuList))
-        // remove meta.ignoreRoute item
-        routeList = filter(routeList, routeRemoveIgnoreFilter);
-        routeList = routeList.filter(routeRemoveIgnoreFilter);
-        routeList = flatMultiLevelRoutes(routeList);
-        routes = routeList;
+        // 移除需要忽略的路由
+        routes = filter(routeList, routeRemoveIgnoreFilter);
         break;
       default:
         break;
     }
-    patchHomeAffix(routes);
-    routes = [...ERROR_LOG_ROUTE, ...routes];
+    // 根据用户设置的首页，在对应的route中的加上affix标记
+    patchHomeAffix(routes, homePath);
+    // 摊平多级路由为只有一级的路由
+    routes = flatRoutesToFirstLevel(routes);
+    routes = getPermissionRouter(routes);
     return routes;
   }
 }
-
 
 // User permissions related operations
 // export function usePermission() {

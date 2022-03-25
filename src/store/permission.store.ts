@@ -1,5 +1,5 @@
 
-import { basicRoutes } from '/@/router/routes';
+import { NOT_PERMISSION_ROUTE } from '/@/router/routes';
 import type { AppRouteRecordRaw, Menu } from '/@/router/types';
 
 interface PermissionState {
@@ -24,7 +24,7 @@ const defaultState = {
   // 触发菜单更新
   lastBuildMenuTime: 0,
   // 路由列表
-  routes: basicRoutes,
+  routes: NOT_PERMISSION_ROUTE,
   // 后台菜单列表
   backMenuList: [],
   // menu List

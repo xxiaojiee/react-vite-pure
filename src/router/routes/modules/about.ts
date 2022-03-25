@@ -1,12 +1,11 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { LAYOUT, load } from '/@/router/constant';
+import { load } from '/@/router/constant';
 
 
 const dashboard: AppRouteRecordRaw = {
   path: '/about',
   name: 'About',
-  component: LAYOUT,
   redirect: '/about/index',
   meta: {
     hideChildrenInMenu: true,

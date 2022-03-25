@@ -6,7 +6,6 @@ import { createFakeUserList } from './user';
 const dashboardRoute = {
   path: '/dashboard',
   name: 'Dashboard',
-  component: 'LAYOUT',
   redirect: '/dashboard/analysis',
   meta: {
     title: 'Dashboard',
@@ -71,7 +70,6 @@ const backRoute = {
 const authRoute = {
   path: '/permission',
   name: 'Permission',
-  component: 'LAYOUT',
   redirect: '/permission/front/page',
   meta: {
     icon: 'carbon:user-role',
@@ -83,7 +81,6 @@ const authRoute = {
 const levelRoute = {
   path: '/level',
   name: 'Level',
-  component: 'LAYOUT',
   redirect: '/level/menu1/menu1-1',
   meta: {
     icon: 'carbon:user-role',
@@ -139,7 +136,6 @@ const levelRoute = {
 const sysRoute = {
   path: '/system',
   name: 'System',
-  component: 'LAYOUT',
   redirect: '/system/account',
   meta: {
     icon: 'ion:settings-outline',
@@ -210,7 +206,6 @@ const sysRoute = {
 const linkRoute = {
   path: '/link',
   name: 'Link',
-  component: 'LAYOUT',
   meta: {
     icon: 'ion:tv-outline',
     title: '外部页面',
@@ -227,7 +222,6 @@ const linkRoute = {
     {
       path: 'https://vvbin.cn/doc-next/',
       name: 'DocExternal',
-      component: 'LAYOUT',
       meta: {
         title: '项目文档(外链)',
       },

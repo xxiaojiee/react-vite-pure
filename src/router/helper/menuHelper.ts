@@ -9,6 +9,9 @@ export function getAllParentPath<T = Recordable>(treeData: T[], path: string) {
   return (menuList || []).map((item) => item.path);
 }
 
+
+
+// 补全地址并增加一个所有父级路径字段parentPathList
 function joinParentPath(menus: Menu[], parentPath = '', parentPathList: string[] = []) {
   for (let index = 0; index < menus.length; index++) {
     const menu = menus[index];
@@ -36,11 +39,13 @@ export function transformMenuModule(menuModule: MenuModule): Menu {
   return menuList[0];
 }
 
+// 将路由（router）转化为菜单（menu）
 export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMapping = false) {
   const cloneRouteModList = cloneDeep(routeModList);
   const routeList: AppRouteRecordRaw[] = [];
 
   cloneRouteModList.forEach((item) => {
+    // 修改需要隐藏子菜单的且存在重定向的路由地址；
     if (routerMapping && item.meta.hideChildrenInMenu && typeof item.redirect === 'string') {
       item.path = item.redirect;
     }

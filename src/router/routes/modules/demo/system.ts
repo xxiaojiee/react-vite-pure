@@ -1,11 +1,10 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { load, LAYOUT } from '/@/router/constant';
+import { load } from '/@/router/constant';
 
 const system: AppRouteRecordRaw = {
   path: '/system',
   name: 'System',
-  component: LAYOUT,
   redirect: '/system/account',
   meta: {
     orderNo: 2000,

@@ -1,12 +1,9 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 import { load } from '../../constant';
 
-import { LAYOUT } from '/@/router/constant';
-
 const dashboard: AppRouteRecordRaw = {
   path: '/dashboard',
   name: 'Dashboard',
-  component: LAYOUT,
   redirect: '/dashboard/analysis',
   meta: {
     orderNo: 10,

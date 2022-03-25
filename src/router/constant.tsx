@@ -19,5 +19,3 @@ export const load = <T extends ComponentType<any>>(
 };
 
 export const EXCEPTION_COMPONENT = load(() => import('/@/pages/sys/exception'));
-
-export const LAYOUT = load(() => import('/@/layouts/default/index'));

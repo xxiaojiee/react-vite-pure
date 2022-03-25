@@ -1,11 +1,10 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { load, LAYOUT } from '/@/router/constant';
+import { load } from '/@/router/constant';
 
 const permission: AppRouteRecordRaw = {
   path: '/level',
   name: 'Level',
-  component: LAYOUT,
   redirect: '/level/menu1/menu1-1/menu1-1-1',
   meta: {
     orderNo: 2000,
