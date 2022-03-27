@@ -1,7 +1,8 @@
 
 import type { AppRouteRecordRaw } from '/@/router/types';
 
-import { EXCEPTION_COMPONENT, load } from '/@/router/constant';
+import { load } from '/@/router/constant';
+import { EXCEPTION_COMPONENT } from '/@/router/routes';
 import { cloneDeep } from 'lodash-es';
 import { warn } from '/@/utils/log';
 
@@ -44,7 +45,7 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
     const component = item.component as unknown as string;
     if (!item.component && item.meta?.frameSrc) {
       item.component = IFRAME;
-    }else if(component){
+    } else if (component) {
       item.component = dynamicImport(dynamicViewsModules, component as string);
     }
     const { children } = item;
@@ -76,6 +77,7 @@ export function flatRoutesToFirstLevel(routeModules: AppRouteRecordRaw[], father
       const childrenRoutes = flatRoutesToFirstLevel(item.children, `${routeItem.path}/`);
       routes = childrenRoutes.concat(routes);
     }
+    delete routeItem.children;
     routes.push(routeItem);
   })
   return routes;

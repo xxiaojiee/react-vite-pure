@@ -10,15 +10,15 @@ import { TOKEN_KEY, SESSION_TIMEOUT_KEY } from '/@/enums/cacheEnum';
 import { cloneDeep } from 'lodash-es';
 import { PageEnum } from '/@/enums/pageEnum';
 import { useMount, useUnmount } from 'ahooks';
-import queryString from 'query-string';
 
-import { PAGE_NOT_FOUND_NAME } from '/@/router/constant';
+import { PAGE_NOT_FOUND_NAME, ROOT_NAME } from '/@/router/constant';
 
 import * as H from 'history';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
+const MAIN_OUT_PATH = PageEnum.MAIN_OUT_PAGE;
 
-const whitePathList: PageEnum[] = [LOGIN_PATH];
+const whitePathList: PageEnum[] = [MAIN_OUT_PATH];
 
 /**
  * @description: 登录鉴权
@@ -52,102 +52,71 @@ export function usePermissionGuard(props: any) {
  */
 export function useGuard(props) {
   const { route, history, location = {} } = props;
-  const isFirst = useRef<boolean>(true);
+  console.log('route:', route.path, route);
   const { redirect, path, meta, name, children } = route;
   const { pathname, search } = location as H.Location;
-  const { route: appRoute, matched, saveApp } = useAppContainer();
-  const getPermissionGuard = usePermissionGuard(props);
+  // const { route: currentRoute, matched, saveApp } = useAppContainer();
   const userState = useStoreState('user');
-  const { userInfo, sessionTimeout } = userState || {};
   const token = userState.token || getAuthCache<string>(TOKEN_KEY);
-  const { removeAllHttpPending } = projectSetting;
+  const { userInfo, sessionTimeout } = userState || {};
   // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
-  const isGetCurrentRoute = !!matched?.some((rou) => rou.path === path);
-  const isWhite = whitePathList.includes(path as PageEnum) || !!meta.ignoreAuth; // 是否是白名单
+  const isWhite = whitePathList.includes(path) || !!meta.ignoreAuth;
+  const isFirst = useRef<boolean>(true);
   const { isDynamicAddedRoute } = useStoreState('permission'); // 是否获取了动态路由
-  // 登录后，找不到route路由地址
-  const isLoginToFount = useMemo(() => {
-    if (
-      appRoute?.path === LOGIN_PATH &&
-      route.name === PAGE_NOT_FOUND_NAME &&
-      pathname !== (userInfo?.homePath || PageEnum.BASE_HOME)
-    ) {
-      return true;
-    }
-    return false;
-  }, [appRoute, pathname, route.name, userInfo?.homePath]);
-  // 是否是登录页，且目前已登录 (是，就自动登录到系统)
-  const isLoginPageAndAuth = useMemo(() => {
-    // 如果是登录页面且存在token，且token已经过期
-    if (path === LOGIN_PATH && token && sessionTimeout) {
-      return true;
-    }
-    return false;
-  }, [path, token, sessionTimeout]);
-  const isAuthorize = (isWhite || isDynamicAddedRoute) && !isLoginPageAndAuth; // 是否已经授权（授权才显示组件）
-  const isShowComponent = isAuthorize && !isLoginToFount;
-  const isLastRoute = !children; // 页面地址是否为最终路由地址
-
-  const beforeMount = () => {
-    if (!isFirst.current) {
-      return;
-    }
-    // 加载顶部进度条
-    if (!nProgress.status) {
-      nProgress.start();
-    }
-    if (!redirect && isLastRoute) {
-      if (removeAllHttpPending) {
-        const axiosCanceler = new AxiosCanceler();
-        // 切换路由会删除之前的请求
-        axiosCanceler?.removeAllPending();
-      }
-    }
-    isFirst.current = false;
-  };
-  beforeMount();
+  const getPermissionGuard = usePermissionGuard(props);
+  console.log('token:', token, sessionTimeout);
+  // 当前页面是登录页，且已登录则先不展示
+  const isLoginPageAddShow = path === LOGIN_PATH && (!token || (token && !sessionTimeout));
+  const isShowComponent = isWhite || isDynamicAddedRoute || isLoginPageAddShow;
+  const isLastRoute = ROOT_NAME !== name; // 页面地址是否为最终路由地址
+  console.log({
+    isWhite,
+    isDynamicAddedRoute,
+    // isLoginToFount,
+    isLastRoute,
+    isLoginPageAddShow,
+  });
+  // const beforeMount = () => {
+  //   if (!isFirst.current) {
+  //     return;
+  //   }
+  //   // 加载顶部进度条
+  //   if (!nProgress.status) {
+  //     nProgress.start();
+  //   }
+  //   if (!redirect && isLastRoute) {
+  //     if (projectSetting.removeAllHttpPending) {
+  //       const axiosCanceler = new AxiosCanceler();
+  //       // 切换路由会删除之前的请求
+  //       axiosCanceler?.removeAllPending();
+  //     }
+  //   }
+  //   isFirst.current = false;
+  // };
+  // beforeMount();
   useMount(async () => {
+    console.log('');
     // 重定向
     if (redirect && pathname === path) {
       await history.replace(redirect);
       return;
     }
-
-    // 当找不到一级路由时
-    if (isLoginToFount) {
-      await history.replace(userInfo.homePath || PageEnum.BASE_HOME);
-      return;
-    }
     if (isLastRoute) {
-      if (!isAuthorize) {
+      if (!isDynamicAddedRoute) {
         await getPermissionGuard();
         return;
       }
       if (token && !sessionTimeout) {
-        if (path === LOGIN_PATH) {
-          await history.replace(
-            (queryString.parse(search)?.redirect as string) ||
-              userInfo?.homePath ||
-              PageEnum.BASE_HOME,
-          );
-          return;
-        }
         if (pathname === PageEnum.BASE_ROOT) {
           await history.replace(userInfo?.homePath || PageEnum.BASE_HOME);
-          return;
         }
-      }
-      if (!isGetCurrentRoute) {
-        console.log('当前router:', props);
-        // 保存当前props (会导致组件重新渲染)
-        saveApp(cloneDeep(props));
       }
     }
   });
-  useEffect(() => {
-    if (isGetCurrentRoute && nProgress.status) {
-      nProgress.done();
-    }
-  }, [isGetCurrentRoute]);
+  // useEffect(() => {
+  //   if (isGetCurrentRoute && nProgress.status) {
+  //     nProgress.done();
+  //   }
+  // }, [isGetCurrentRoute]);
   return isShowComponent;
 }

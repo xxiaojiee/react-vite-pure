@@ -17,7 +17,7 @@ export interface initAppContainerProp {
 export type AppContainerProp = RouterRenderProp & initAppContainerProp;
 
 
-export const useApp = () => {
+export const useApp = (routerProps: RouterRenderProp) => {
   const [app, setApp] = useState<AppContainerProp>({
     prefixCls,
     isMobile: false,
@@ -33,7 +33,7 @@ export const useApp = () => {
       }
     });
   };
-  return { ...app, saveApp };
+  return { ...app, ...routerProps, saveApp };
 };
 
 const App = createContainer(useApp);
