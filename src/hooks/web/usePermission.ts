@@ -102,7 +102,6 @@ export function useBuildRoutesAction() {
       const { ignoreRoute } = meta || {};
       return !ignoreRoute;  // ignoreRoute 是否忽略路由
     };
-
     switch (permissionMode) {
       case PermissionModeEnum.ROLE:
         routes = filter(getStaticRoutes(), routeFilter); // 通过角色roles过滤路由

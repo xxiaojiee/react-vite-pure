@@ -9,7 +9,6 @@ import { LoginParams } from '/@/api/sys/types/user';
 import { useHistory, useLocation } from 'react-router-dom';
 import { actions, useStoreState, store } from '/@/store';
 import { useDispatch } from 'react-redux';
-import queryString from 'query-string';
 import { isArray } from '/@/utils/is';
 
 import type { ErrorMessageMode } from '/#/axios';
@@ -58,7 +57,8 @@ export function useAfterLoginAction() {
   const permissionState = useStoreState('permission');
   const disPatch = useDispatch();
   const { replace } = useHistory();
-  const { search } = useLocation();
+  const location = useLocation();
+  console.log('location:', location);
   const getUserInfoAction = useGetUserInfoAction();
   const buildRoutesAction = useBuildRoutesAction();
   return async function afterLoginAction(): Promise<UserInfo | null> {
@@ -75,8 +75,6 @@ export function useAfterLoginAction() {
       // 设置routes, 页面会重新卸载，重新加载页面
       disPatch(permissionActions.setRoutes(actionroutes));
     }
-    const jumpPath = (queryString.parse(search)?.redirect as string) || '/';
-    await replace(jumpPath);
     return userInfo;
   };
 }

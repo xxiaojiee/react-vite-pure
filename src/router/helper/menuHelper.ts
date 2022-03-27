@@ -70,7 +70,9 @@ export function transformRouteToMenu(routeModList: AppRouteRecordRaw[], routerMa
       };
     },
   });
+  console.log(888, cloneDeep(list));
   joinParentPath(list);
+  console.log(9999, cloneDeep(list));
   return cloneDeep(list);
 }
 

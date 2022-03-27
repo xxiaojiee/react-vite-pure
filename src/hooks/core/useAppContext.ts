@@ -39,5 +39,4 @@ export const useApp = (routerProps: RouterRenderProp) => {
 const App = createContainer(useApp);
 
 export const AppProvider = App.Provider;
-
-export const useAppContainer = () => App.useContainer();
+export const useAppContainer = App.useContainer;

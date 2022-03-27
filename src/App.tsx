@@ -21,7 +21,7 @@ const AppProviderMain: React.FC = ({ children }) => {
   return <AppProvider>{children}</AppProvider>;
 };
 
-const App = () => (
+const App = (
   <Router>
     <ConfigProvider locale={zhCN}>
       <Provider store={store}>

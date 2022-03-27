@@ -57,8 +57,6 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
 export function transformObjToRoute<T = AppRouteRecordRaw>(routeList: AppRouteRecordRaw[]): T[] {
   routeList.forEach((route) => {
     const meta = route.meta || {};
-    meta.single = true;
-    meta.affix = false;
     route.meta = meta;
     route.children && asyncImportRoute(route.children);
   });

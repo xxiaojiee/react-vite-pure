@@ -10,6 +10,7 @@ import { TOKEN_KEY, SESSION_TIMEOUT_KEY } from '/@/enums/cacheEnum';
 import { cloneDeep } from 'lodash-es';
 import { PageEnum } from '/@/enums/pageEnum';
 import { useMount, useUnmount } from 'ahooks';
+import queryString from 'query-string';
 
 import { PAGE_NOT_FOUND_NAME, ROOT_NAME } from '/@/router/constant';
 
@@ -52,50 +53,50 @@ export function usePermissionGuard(props: any) {
  */
 export function useGuard(props) {
   const { route, history, location = {} } = props;
-  console.log('route:', route.path, route);
   const { redirect, path, meta, name, children } = route;
   const { pathname, search } = location as H.Location;
-  // const { route: currentRoute, matched, saveApp } = useAppContainer();
+  const { route: currentRoute, matched, saveApp } = useAppContainer();
   const userState = useStoreState('user');
   const token = userState.token || getAuthCache<string>(TOKEN_KEY);
   const { userInfo, sessionTimeout } = userState || {};
   // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
   const isWhite = whitePathList.includes(path) || !!meta.ignoreAuth;
+  // 是否获取了当前的Route; 再渲染路由组件，保证组件都马上获取到当前的Route；
+  const isGetCurrentRoute = !!matched?.some((rou) => rou.path === path);
   const isFirst = useRef<boolean>(true);
   const { isDynamicAddedRoute } = useStoreState('permission'); // 是否获取了动态路由
   const getPermissionGuard = usePermissionGuard(props);
-  console.log('token:', token, sessionTimeout);
   // 当前页面是登录页，且已登录则先不展示
   const isLoginPageAddShow = path === LOGIN_PATH && (!token || (token && !sessionTimeout));
-  const isShowComponent = isWhite || isDynamicAddedRoute || isLoginPageAddShow;
+  const isShowComponent =
+    (isWhite || isDynamicAddedRoute || isLoginPageAddShow) && isGetCurrentRoute;
   const isLastRoute = ROOT_NAME !== name; // 页面地址是否为最终路由地址
   console.log({
     isWhite,
     isDynamicAddedRoute,
-    // isLoginToFount,
     isLastRoute,
     isLoginPageAddShow,
+    isGetCurrentRoute,
   });
-  // const beforeMount = () => {
-  //   if (!isFirst.current) {
-  //     return;
-  //   }
-  //   // 加载顶部进度条
-  //   if (!nProgress.status) {
-  //     nProgress.start();
-  //   }
-  //   if (!redirect && isLastRoute) {
-  //     if (projectSetting.removeAllHttpPending) {
-  //       const axiosCanceler = new AxiosCanceler();
-  //       // 切换路由会删除之前的请求
-  //       axiosCanceler?.removeAllPending();
-  //     }
-  //   }
-  //   isFirst.current = false;
-  // };
-  // beforeMount();
+  const beforeMount = () => {
+    if (!isFirst.current) {
+      return;
+    }
+    // 加载顶部进度条
+    if (!nProgress.status) {
+      nProgress.start();
+    }
+    if (!redirect && isLastRoute) {
+      if (projectSetting.removeAllHttpPending) {
+        const axiosCanceler = new AxiosCanceler();
+        // 切换路由会删除之前的请求
+        axiosCanceler?.removeAllPending();
+      }
+    }
+    isFirst.current = false;
+  };
+  beforeMount();
   useMount(async () => {
-    console.log('');
     // 重定向
     if (redirect && pathname === path) {
       await history.replace(redirect);
@@ -103,7 +104,16 @@ export function useGuard(props) {
     }
     if (isLastRoute) {
       if (!isDynamicAddedRoute) {
+        debugger;
         await getPermissionGuard();
+        return;
+      }
+      if (path === LOGIN_PATH) {
+        await history.replace(
+          (queryString.parse(search)?.redirect as string) ||
+            userInfo?.homePath ||
+            PageEnum.BASE_HOME,
+        );
         return;
       }
       if (token && !sessionTimeout) {
@@ -111,12 +121,17 @@ export function useGuard(props) {
           await history.replace(userInfo?.homePath || PageEnum.BASE_HOME);
         }
       }
+      if (!isGetCurrentRoute) {
+        console.log('当前router:', props);
+        // 保存当前props (会导致组件重新渲染)
+        saveApp(cloneDeep(props));
+      }
     }
   });
-  // useEffect(() => {
-  //   if (isGetCurrentRoute && nProgress.status) {
-  //     nProgress.done();
-  //   }
-  // }, [isGetCurrentRoute]);
+  useEffect(() => {
+    if (isGetCurrentRoute && nProgress.status) {
+      nProgress.done();
+    }
+  }, [isGetCurrentRoute]);
   return isShowComponent;
 }
